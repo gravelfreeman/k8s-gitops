@@ -1,0 +1,40 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app pocket-id
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/common
+    - ../../../../components/cnpg
+  dependsOn:
+    - name: cloudnative-pg
+    - name: envoy-gateway-config
+    - name: external-secrets-store
+  interval: 1h
+  patches:
+    - patch: |-
+        - op: replace
+          path: /spec/bootstrap
+          value:
+            initdb:
+              database: pocket-id
+              owner: pocket-id
+      target:
+        group: postgresql.cnpg.io
+        kind: Cluster
+  path: kubernetes/apps/core/pocket-id/app
+  postBuild:
+    substitute:
+      APP: *app
+      ENVOY_GATEWAY_ACCESS: external
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: *app
+  timeout: 10m
+  wait: true

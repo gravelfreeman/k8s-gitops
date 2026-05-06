@@ -1,0 +1,65 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ${APP}-dragonfly-ca
+spec:
+  secretName: ${DRAGONFLY_CA_SECRET_NAME:=${APP}-dragonfly-ca}
+  commonName: ${APP}-dragonfly-ca
+  isCA: true
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    rotationPolicy: Always
+  usages: [ cert sign, crl sign ]
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: selfsigned
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: ${APP}-dragonfly-ca
+spec:
+  ca:
+    secretName: ${DRAGONFLY_CA_SECRET_NAME:=${APP}-dragonfly-ca}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ${APP}-dragonfly
+spec:
+  secretName: ${DRAGONFLY_TLS_SECRET_NAME:=${APP}-dragonfly-tls}
+  commonName: ${APP}-dragonfly.${APP}.svc.cluster.local
+  dnsNames:
+    - ${APP}-dragonfly
+    - ${APP}-dragonfly.${APP}
+    - ${APP}-dragonfly.${APP}.svc
+    - ${APP}-dragonfly.${APP}.svc.cluster.local
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    rotationPolicy: Always
+  usages: [ server auth ]
+  issuerRef:
+    group: cert-manager.io
+    kind: Issuer
+    name: ${APP}-dragonfly-ca
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ${APP}-dragonfly-client
+spec:
+  secretName: ${DRAGONFLY_CLIENT_TLS_SECRET_NAME:=${APP}-dragonfly-client-tls}
+  commonName: ${DRAGONFLY_CLIENT_COMMON_NAME:=${APP}}
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    rotationPolicy: Always
+  usages: [ client auth ]
+  issuerRef:
+    group: cert-manager.io
+    kind: Issuer
+    name: ${APP}-dragonfly-ca

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
+  "name": "k8s-gitops",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu@sha256:7ee7da33a68d997971660d91ecc8372e55a38a777c3c6bd6808daf91928052db",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "installOhMyZsh": true,
+      "installOhMyZshConfig": true
+    },
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": { "minikube": "none" },
+    "ghcr.io/devcontainers-extra/features/apt-get-packages:1": {
+      "packages": "file,fzf,jq,libimage-exiftool-perl,netcat-openbsd,python3,python3-pip,python3-venv,ripgrep,sshfs,tree,unzip,xz-utils,zip,zsh,zstd" },
+    "ghcr.io/devcontainers-extra/features/go-task:1": {},
+    "ghcr.io/devcontainers-extra/features/helmfile:1": {},
+    "ghcr.io/devcontainers-extra/features/talosctl:1": {},
+    "ghcr.io/devcontainer-community/devcontainer-features/k9scli.io:1": {},
+    "ghcr.io/devcontainer-community/devcontainer-features/yq:1": {},
+    "ghcr.io/flexwie/devcontainer-features/op:1": {},
+    "ghcr.io/jsburckhardt/devcontainer-features/flux:1": {},
+    "ghcr.io/rio/features/kustomize:1": {}
+  },
+  "mounts": [
+    "source=/tmp/1password-ssh-agent.sock,target=/tmp/ssh-agent.sock,type=bind",
+    "source=${localEnv:HOME}/.cache/k8s-gitops,target=/tmp/host-secrets,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.cache/k8s-gitops/talos,target=/tmp/talos,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.ssh,target=/tmp/host-ssh,type=bind,consistency=cached,readonly",
+    "source=${localEnv:HOME}/.gitconfig,target=/tmp/host.gitconfig,type=bind,consistency=cached,readonly",
+    "source=${localEnv:HOME}/.codex,target=/home/vscode/.codex,type=bind"
+  ],
+  "runArgs": [ "--privileged" ],
+  "containerEnv": {
+    "SHELL": "/bin/zsh",
+    "SSH_AUTH_SOCK": "/tmp/ssh-agent.sock",
+    "PATH": "/home/vscode/.local/bin:/home/vscode/.krew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "MINIJINJA_CONFIG_FILE": "${containerWorkspaceFolder}/.devcontainer/.config/.minijinja.toml",
+    "KUBECONFIG": "/home/vscode/.kube/config",
+    "TALOSCONFIG": "/home/vscode/.talos/config"
+  },
+  "updateRemoteUserUID": false,
+  "userEnvProbe": "loginInteractiveShell",
+  "initializeCommand": "bash ${localWorkspaceFolder}/.devcontainer/scripts/initializeCommand.sh ${localWorkspaceFolder}",
+  "onCreateCommand": "bash ${containerWorkspaceFolder}/.devcontainer/scripts/onCreateCommand.sh ${containerWorkspaceFolder}",
+  "postCreateCommand": "bash ${containerWorkspaceFolder}/.devcontainer/scripts/postCreateCommand.sh ${containerWorkspaceFolder}",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "containers.environment": { "DOCKER_HOST": "ssh://colima" },
+        "github.copilot.chat.commitMessageGeneration.instructions": [ { "file": "./.githooks/commit-msg" } ],
+        "json5.schemaDownload.trustedDomains": { "https://docs.renovatebot.com/": true },
+        "kustomizeNavigator.diagnostics.enabled": false,
+        "yaml.schemas": { "kubernetes": "kubernetes/**/*.yaml" }
+      },
+      "extensions": [
+        "BlueGlassBlock.better-json5",
+        "MichalHajny.kustomize-navigator",
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "openai.chatgpt",
+        "redhat.vscode-yaml",
+        "samuelcolvin.jinjahtml",
+        "tamasfe.even-better-toml",
+        "weaveworks.vscode-gitops-tools"
+      ]
+    }
+  }
+}

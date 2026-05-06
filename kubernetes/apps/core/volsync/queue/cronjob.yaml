@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: &name volsync-queue
+spec:
+  suspend: true
+  schedule: "0 5 * * *"
+  timeZone: America/Toronto
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        spec:
+          serviceAccountName: *name
+          restartPolicy: Never
+          volumes:
+            - name: script
+              configMap:
+                name: volsync-queue-script
+                defaultMode: 0555
+          containers:
+            - name: queue
+              image: bitnami/kubectl@sha256:59ad45e8bd79e7af7592ff2852b32adcb0da50792bc52ce44679d5c5f1b4d415
+              volumeMounts:
+                - name: script
+                  mountPath: /scripts
+                  readOnly: true
+              command: ["/bin/sh", "-eu", "/scripts/volsync-queue.sh"]

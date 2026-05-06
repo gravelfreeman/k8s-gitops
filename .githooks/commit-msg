@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+commit_msg_file="${1:-}"
+
+if [ -z "$commit_msg_file" ] || [ ! -f "$commit_msg_file" ]; then
+  echo "commit-msg hook requires a commit message file." >&2
+  exit 1
+fi
+
+subject="$(
+  awk '
+    /^[[:space:]]*#/ { next }
+    /^[[:space:]]*$/ { next }
+    { print; exit }
+  ' "$commit_msg_file"
+)"
+
+body_line="$(
+  awk '
+    /^[[:space:]]*#/ { next }
+    /^[[:space:]]*$/ { next }
+    seen_subject { print; exit }
+    { seen_subject = 1 }
+  ' "$commit_msg_file"
+)"
+
+if [ -z "$subject" ]; then
+  echo "Commit message subject cannot be empty." >&2
+  exit 1
+fi
+
+case "$subject" in
+Merge\ * | Revert\ \"*)
+  exit 0
+  ;;
+esac
+
+type_pattern='(feat|fix|chore|docs|refactor|test|revert)'
+scope_pattern='[a-z0-9][a-z0-9-]*'
+summary_pattern='[a-z0-9].*[^.]'
+commit_pattern="^${type_pattern}\\(${scope_pattern}\\): ${summary_pattern}$"
+
+if [[ "$subject" =~ $commit_pattern ]]; then
+  if [ -n "$body_line" ]; then
+    cat >&2 <<'EOF'
+Commit message body is not allowed.
+
+Expected a single-line commit message:
+  <type>(<scope>): <short summary>
+
+Remove Copilot or editor-generated descriptions before committing.
+EOF
+
+    printf '\nFirst extra line:\n  %s\n' "$body_line" >&2
+    exit 1
+  fi
+
+  exit 0
+fi
+
+cat >&2 <<'EOF'
+Invalid commit message subject.
+
+Expected:
+  <type>(<scope>): <short summary>
+
+Allowed types:
+  feat, fix, chore, docs, refactor, test, revert
+
+Rules:
+  - scope must be lowercase letters, numbers, or hyphens
+  - summary must start with lowercase text or a number
+  - summary must not end with a period
+  - body text is not allowed; keep the commit message to one line
+
+Common scopes:
+  agents, bootstrap, cnpg, devcontainer, docs, dragonfly, flux, app-name, repo, talos, volsync
+
+Examples:
+  fix(app-name): add volsync backup component
+  docs(agents): document commit message format
+  chore(flux): update repository wiring
+EOF
+
+printf '\nActual:\n  %s\n' "$subject" >&2
+exit 1

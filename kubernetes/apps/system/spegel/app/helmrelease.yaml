@@ -1,0 +1,19 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app spegel
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  values:
+    spegel:
+      containerdRegistryConfigPath: /etc/cri/conf.d/hosts
+    service:
+      registry:
+        hostPort: 29999
+    serviceMonitor:
+      enabled: true

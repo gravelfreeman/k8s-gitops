@@ -1,0 +1,45 @@
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: ClientTrafficPolicy
+metadata:
+  name: envoy-external
+spec:
+  clientIPDetection:
+    xForwardedFor:
+      trustedCIDRs:
+        - 10.244.0.0/16
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: envoy-external
+  tls:
+    minVersion: "1.2"
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: ClientTrafficPolicy
+metadata:
+  name: envoy-internal
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: envoy-internal
+  tls:
+    minVersion: "1.2"
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: envoy
+spec:
+  retry:
+    numRetries: 2
+    retryOn:
+      triggers:
+        - reset
+  targetSelectors:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+  timeout:
+    http:
+      requestTimeout: 0s

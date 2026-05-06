@@ -1,0 +1,7 @@
+# Create a self-signed Issuer for the webhook serving certificate.
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: k8tz-webhook-issuer
+spec:
+  selfSigned: {}

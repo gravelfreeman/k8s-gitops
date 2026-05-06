@@ -1,0 +1,21 @@
+---
+version: "3"
+
+set: [pipefail]
+shopt: [globstar]
+
+vars:
+  BOOTSTRAP_DIR: "{{.ROOT_DIR}}/bootstrap"
+  KUBERNETES_DIR: "{{.ROOT_DIR}}/kubernetes"
+  TALOS_DIR: "{{.ROOT_DIR}}/talos"
+  GIT_REPOSITORY_URL: https://github.com/gravelfreeman/k8s-gitops.git
+  OP_VAULT: Kubernetes
+
+env:
+  GIT_REPOSITORY_URL: "{{.GIT_REPOSITORY_URL}}"
+  OP_VAULT: "{{.OP_VAULT}}"
+
+includes:
+  bootstrap: bootstrap/Taskfile.yaml
+  kubernetes: kubernetes/Taskfile.yaml
+  talos: talos/Taskfile.yaml

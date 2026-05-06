@@ -1,0 +1,36 @@
+---
+version: "3"
+
+tasks:
+
+  secrets:list:
+    desc: List ignored app files
+    silent: true
+    cmd: |-
+      while IFS= read -r path || [ -n "$path" ]; do
+        case "$path" in /kubernetes/apps/*/*/*) ;; *) continue ;; esac
+        externalsecret_path=".${path%/app/*}/app/externalsecret.yaml"
+        yq --no-doc --exit-status --output-format=tsv "
+          .spec.data[]?
+          | select(.secretKey == \"${path##*/}\" and .remoteRef.key and .remoteRef.property)
+          | [\"$(basename "${path%/app/*}")\", .remoteRef.key, .remoteRef.property, \".$path\"]
+        " "$externalsecret_path"
+      done < .gitignore
+    preconditions:
+      - sh: test -f .gitignore
+      - sh: which yq
+
+  secrets:push:
+    desc: Push ignored app files to 1Password
+    silent: true
+    cmd: |-
+      task githooks:secrets:list \
+      | while IFS="$(printf '\t')" read -r app item file_name file_path; do
+          field_name="$(printf '%s' "$file_name" | sed 's/[.=\\]/\\&/g')"
+          op item edit "$item" "$field_name[file]=$file_path" --vault {{.OP_VAULT | shellQuote}} < /dev/tty > /dev/null || exit 1
+          echo "$app/$file_name -> $item"
+        done
+    preconditions:
+      - sh: test -f .gitignore
+      - sh: op user get --me
+      - sh: which yq

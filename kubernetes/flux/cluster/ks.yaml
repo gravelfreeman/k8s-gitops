@@ -1,0 +1,63 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cluster-apps
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: flux-repositories
+  interval: 1h
+  path: ./kubernetes/apps
+  patches:
+    - patch: |-
+        - op: add
+          path: /spec/postBuild
+          value:
+            substituteFrom:
+              - kind: Secret
+                name: flux-common
+                optional: true
+      target:
+        group: kustomize.toolkit.fluxcd.io
+        kind: Kustomization
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: flux-repositories
+  namespace: flux-system
+spec:
+  interval: 1h
+  path: ./kubernetes/flux/repositories
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: flux-system
+  wait: true
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: flux-secrets
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: external-secrets-store
+  interval: 1h
+  path: ./kubernetes/flux/secrets
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: flux-system
+  timeout: 5m
+  wait: true

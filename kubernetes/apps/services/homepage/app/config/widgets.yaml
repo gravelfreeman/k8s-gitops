@@ -1,0 +1,21 @@
+---
+- logo:
+    icon: '/images/favicon.png'
+- unifi_console:
+    url: 'https://10.0.20.1:443'
+    key: '{{HOMEPAGE_FILE_UDM_KEY}}'
+- glances:
+    url: 'http://10.0.10.10:61208'
+    version: '4'
+    cpu: 'true'
+    mem: 'false'
+    cputemp: 'true'
+    uptime: 'true'
+    label: 'PVE-01'
+- weatherapi:
+    label: '${CITY}'
+    latitude: '${LATITUDE}'
+    longitude: '${LONGITUDE}'
+    units: 'metric'
+    apiKey: '{{HOMEPAGE_FILE_WEATHERAPI_KEY}}'
+    cache: '5'

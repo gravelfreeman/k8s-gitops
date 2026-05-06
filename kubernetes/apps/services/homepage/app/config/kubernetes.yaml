@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
+mode: cluster
+ingress: false
+traefik: false
+gateway: false

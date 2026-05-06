@@ -1,0 +1,29 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app kube-prometheus-stack
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/common
+    - ../../../../components/envoy-oidc
+  dependsOn:
+    - name: envoy-gateway-config
+    - name: external-secrets-store
+    - name: rook-ceph-cluster
+  interval: 1h
+  path: kubernetes/apps/system/kube-prometheus-stack/app
+  postBuild:
+    substitute:
+      APP: kube-prometheus-stack-prometheus
+      ENVOY_OIDC_SUBDOMAIN: prometheus
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: *app
+  timeout: 5m
+  wait: true

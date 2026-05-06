@@ -1,0 +1,24 @@
+---
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: ${APP}-barman-store
+spec:
+  retentionPolicy: 30d
+  configuration:
+    destinationPath: s3://${S3_BUCKET}/cnpg
+    endpointURL: https://${S3_ENDPOINT}
+    data:
+      compression: gzip
+      encryption: AES256
+    wal:
+      compression: gzip
+      encryption: AES256
+    s3Credentials:
+      accessKeyId:
+        name: ${APP}-b2-secret
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: ${APP}-b2-secret
+        key: AWS_SECRET_ACCESS_KEY

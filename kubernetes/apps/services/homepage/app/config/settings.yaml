@@ -1,0 +1,125 @@
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
+---
+title: 'root:freeman'
+background:
+  image: '/images/background.jpg'
+  brightness: '60'
+cardBlur: 'sm'
+favicon: '/images/favicon.png'
+theme: 'light'
+color: 'slate'
+providers:
+  openweathermap: 'openweathermapapikey'
+  weatherapi: 'weatherapiapikey'
+headerStyle: 'clean'
+target: '_blank'
+language: 'en'
+quicklaunch:
+    searchDescriptions: 'false'
+    hideInternetSearch: 'true'
+    provider: 'duckduckgo'
+statusStyle: 'dot'
+hideVersion: 'true'
+hideErrors: 'true'
+useEqualHeights: 'true'
+layout:
+  # TAB 1
+  Servers:
+    tab: 'Home'
+    icon: 'mdi-server-network-#1E293B'
+    style: 'row'
+    columns: '4'
+  Network:
+    tab: 'Home'
+    icon: 'mdi-wan-#1E293B'
+    style: 'row'
+    columns: '5'
+  Bookmarks:
+    tab: 'Home'
+  Server:
+    tab: 'Home'
+  Forums:
+    tab: 'Home'
+  # TAB 2
+  Everyday Life:
+    tab: 'Applications'
+    icon: 'mdi-leaf-#1E293B'
+    style: row
+    columns: '5'
+  Office:
+    tab: 'Applications'
+    icon: 'mdi-text-box-#1E293B'
+    style: 'row'
+    columns: '5'
+  Finances:
+    tab: 'Applications'
+    icon: 'mdi-finance-#1E293B'
+    style: 'row'
+    columns: '5'
+  Broadcasting:
+    tab: 'Applications'
+    icon: 'mdi-broadcast-#1E293B'
+    style: 'row'
+    columns: '4'
+  File Sharing:
+    tab: 'Applications'
+    icon: 'mdi-share-variant-#1E293B'
+    style: 'row'
+    columns: '4'
+  Data Processing:
+    tab: 'Applications'
+    icon: 'mdi-database-#1E293B'
+    style: 'row'
+    columns: '3'
+  Accounting:
+    tab: 'Applications'
+  Communication:
+    tab: 'Applications'
+  Social Media:
+    tab: 'Applications'
+  # TAB 3
+  Library:
+    tab: 'Multimedia'
+    icon: 'mdi-bookshelf-#1E293B'
+    style: 'row'
+    columns: '3'
+  Media Management:
+    tab: 'Multimedia'
+    icon: 'mdi-multimedia-#1E293B'
+    style: 'row'
+    columns: '4'
+  Tools:
+    tab: 'Multimedia'
+    icon: 'mdi-toolbox-#1E293B'
+    style: 'row'
+    columns: '5'
+  Resources:
+    tab: 'Multimedia'
+  Gaming:
+    tab: 'Multimedia'
+  Boards:
+    tab: 'Multimedia'
+  # TAB 4
+  Download Clients:
+    tab: 'Download'
+    icon: 'mdi-cloud-download-#1E293B'
+    style: 'row'
+    columns: '4'
+  Media Downloaders:
+    tab: 'Download'
+    icon: 'mdi-play-network-#1E293B'
+    style: 'row'
+    columns: '5'
+  Download Tools:
+    tab: 'Download'
+    icon: 'mdi-cog-transfer-#1E293B'
+    style: 'row'
+    columns: '4'
+  Usenet:
+    tab: 'Download'
+  Torrent/EN:
+    tab: 'Download'
+  Torrent/FR:
+    tab: 'Download'
+  Direct Download:
+    tab: 'Download'

@@ -1,0 +1,42 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app envoy-gateway
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/common
+  interval: 1h
+  path: kubernetes/apps/core/envoy-gateway/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: *app
+  timeout: 5m
+  wait: true
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: envoy-gateway-config
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: envoy-gateway
+  dependsOn:
+    - name: cilium-config
+    - name: envoy-gateway
+    - name: cert-manager-issuers
+  interval: 1h
+  path: kubernetes/apps/core/envoy-gateway/config
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: envoy-gateway
+  timeout: 5m
+  wait: true

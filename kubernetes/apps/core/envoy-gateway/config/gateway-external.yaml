@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: envoy-external
+  annotations:
+    external-dns.alpha.kubernetes.io/target: &externalHostname external.${DOMAIN_0}
+spec:
+  gatewayClassName: envoy-external
+  infrastructure:
+    annotations:
+      external-dns.alpha.kubernetes.io/hostname: *externalHostname
+      lbipam.cilium.io/ips: 10.0.20.88
+    labels:
+      io.cilium/l2-announcer: "true"
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: Same
+    - name: https
+      port: 443
+      protocol: HTTPS
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              envoy-gateway-access: external
+      tls:
+        certificateRefs:
+          - name: certificate-issuer-domain-0-wildcard
+          - name: certificate-issuer-domain-1-wildcard
+          - name: certificate-issuer-domain-2-wildcard

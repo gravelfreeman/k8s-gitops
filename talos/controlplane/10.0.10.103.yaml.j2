@@ -1,0 +1,34 @@
+---
+machine:
+  install:
+    diskSelector:
+      serial: op://${OP_VAULT}/talos/MACHINE_DISK_SERIAL_M3
+  network:
+    hostname: "m3.k8s.{% raw %}{{ op://${OP_VAULT}/common/DOMAIN_0 }}{% endraw %}"
+    interfaces:
+      - deviceSelector:
+          hardwareAddr: "op://${OP_VAULT}/talos/MACHINE_NETWORK_MAC_M3"
+        addresses: [10.0.10.103/24]
+        vip:
+          ip: 10.0.10.100
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 10.0.10.1
+      - deviceSelector:
+          busPath: 0-1.0 # ms01-1
+        dhcp: false
+        mtu: 65520
+        addresses: [169.254.0.103/32]
+        routes:
+          - network: 169.254.0.101/32
+            metric: 2048
+      - deviceSelector:
+          busPath: 1-1.0 # ms01-2
+        dhcp: false
+        mtu: 65520
+        addresses: [169.254.0.103/32]
+        routes:
+          - network: 169.254.0.102/32
+            metric: 2048
+  nodeLabels:
+    topology.kubernetes.io/zone: ms01-3

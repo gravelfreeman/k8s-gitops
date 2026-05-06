@@ -1,0 +1,18 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app kubelet-csr-approver
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  values:
+    priorityClassName: system-cluster-critical
+    providerIpPrefixes: [10.0.10.0/24]
+    providerRegex: '^m[1-3]\.k8s\.${DOMAIN_0//./\\.}$'
+    metrics:
+      serviceMonitor:
+        enabled: true

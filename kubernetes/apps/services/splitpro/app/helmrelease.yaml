@@ -1,0 +1,88 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: splitpro
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    controllers:
+      splitpro:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile: { type: RuntimeDefault }
+          automountServiceAccountToken: false
+        initContainers:
+          db-wait:
+            image: { repository: postgres, tag: "18.3-alpine3.23@sha256:52098013b4b64a746626437d38afc03cabff6cdeb4d3d92e2342aa95f0ce56ea" }
+            command: ["/bin/sh", "-ec"]
+            args: ["until pg_isready -q -h ${APP}-cnpg-rw -p 5432 -U postgres -d postgres; do sleep 2; done"]
+        containers:
+          app:
+            image:
+              repository: ossapps/splitpro
+              tag: v2.0.3@sha256:6e3cbc88dbd4c1b64dcb39b1c24ae8da71c8a475f1e012345da1d1ed0dd2cbe9
+            envFrom:
+              - secretRef:
+                  name: splitpro-app-secret
+            env:
+              PORT: &httpPort 3000
+              DATABASE_URL:
+                valueFrom:
+                  secretKeyRef:
+                    name: splitpro-cnpg-app
+                    key: fqdn-uri
+              DEFAULT_HOMEPAGE: /balances
+              ENABLE_SENDING_INVITES: true
+              FROM_EMAIL: split@${DOMAIN_0}
+              EMAIL_SERVER_PORT: 587
+              NEXTAUTH_URL: https://split.${DOMAIN_0}
+              OIDC_WELL_KNOWN_URL: https://auth.${DOMAIN_0}/.well-known/openid-configuration
+              OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: true
+              OIDC_NAME: PocketID
+              OIDC_CLIENT_ID: splitpro
+            probes:
+              liveness: &probe
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: *httpPort
+              readiness: *probe
+            resources:
+              requests: { cpu: 25m, memory: 256Mi }
+              limits: { memory: 512Mi }
+            securityContext:
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        existingClaim: splitpro-data
+        globalMounts:
+          - path: /app/uploads
+    route:
+      app:
+        hostnames: ['split.${DOMAIN_0}']
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy-gateway
+            sectionName: https
+    service:
+      app:
+        controller: splitpro
+        ports:
+          http:
+            port: *httpPort

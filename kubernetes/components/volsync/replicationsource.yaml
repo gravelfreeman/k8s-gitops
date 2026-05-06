@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: ${APP}-data
+spec:
+  sourcePVC: ${APP}-data
+  restic:
+    copyMethod: Snapshot
+    repository: ${APP}-volsync-secret
+    cacheCapacity: ${VOLSYNC_CACHE_CAPACITY:=1Gi}
+    cacheStorageClassName: openebs-hostpath
+    volumeSnapshotClassName: csi-ceph-block
+    retain:
+      daily: 7
+      weekly: 4
+      monthly: 3
+      yearly: 1
+    pruneIntervalDays: 7
+    moverSecurityContext:
+      seccompProfile:
+        type: RuntimeDefault
+      runAsNonRoot: ${VOLSYNC_RUN_AS_NON_ROOT:=true}
+      runAsUser: ${VOLSYNC_PUID:=568}
+      runAsGroup: ${VOLSYNC_PGID:=568}
+      fsGroup: ${VOLSYNC_FS_GROUP:=568}
+      fsGroupChangePolicy: ${VOLSYNC_FS_GROUP_CHANGE_POLICY:=OnRootMismatch}
+  trigger:
+    schedule: "${VOLSYNC_TRIGGER_SCHEDULE:=0 5 * * *}"

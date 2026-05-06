@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
+ingress:
+  - hostname: "*.${DOMAIN_0}"
+    originRequest:
+      http2Origin: true
+      originServerName: external.${DOMAIN_0}
+    service: https://envoy-external.envoy-gateway.svc.cluster.local:443
+  - hostname: "*.${DOMAIN_1}"
+    originRequest:
+      http2Origin: true
+      originServerName: external.${DOMAIN_1}
+    service: https://envoy-external.envoy-gateway.svc.cluster.local:443
+  - hostname: "*.${DOMAIN_2}"
+    originRequest:
+      http2Origin: true
+      originServerName: external.${DOMAIN_2}
+    service: https://envoy-external.envoy-gateway.svc.cluster.local:443
+  - service: http_status:404

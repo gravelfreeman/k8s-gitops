@@ -1,0 +1,10 @@
+---
+customization:
+  extraKernelArgs:
+    - talos.config.early={{ ENV.TALOS_CONFIG_EARLY }}
+  systemExtensions:
+    officialExtensions:
+      - siderolabs/i915
+      - siderolabs/intel-ucode
+      - siderolabs/mei
+      - siderolabs/thunderbolt

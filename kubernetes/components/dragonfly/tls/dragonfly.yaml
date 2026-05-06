@@ -1,0 +1,12 @@
+---
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: ${APP}-dragonfly
+spec:
+  tlsSecretRef:
+    name: ${DRAGONFLY_TLS_SECRET_NAME:=${APP}-dragonfly-tls}
+  authentication:
+    clientCaCertSecret:
+      name: ${DRAGONFLY_CA_SECRET_NAME:=${APP}-dragonfly-ca}
+      key: tls.crt

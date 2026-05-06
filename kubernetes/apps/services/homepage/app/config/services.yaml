@@ -1,0 +1,526 @@
+---
+  # TAB 1 - ROW 1
+- Servers:
+  - Scale-01:
+      icon: 'sh-truenas-scale.svg'
+      href: 'https://10.0.10.15'
+      siteMonitor: 'http://10.0.10.15'
+      widgets:
+        - type: truenas
+          url: 'http://10.0.10.15'
+          key: '{{HOMEPAGE_FILE_SCALE_01_KEY}}'
+          enablePools: 'true'
+          nasType: 'scale'
+  - Scale-02:
+      icon: 'sh-truenas-scale.svg'
+      href: 'http://10.1.10.15'
+      siteMonitor: 'http://10.1.10.15'
+      widgets:
+        - type: 'truenas'
+          url: 'http://10.1.10.15'
+          key: '{{HOMEPAGE_FILE_SCALE_02_KEY}}'
+          enablePools: 'true'
+          nasType: 'scale'
+  - PVE-01:
+      icon: 'sh-proxmox.svg'
+      href: 'https://10.0.10.10:8006/#v1:0:=node%2Fpve-01:4'
+      siteMonitor: 'https://10.0.10.10:8006'
+      widgets:
+        - type: 'proxmox'
+          url: 'https://10.0.10.10:8006'
+          username: '{{HOMEPAGE_VAR_PVE_01_USERNAME}}'
+          password: '{{HOMEPAGE_FILE_PVE_01_PASSWORD}}'
+          fields: ["vms", "resources.cpu", "resources.mem"]
+  - Plex:
+      icon: 'sh-plex.svg'
+      href: 'https://plex.${DOMAIN_1}'
+      siteMonitor: 'http://plex.plex.svc.cluster.local:32400'
+      namespace: 'plex'
+      podSelector: 'app.kubernetes.io/instance=plex,app.kubernetes.io/name=plex,pod.name=main'
+      widgets:
+        - type: 'kubernetes'
+          namespace: 'plex'
+          app: 'plex'
+          podSelector: 'app.kubernetes.io/instance=plex,app.kubernetes.io/name=plex,pod.name=main'
+          # widgets:
+          #   - type: 'tautulli'
+          #     url: 'http://tautulli.tautulli.svc.cluster.local:8181'
+          #     key: '{{HOMEPAGE_FILE_TAUTULLI_KEY}}'
+  - Home Assistant:
+      icon: 'sh-home-assistant.svg'
+      href: 'http://10.0.10.40:8123'
+      siteMonitor: 'http://10.0.10.40:8123'
+      widgets:
+        - type: 'homeassistant'
+          url: 'http://10.0.10.40:8123'
+          key: '{{HOMEPAGE_FILE_HAOS_KEY}}'
+          fields: ["people_home", "lights_on", "switches_on"]
+  # TAB 1 - ROW 2
+- Network:
+  -  UDM-SE:
+      icon: '/images/icons/udm-se.png'
+      href: 'https://10.0.10.1'
+      siteMonitor: 'https://10.0.20.1:443'
+      widgets:
+        - type: 'unifi'
+          url: 'https://10.0.20.1:443'
+          key: '{{HOMEPAGE_FILE_UDM_KEY}}'
+          fields: ["uptime", "wan", "lan_users", "wlan_users"]
+  -  UCG Ultra:
+      icon: '/images/icons/ucg-ultra.png'
+      href: 'https://10.1.10.1'
+      siteMonitor: 'https://10.1.10.1:443'
+      widgets:
+        - type: 'unifi'
+          url: 'https://10.1.10.1:443'
+          key: '{{HOMEPAGE_FILE_UCG_KEY}}'
+          fields: ["uptime", "wan", "lan_users"]
+  -  Cloudflared:
+      icon: 'sh-cloudflare.svg'
+      href: 'https://one.dash.cloudflare.com/{{HOMEPAGE_VAR_CLOUDFLARED_ACCOUNT_ID}}/networks/tunnels/cfd_tunnel/{{HOMEPAGE_VAR_CLOUDFLARED_TUNNEL_ID}}/edit?tab=publicHostname'
+      siteMonitor: 'https://cloudflare.com'
+      widgets:
+        - type: 'cloudflared'
+          accountid: '{{HOMEPAGE_VAR_CLOUDFLARED_ACCOUNT_ID}}'
+          tunnelid: '{{HOMEPAGE_VAR_CLOUDFLARED_TUNNEL_ID}}'
+          key: '{{HOMEPAGE_FILE_CLOUDFLARED_KEY}}'
+          fields: ["status", "origin_ip"]
+  - Speedtest Tracker:
+      icon: 'sh-speedtest-tracker.svg'
+      href: 'https://speedtest.${DOMAIN_0}'
+      siteMonitor: 'http://speedtest-tracker.speedtest-tracker.svc.cluster.local:9004'
+      # widgets:
+      #   - type: 'speedtest'
+      #     url: 'http://speedtest-tracker.speedtest-tracker.svc.cluster.local:9004'
+  - Changedetection.io:
+      icon: 'sh-changedetection.svg'
+      href: 'https://cdio.${DOMAIN_0}'
+      siteMonitor: 'http://changedetection-io.changedetection.svc.cluster.local:5000'
+      # widgets:
+      #   - type: 'changedetectionio'
+      #     url: 'http://changedetection-io.changedetection.svc.cluster.local:5000'
+      #     key:
+  # TAB 2 - ROW 1
+- Everyday Life:
+  - The Lounge:
+      icon: 'sh-the-lounge.svg'
+      href: 'https://irc.${DOMAIN_0}'
+      siteMonitor: 'http://thelounge.thelounge.svc.cluster.local:10061'
+  - Mealie:
+      icon: 'sh-mealie.svg'
+      href: 'https://mealie.${DOMAIN_0}'
+      siteMonitor: 'http://mealie.mealie.svc.cluster.local:10018'
+      # widgets:
+      #   - type: 'mealie'
+      #     url: 'http://mealie.mealie.svc.cluster.local:10018'
+      #     key: '{{HOMEPAGE_FILE_MEALIE_KEY}}'
+      #     version: '2'
+  - Homebox:
+      icon: 'sh-homebox.svg'
+      href: 'https://homebox.${DOMAIN_0}'
+      siteMonitor: 'http://homebox.homebox.svc.cluster.local:10603'
+      # widgets:
+      #   - type: 'homebox'
+      #     url: 'http://homebox.homebox.svc.cluster.local:10603'
+      #     username: '{{HOMEPAGE_VAR_HOMEBOX_USERNAME}}'
+      #     password: '{{HOMEPAGE_FILE_HOMEBOX_KEY}}'
+      #     fields: ["items", "locations", "totalValue"]
+  # TAB 2 - ROW 2
+- Office:
+  - Flatnotes:
+      icon: 'sh-flatnotes.svg'
+      href: 'https://docs.${DOMAIN_0}'
+      siteMonitor: 'http://flatnotes-app-template.flatnotes.svc.cluster.local:8080'
+      namespace: 'flatnotes'
+      podSelector: 'app.kubernetes.io/instance=flatnotes,app.kubernetes.io/name=app-template,pod.name=main'
+      widgets:
+        - type: 'kubernetes'
+          namespace: 'flatnotes'
+          app: 'app-template'
+          podSelector: 'app.kubernetes.io/instance=flatnotes,app.kubernetes.io/name=app-template,pod.name=main'
+  - Vikunja:
+      icon: 'sh-vikunja.svg'
+      href: 'https://todo.${DOMAIN_0}'
+      siteMonitor: 'http://vikunja.vikunja.svc.cluster.local:10220'
+  - Shlink:
+      icon: 'sh-shlink.svg'
+      href: 'https://shlink.${DOMAIN_0}'
+      siteMonitor: 'http://shlink.shlink.svc.cluster.local:10153/'
+  - Stirling PDF:
+      icon: 'sh-stirling-pdf.svg'
+      href: 'https://pdf.${DOMAIN_0}'
+      siteMonitor: 'http://stirling-pdf.stirling-pdf.svc.cluster.local:18080'
+      namespace: 'stirling-pdf'
+      podSelector: 'app.kubernetes.io/instance=stirling-pdf,app.kubernetes.io/name=stirling-pdf,pod.name=main'
+      widgets:
+        - type: 'kubernetes'
+          namespace: 'stirling-pdf'
+          app: 'stirling-pdf'
+          podSelector: 'app.kubernetes.io/instance=stirling-pdf,app.kubernetes.io/name=stirling-pdf,pod.name=main'
+  # TAB 2 - ROW 3
+- Finances:
+  - SplitPro:
+      icon: 'sh-splitpro.svg'
+      href: 'https://split.${DOMAIN_0}'
+      siteMonitor: 'http://splitpro.splitpro.svc.cluster.local:3000'
+      namespace: 'splitpro'
+      podSelector: 'app.kubernetes.io/instance=splitpro,app.kubernetes.io/name=splitpro'
+      widgets:
+        - type: 'kubernetes'
+          namespace: 'splitpro'
+          app: 'splitpro'
+          podSelector: 'app.kubernetes.io/instance=splitpro,app.kubernetes.io/name=splitpro'
+  - InvoiceShelf:
+      icon: 'sh-invoiceshelf.svg'
+      href: 'https://client.${DOMAIN_0}'
+      siteMonitor: 'http://invoiceshelf-app-template.invoiceshelf.svc.cluster.local:9090'
+      namespace: 'invoiceshelf'
+      podSelector: 'app.kubernetes.io/instance=invoiceshelf,app.kubernetes.io/name=app-template,pod.name=main'
+      widgets:
+        - type: 'kubernetes'
+          namespace: 'invoiceshelf'
+          app: 'app-template'
+          podSelector: 'app.kubernetes.io/instance=invoiceshelf,app.kubernetes.io/name=app-template,pod.name=main'
+  - TaxHacker:
+      icon: 'sh-taxhacker.webp'
+      href: 'https://taxhacker.${DOMAIN_0}'
+      siteMonitor: 'http://taxhacker-app-template.taxhacker.svc.cluster.local:7331'
+      namespace: 'taxhacker'
+      podSelector: 'app.kubernetes.io/instance=taxhacker,app.kubernetes.io/name=app-template,pod.name=main'
+      widgets:
+        - type: 'kubernetes'
+          namespace: 'taxhacker'
+          app: 'app-template'
+          podSelector: 'app.kubernetes.io/instance=taxhacker,app.kubernetes.io/name=app-template,pod.name=main'
+  # TAB 2 - ROW 3
+- Broadcasting:
+  - Companion:
+      icon: 'sh-bitfocus-companion.webp'
+      href: 'https://companion.${DOMAIN_0}'
+      siteMonitor: 'http://companion-app-template.companion.svc.cluster.local:8000'
+  - RTMP-HLS:
+      icon: '/images/icons/rtmp-hls.png'
+      href: 'https://rtmp.${DOMAIN_0}/stats'
+      siteMonitor: 'https://rtmp.${DOMAIN_0}/stats'
+  # TAB 2 - ROW 4
+- File Sharing:
+  - ProjectSend:
+      icon: 'sh-projectsend.svg'
+      href: 'https://send.${DOMAIN_0}'
+      siteMonitor: 'http://projectsend.projectsend.svc.cluster.local:10127'
+  - SFTPGo:
+      icon: 'sh-sftpgo.svg'
+      href: 'https://sftpgo.${DOMAIN_0}/web/admin/login'
+      siteMonitor: 'http://sftpgo.sftpgo.svc.cluster.local:2221'
+  - Snapdrop:
+      icon: 'sh-snapdrop.svg'
+      href: 'https://drop.${DOMAIN_0}'
+      siteMonitor: 'http://snapdrop.snapdrop.svc.cluster.local:10215'
+  # TAB 2 - ROW 5
+- Data Processing:
+  - Duplicacy:
+      icon: 'sh-duplicacy.webp'
+      href: 'https://duplicacy.${DOMAIN_0}'
+      siteMonitor: 'http://duplicacy.duplicacy.svc.cluster.local:3875'
+      namespace: 'duplicacy'
+      podSelector: 'app.kubernetes.io/instance=duplicacy,app.kubernetes.io/name=duplicacy,pod.name=main'
+      widgets:
+        - type: 'kubernetes'
+          namespace: 'duplicacy'
+          app: 'duplicacy'
+          podSelector: 'app.kubernetes.io/instance=duplicacy,app.kubernetes.io/name=duplicacy,pod.name=main'
+  # TAB 3 - ROW 1
+- Library:
+  - Plex:
+      icon: 'sh-plex.svg'
+      href: 'https://plex.${DOMAIN_1}'
+      siteMonitor: 'http://plex.plex.svc.cluster.local:32400'
+      namespace: 'plex'
+      podSelector: 'app.kubernetes.io/instance=plex,app.kubernetes.io/name=plex,pod.name=main'
+      widgets:
+        - type: 'kubernetes'
+          namespace: 'plex'
+          app: 'plex'
+          podSelector: 'app.kubernetes.io/instance=plex,app.kubernetes.io/name=plex,pod.name=main'
+        - type: 'plex'
+          fields: ["albums", "movies", "tv"]
+          url: 'http://plex.plex.svc.cluster.local:32400'
+          key: '{{HOMEPAGE_FILE_PLEX_KEY}}'
+  - Romm:
+      icon: 'sh-romm.svg'
+      href: 'https://romm.${DOMAIN_1}'
+      siteMonitor: 'http://romm.romm.svc.cluster.local:8080'
+      namespace: 'romm'
+      podSelector: 'app.kubernetes.io/instance=romm,app.kubernetes.io/name=romm,app.kubernetes.io/component=romm'
+      widgets:
+        - type: 'romm'
+          url: 'http://romm.romm.svc.cluster.local:8080'
+        - type: 'kubernetes'
+          namespace: 'romm'
+          app: 'romm'
+          podSelector: 'app.kubernetes.io/instance=romm,app.kubernetes.io/name=romm,app.kubernetes.io/component=romm'
+  - Immich:
+      icon: 'sh-immich.svg'
+      href: 'https://photos.${DOMAIN_0}'
+      siteMonitor: 'http://immich.immich.svc.cluster.local:10323'
+      namespace: 'immich'
+      podSelector: 'app.kubernetes.io/instance=immich,app.kubernetes.io/name=immich,app.kubernetes.io/component=server'
+      widgets:
+        - type: 'immich'
+          url: 'http://immich.immich.svc.cluster.local:10323'
+          key: '{{HOMEPAGE_FILE_IMMICH_KEY}}'
+          version: 2
+        - type: 'kubernetes'
+          namespace: 'immich'
+          app: 'immich'
+          podSelector: 'app.kubernetes.io/instance=immich,app.kubernetes.io/name=immich,app.kubernetes.io/component=server'
+  - Audiobookshelf:
+      icon: 'sh-audiobookshelf.svg'
+      href: 'https://audiobook.${DOMAIN_1}'
+      siteMonitor: 'http://audiobookshelf.audiobookshelf.svc.cluster.local:10223'
+      # widgets:
+      #   - type: 'audiobookshelf'
+      #     url: 'http://audiobookshelf.audiobookshelf.svc.cluster.local:10223'
+      #     key: '{{HOMEPAGE_FILE_AUDIOBOOKSHELF_KEY}}'
+  - Stash:
+      icon: 'sh-stash.svg'
+      href: 'https://stash.${DOMAIN_0}'
+      siteMonitor: 'http://stash.stash.svc.cluster.local:9999'
+      # widgets:
+      #   - type: 'stash'
+      #     url: 'http://stash.stash.svc.cluster.local:9999'
+      #     key:
+      #     fields: ["studios", "performers", "scenes", "tags"]
+  # TAB 3 - ROW 2
+- Media Management:
+  - Radarr:
+      icon: 'sh-radarr.svg'
+      href: 'https://radarr.${DOMAIN_0}'
+      siteMonitor: 'http://radarr.radarr.svc.cluster.local:7878'
+      # widgets:
+      #   - type: 'radarr'
+      #     url: 'http://radarr.radarr.svc.cluster.local:7878'
+      #     key: '{{HOMEPAGE_FILE_RADARR_KEY}}'
+  - Sonarr:
+      icon: 'sh-sonarr.svg'
+      href: 'https://sonarr.${DOMAIN_0}'
+      siteMonitor: 'http://sonarr.sonarr.svc.cluster.local:8989'
+      # widgets:
+      #   - type: 'sonarr'
+      #     url: 'http://sonarr.sonarr.svc.cluster.local:8989'
+      #     key: '{{HOMEPAGE_FILE_SONARR_KEY}}'
+  - Lidarr:
+      icon: 'sh-lidarr.svg'
+      href: 'https://lidarr.${DOMAIN_0}'
+      siteMonitor: 'http://lidarr.lidarr.svc.cluster.local:8686'
+      # widgets:
+      #   - type: 'lidarr'
+      #     url: 'http://lidarr.lidarr.svc.cluster.local:8686'
+      #     key: '{{HOMEPAGE_FILE_LIDARR_KEY}}'
+  - Seerr:
+      icon: '/images/icons/seerr.png'
+      href: 'https://${DOMAIN_1}'
+      siteMonitor: 'http://overseerr.overseerr.svc.cluster.local:5055'
+      # widgets:
+      #   - type: 'seerr'
+      #     url: 'http://overseerr.overseerr.svc.cluster.local:5055'
+      #     key: '{{HOMEPAGE_FILE_SEERR_KEY}}'
+  - Maintainerr:
+      icon: 'sh-maintainerr.svg'
+      href: 'https://maintainerr.${DOMAIN_0}'
+      siteMonitor: 'http://maintainerr.maintainerr.svc.cluster.local:6246'
+  - Bazarr:
+      icon: 'sh-bazarr.svg'
+      href: 'https://bazarr.${DOMAIN_0}'
+      siteMonitor: 'http://bazarr.bazarr.svc.cluster.local:6767'
+      # widgets:
+      #   - type: 'bazarr'
+      #     url: 'http://bazarr.bazarr.svc.cluster.local:6767'
+      #     key: '{{HOMEPAGE_FILE_BAZARR_KEY}}'
+  - MakeMKV:
+      icon: 'makemkv'
+      href: 'https://makemkv.${DOMAIN_0}'
+      siteMonitor: 'http://makemkv.makemkv.svc.cluster.local:10180'
+  # TAB 3 - ROW 3
+- Tools:
+  - Tautulli:
+      icon: 'sh-tautulli.svg'
+      href: 'https://tautulli.${DOMAIN_0}'
+      siteMonitor: 'http://tautulli.tautulli.svc.cluster.local:8181'
+      # widgets:
+      #   - type: 'tautulli'
+      #     url: 'http://tautulli.tautulli.svc.cluster.local:8181'
+      #     key: '{{HOMEPAGE_FILE_TAUTULLI_KEY}}'
+  - Watcharr:
+      icon: 'sh-watcharr.webp'
+      href: 'https://watch.${DOMAIN_0}'
+      siteMonitor: 'http://watcharr.watcharr.svc.cluster.local:10684'
+  - Kometa:
+      icon: 'sh-kometa.svg'
+      href: 'https://kometa.cs.${DOMAIN_0}'
+      siteMonitor: 'http://kometa.kometa.svc.cluster.local:12321'
+  - Maloja:
+      icon: 'sh-maloja.svg'
+      href: 'https://maloja.${DOMAIN_0}'
+      siteMonitor: 'http://maloja.maloja.svc.cluster.local:42010'
+  - Multi-Scrobbler:
+      icon: 'sh-multi-scrobbler.svg'
+      href: 'https://scrobbler.${DOMAIN_0}'
+      siteMonitor: 'http://multi-scrobbler.multi-scrobbler.svc.cluster.local:9078'
+  # TAB 4 - ROW 1
+- Download Clients:
+  - qBittorrent:
+      icon: 'sh-qbittorrent.svg'
+      href: 'https://qb1.${DOMAIN_0}'
+      siteMonitor: 'http://qb1-qbittorrent.qbittorrent.svc.cluster.local:10095'
+      namespace: 'qbittorrent'
+      podSelector: 'app.kubernetes.io/instance=qb1,app.kubernetes.io/name=qbittorrent,pod.name=main'
+      widgets:
+        - type: 'qbittorrent'
+          url: 'http://qb1-qbittorrent.qbittorrent.svc.cluster.local:10095'
+          username: '{{HOMEPAGE_VAR_QB_USERNAME}}'
+          password: '{{HOMEPAGE_FILE_QB_PASSWORD}}'
+        - type: 'kubernetes'
+          namespace: 'qbittorrent'
+          app: 'qbittorrent'
+          podSelector: 'app.kubernetes.io/instance=qb1,app.kubernetes.io/name=qbittorrent,pod.name=main'
+  - qBittorrent-2:
+      icon: 'sh-qbittorrent.svg'
+      href: 'https://qb2.${DOMAIN_0}'
+      siteMonitor: 'http://qb2-qbittorrent.qbittorrent.svc.cluster.local:10095'
+      namespace: 'qbittorrent'
+      podSelector: 'app.kubernetes.io/instance=qb2,app.kubernetes.io/name=qbittorrent,pod.name=main'
+      widgets:
+        - type: 'qbittorrent'
+          url: 'http://qb2-qbittorrent.qbittorrent.svc.cluster.local:10095'
+          username: '{{HOMEPAGE_VAR_QB_USERNAME}}'
+          password: '{{HOMEPAGE_FILE_QB_PASSWORD}}'
+        - type: 'kubernetes'
+          namespace: 'qbittorrent'
+          app: 'qbittorrent'
+          podSelector: 'app.kubernetes.io/instance=qb2,app.kubernetes.io/name=qbittorrent,pod.name=main'
+  - qBittorrent-3:
+      icon: 'sh-qbittorrent.svg'
+      href: 'https://qb3.${DOMAIN_0}'
+      siteMonitor: 'http://qb3-qbittorrent.qbittorrent.svc.cluster.local:10095'
+      namespace: 'qbittorrent'
+      podSelector: 'app.kubernetes.io/instance=qb3,app.kubernetes.io/name=qbittorrent,pod.name=main'
+      widgets:
+        - type: 'qbittorrent'
+          url: 'http://qb3-qbittorrent.qbittorrent.svc.cluster.local:10095'
+          username: '{{HOMEPAGE_VAR_QB_USERNAME}}'
+          password: '{{HOMEPAGE_FILE_QB_PASSWORD}}'
+        - type: 'kubernetes'
+          namespace: 'qbittorrent'
+          app: 'qbittorrent'
+          podSelector: 'app.kubernetes.io/instance=qb3,app.kubernetes.io/name=qbittorrent,pod.name=main'
+  - qBittorrent-4:
+      icon: 'sh-qbittorrent.svg'
+      href: 'https://qb4.${DOMAIN_0}'
+      siteMonitor: 'http://qb4-qbittorrent.qbittorrent.svc.cluster.local:10095'
+      namespace: 'qbittorrent'
+      podSelector: 'app.kubernetes.io/instance=qb4,app.kubernetes.io/name=qbittorrent,pod.name=main'
+      widgets:
+        - type: 'qbittorrent'
+          url: 'http://qb4-qbittorrent.qbittorrent.svc.cluster.local:10095'
+          username: '{{HOMEPAGE_VAR_QB_USERNAME}}'
+          password: '{{HOMEPAGE_FILE_QB_PASSWORD}}'
+        - type: 'kubernetes'
+          namespace: 'qbittorrent'
+          app: 'qbittorrent'
+          podSelector: 'app.kubernetes.io/instance=qb4,app.kubernetes.io/name=qbittorrent,pod.name=main'
+  - Sabnzbd:
+      icon: 'sh-sabnzbd.svg'
+      href: 'https://sabnzbd.${DOMAIN_0}'
+      siteMonitor: 'http://sabnzbd.sabnzbd.svc.cluster.local:10097'
+      namespace: 'sabnzbd'
+      podSelector: 'app.kubernetes.io/instance=sabnzbd,app.kubernetes.io/name=sabnzbd,pod.name=main'
+      widgets:
+        - type: 'sabnzbd'
+          url: 'http://sabnzbd.sabnzbd.svc.cluster.local:10097'
+          key: '{{HOMEPAGE_FILE_SABNZBD_KEY}}'
+        - type: 'kubernetes'
+          namespace: 'sabnzbd'
+          app: 'sabnzbd'
+          podSelector: 'app.kubernetes.io/instance=sabnzbd,app.kubernetes.io/name=sabnzbd,pod.name=main'
+  - Sabnzbd for Overseerr:
+      icon: 'sh-sabnzbd.svg'
+      href: 'https://sabnzbd.os.${DOMAIN_0}'
+      siteMonitor: 'http://sabnzbd.sabnzbd.svc.cluster.local:20097'
+      namespace: 'sabnzbd'
+      podSelector: 'app.kubernetes.io/instance=sabnzbd,app.kubernetes.io/name=sabnzbd,pod.name=main'
+      widgets:
+        - type: 'sabnzbd'
+          url: 'http://sabnzbd.sabnzbd.svc.cluster.local:20097'
+          key: '{{HOMEPAGE_FILE_SABNZBD_ALT_KEY}}'
+        - type: 'kubernetes'
+          namespace: 'sabnzbd'
+          app: 'sabnzbd'
+          podSelector: 'app.kubernetes.io/instance=sabnzbd,app.kubernetes.io/name=sabnzbd,pod.name=main'
+  - jDownloader:
+      icon: 'sh-jdownloader.webp'
+      href: 'https://jd.${DOMAIN_0}'
+      siteMonitor: 'http://jdownloader2.jdownloader.svc.cluster.local:10054'
+      widgets:
+        - type: 'jdownloader'
+          username: '{{HOMEPAGE_VAR_JDOWNLOADER_USERNAME}}'
+          password: '{{HOMEPAGE_FILE_JDOWNLOADER_PASSWORD}}'
+          client: 'JDownloader@Docker'
+  # TAB 4 - ROW 2
+- Media Downloaders:
+  - Archive Box:
+      icon: 'sh-archivebox.svg'
+      href: 'https://archivebox.${DOMAIN_0}'
+      siteMonitor: 'http://archivebox.archivebox.svc.cluster.local:9598'
+  - slskd:
+      icon: 'sh-slskd.svg'
+      href: 'https://slskd.${DOMAIN_0}'
+      siteMonitor: 'http://slskd.slskd.svc.cluster.local:5030'
+  - TubeSync:
+      icon: 'sh-tubesync.svg'
+      href: 'https://tubesync.${DOMAIN_0}'
+      siteMonitor: 'http://tubesync.tubesync.svc.cluster.local:4848'
+  - MeTube:
+      icon: 'sh-metube.svg'
+      href: 'https://metube.${DOMAIN_0}'
+      siteMonitor: 'http://metube.metube.svc.cluster.local:10216'
+  - Ganymede:
+      icon: 'sh-ganymede.webp'
+      href: 'https://ganymede.${DOMAIN_0}'
+      siteMonitor: 'http://ganymede-app-template.ganymede.svc.cluster.local:4000'
+  # TAB 4 - ROW 3
+- Download Tools:
+  - Prowlarr:
+      icon: 'sh-prowlarr.svg'
+      href: 'https://prowlarr.${DOMAIN_0}'
+      siteMonitor: 'http://prowlarr.prowlarr.svc.cluster.local:9696'
+      # widgets:
+      #   - type: 'prowlarr'
+      #     url: 'http://prowlarr.prowlarr.svc.cluster.local:9696'
+      #     key: '{{HOMEPAGE_FILE_PROWLARR_KEY}}'
+  - Autobrr:
+      icon: 'sh-autobrr.svg'
+      href: 'https://autobrr.${DOMAIN_0}'
+      siteMonitor: 'http://autobrr.autobrr.svc.cluster.local:7474'
+      namespace: 'autobrr'
+      podSelector: 'app.kubernetes.io/instance=autobrr,app.kubernetes.io/name=autobrr,pod.name=main'
+      widgets:
+        - type: 'autobrr'
+          url: 'http://autobrr.autobrr.svc.cluster.local:7474'
+          key: '{{HOMEPAGE_FILE_AUTOBRR_KEY}}'
+        - type: 'kubernetes'
+          namespace: 'autobrr'
+          app: 'autobrr'
+          podSelector: 'app.kubernetes.io/instance=autobrr,app.kubernetes.io/name=autobrr,pod.name=main'
+  - Recyclarr:
+      icon: 'sh-recyclarr.svg'
+      href: 'https://recyclarr.cs.${DOMAIN_0}'
+      siteMonitor: 'http://recyclarr.recyclarr.svc.cluster.local:12321'
+  - qBit Manage:
+      icon: 'sh-qbit-manage.webp'
+      href: 'https://qb.cs.${DOMAIN_0}'
+      siteMonitor: 'http://qbitmanage.qbittorrent.svc.cluster.local:12321'
+  - Joal:
+      icon: 'joal'
+      href: 'http://10.0.10.13:10710/web/ui/#'
+      siteMonitor: 'http://10.0.10.13:10710/web/ui/#'

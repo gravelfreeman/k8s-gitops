@@ -1,0 +1,45 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/gateway.envoyproxy.io/securitypolicy_v1alpha1.json
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: ${APP}-oidc
+  labels:
+    app.kubernetes.io/component: envoy-oidc
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: ${APP}
+  oidc:
+    provider:
+      issuer: "https://auth.${DOMAIN_0}"
+    clientIDRef:
+      name: envoy-oidc-secret
+    clientSecret:
+      name: envoy-oidc-secret
+    forwardAccessToken: true
+    cookieNames:
+      idToken: pocketid-token
+    scopes: [profile,email,groups]
+    redirectURL: "https://${ENVOY_OIDC_SUBDOMAIN:=${APP}}.${ENVOY_OIDC_DOMAIN:=${DOMAIN_0}}/oauth2/callback"
+  jwt:
+    providers:
+      - name: pocketid
+        issuer: "https://auth.${DOMAIN_0}"
+        remoteJWKS:
+          uri: "https://auth.${DOMAIN_0}/.well-known/jwks.json"
+        extractFrom:
+          cookies: [pocketid-token]
+  authorization:
+    defaultAction: Deny
+    rules:
+      - name: allow-oidc-groups
+        action: Allow
+        principal:
+          jwt:
+            provider: pocketid
+            claims:
+              - name: groups
+                valueType: StringArray
+                values: [admin,'${ENVOY_OIDC_GROUP:=user}']

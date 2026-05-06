@@ -1,0 +1,57 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app immich
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/common
+    - ../../../../components/cnpg
+    - ../../../../components/dragonfly
+    - ../../../../components/dragonfly/tls
+    - ../../../../components/volsync
+  dependsOn:
+    - name: cloudnative-pg
+    - name: dragonfly-operator
+    - name: envoy-gateway-config
+    - name: external-secrets-store
+    - name: rook-ceph-cluster
+    - name: volsync
+  interval: 1h
+  patches:
+    - patch: |-
+        - op: add
+          path: /spec/walStorage
+          value:
+            size: 20Gi
+            storageClass: ceph-block
+      target:
+        group: postgresql.cnpg.io
+        kind: Cluster
+    - patch: |-
+        - op: add
+          path: /spec/args/-
+          value: --default_lua_flags=allow-undeclared-keys
+      target:
+        group: dragonflydb.io
+        kind: Dragonfly
+  path: kubernetes/apps/services/immich/app
+  postBuild:
+    substitute:
+      APP: *app
+      CNPG_USERNAME: postgres
+      CNPG_IMAGE_CATALOG_MAJOR: "16"
+      CNPG_IMAGE_CATALOG_NAME: postgresql-tensorchord
+      CNPG_SHARED_PRELOAD_LIBRARIES: '[vchord.so]'
+      DRAGONFLY_CLIENT_COMMON_NAME: immich-server
+      VOLSYNC_CAPACITY: 20Gi
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: *app
+  timeout: 20m
+  wait: true

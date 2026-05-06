@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/cert-manager.io/certificate_v1.json
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: &name certificate-issuer-domain-0-wildcard
+spec:
+  dnsNames: ['*.${DOMAIN_0}']
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: domain-0-le
+  privateKey:
+    algorithm: ECDSA
+    rotationPolicy: Always
+    size: 256
+  secretName: *name
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/cert-manager.io/certificate_v1.json
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: &name certificate-issuer-domain-1-wildcard
+spec:
+  dnsNames: ['${DOMAIN_1}', '*.${DOMAIN_1}']
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: domain-1-le
+  privateKey:
+    algorithm: ECDSA
+    rotationPolicy: Always
+    size: 256
+  secretName: *name
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/cert-manager.io/certificate_v1.json
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: &name certificate-issuer-domain-2-wildcard
+spec:
+  dnsNames: ['${DOMAIN_2}', '*.${DOMAIN_2}']
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: domain-2-le
+  privateKey:
+    algorithm: ECDSA
+    rotationPolicy: Always
+    size: 256
+  secretName: *name

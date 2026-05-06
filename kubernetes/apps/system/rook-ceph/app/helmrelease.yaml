@@ -1,0 +1,26 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app rook-ceph
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  releaseName: *app
+  values:
+    csi:
+      enableCephfsDriver: false
+      enableCephfsSnapshotter: false
+      enableLiveness: true
+      serviceMonitor:
+        enabled: true
+    image:
+      repository: ghcr.io/rook/ceph
+    monitoring:
+      enabled: true
+    resources:
+      requests: { cpu: 100m, memory: 128Mi }
+      limits: {}

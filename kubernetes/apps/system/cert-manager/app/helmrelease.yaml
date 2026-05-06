@@ -1,0 +1,14 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app cert-manager
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  values:
+    dns01RecursiveNameservers: "1.1.1.1:53,1.0.0.1:53"
+    dns01RecursiveNameserversOnly: false
+    installCRDs: true
+    enableCertificateOwnerRef: true

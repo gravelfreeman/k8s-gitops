@@ -1,0 +1,10 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: reloader
+spec:
+  interval: 5m
+  provider: generic
+  ref:
+    tag: 2.2.9
+  url: oci://ghcr.io/stakater/charts/reloader

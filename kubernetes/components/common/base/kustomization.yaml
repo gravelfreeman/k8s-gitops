@@ -1,0 +1,41 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+patches:
+  - patch: |-
+      apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      metadata:
+        name: _
+      spec:
+        install:
+          crds: CreateReplace
+          strategy:
+            name: RetryOnFailure
+        rollback:
+          cleanupOnFail: true
+        timeout: 10m
+        upgrade:
+          cleanupOnFail: true
+          crds: CreateReplace
+          strategy:
+            name: RemediateOnFailure
+          remediation:
+            remediateLastFailure: true
+            retries: 2
+    target:
+      group: helm.toolkit.fluxcd.io
+      kind: HelmRelease
+  - patch: |-
+      apiVersion: external-secrets.io/v1
+      kind: ExternalSecret
+      metadata:
+        name: _
+      spec:
+        target:
+          template:
+            metadata:
+              labels:
+                reconcile.fluxcd.io/watch: Enabled
+    target:
+      group: external-secrets.io
+      kind: ExternalSecret

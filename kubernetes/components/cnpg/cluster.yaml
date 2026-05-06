@@ -1,0 +1,61 @@
+---
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: ${APP}-cnpg
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: enabled
+spec:
+  instances: 3
+  topologySpreadConstraints:
+    - maxSkew: 2
+      minDomains: 2
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: DoNotSchedule
+      labelSelector:
+        matchLabels:
+          cnpg.io/cluster: ${APP}-cnpg
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+        matchLabels:
+          cnpg.io/cluster: ${APP}-cnpg
+  imageCatalogRef:
+    apiGroup: postgresql.cnpg.io
+    kind: ClusterImageCatalog
+    name: ${CNPG_IMAGE_CATALOG_NAME:=postgresql-system-trixie}
+    major: ${CNPG_IMAGE_CATALOG_MAJOR:=18}
+  postgresUID: ${CNPG_POSTGRES_UID:=26}
+  postgresGID: ${CNPG_POSTGRES_GID:=26}
+  enableSuperuserAccess: true
+  superuserSecret:
+    name: ${APP}-cnpg-superuser
+  bootstrap:
+    recovery:
+      source: origin
+      database: ${CNPG_DATABASE:=${APP}}
+      owner: ${CNPG_USERNAME:=${APP}}
+  storage:
+    size: ${CNPG_STORAGE_SIZE:=1Gi}
+    storageClass: openebs-hostpath
+  postgresql:
+    parameters:
+      max_connections: '100'
+    shared_preload_libraries: ${CNPG_SHARED_PRELOAD_LIBRARIES:=[]}
+  monitoring:
+    enablePodMonitor: true
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: ${APP}-barman-store
+        serverName: ${APP}
+  externalClusters:
+    - name: origin
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: ${APP}-barman-store
+          serverName: ${CNPG_RECOVERY_SERVER_NAME:=${APP}}

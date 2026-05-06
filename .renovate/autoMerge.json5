@@ -1,0 +1,24 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  packageRules: [
+    {
+      description: "Auto-merge trusted OCI digests",
+      matchDatasources: ["docker"],
+      automerge: true,
+      automergeType: "pr",
+      matchUpdateTypes: ["digest"],
+      matchPackageNames: ["/home-operations/"],
+      ignoreTests: false,
+    },
+    {
+      description: "Auto-merge high-cadence OCI packages weekly",
+      matchDatasources: ["docker"],
+      automerge: true,
+      automergeType: "pr",
+      matchUpdateTypes: ["minor", "patch"],
+      matchPackageNames: ["/kube-prometheus-stack/"],
+      ignoreTests: false,
+      schedule: ["before 6am on Monday"],
+    },
+  ],
+}

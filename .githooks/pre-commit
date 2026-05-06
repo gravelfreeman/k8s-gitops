@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+if ! command -v exiftool >/dev/null 2>&1; then
+  cat >&2 <<'EOF'
+exiftool is required to strip image metadata.
+
+EOF
+  exit 127
+fi
+
+tmp_dir="$(mktemp -d)"
+trap 'rm -rf "$tmp_dir"' EXIT
+
+staged_paths="$tmp_dir/staged-paths"
+existing_images="$tmp_dir/existing-images"
+before_hashes="$tmp_dir/before.sha256"
+after_hashes="$tmp_dir/after.sha256"
+
+git diff --cached --name-only -z --diff-filter=ACMR >"$staged_paths"
+
+if [ ! -s "$staged_paths" ]; then
+  exit 0
+fi
+
+while IFS= read -r -d '' path; do
+  [ -f "$path" ] || continue
+
+  filename="${path##*/}"
+  case "$filename" in
+    *.*) extension="${filename##*.}" ;;
+    *) continue ;;
+  esac
+
+  case "${extension,,}" in
+    jpg | jpeg | png | gif | tif | tiff | webp | heic | heif | avif | jp2 | jxl | bmp)
+      printf '%s\0' "$path"
+      ;;
+  esac
+done <"$staged_paths" >"$existing_images"
+
+if [ ! -s "$existing_images" ]; then
+  exit 0
+fi
+
+xargs -0 sha256sum -- <"$existing_images" | sort >"$before_hashes"
+xargs -0 exiftool -overwrite_original -P -all= <"$existing_images" >/dev/null
+xargs -0 sha256sum -- <"$existing_images" | sort >"$after_hashes"
+
+if cmp -s "$before_hashes" "$after_hashes"; then
+  exit 0
+fi
+
+cat >&2 <<'EOF'
+Image metadata was stripped from staged image files.
+
+Review the cleaned image files, stage them again, then retry the commit.
+EOF
+
+exit 1

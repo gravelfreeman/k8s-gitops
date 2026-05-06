@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: flux-system
+resources:
+  - cloudflared/ks.yaml
+  - cloudnative-pg/ks.yaml
+  - dragonfly/ks.yaml
+  - envoy-gateway/ks.yaml
+  - external-dns/ks.yaml
+  - external-secrets/ks.yaml
+  - onepassword-connect/ks.yaml
+  - pocket-id/ks.yaml
+  - volsync/ks.yaml

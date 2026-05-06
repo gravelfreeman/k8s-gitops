@@ -1,0 +1,16 @@
+---
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: ${APP}-cnpg
+spec:
+  cluster:
+    name: ${APP}-cnpg
+  backupOwnerReference: cluster
+  immediate: true
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io
+  schedule: 0 0 5 * * *
+  target: prefer-standby

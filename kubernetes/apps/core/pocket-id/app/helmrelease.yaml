@@ -1,0 +1,104 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app pocket-id
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    controllers:
+      pocket-id:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile: { type: RuntimeDefault }
+          automountServiceAccountToken: false
+        replicas: 1
+        strategy: Recreate
+        podDisruptionBudget:
+          minAvailable: 1
+        initContainers:
+          db-wait:
+            image: { repository: postgres, tag: "18.3-alpine3.23@sha256:52098013b4b64a746626437d38afc03cabff6cdeb4d3d92e2342aa95f0ce56ea" }
+            command: ["/bin/sh", "-ec"]
+            args: ["until pg_isready -q -h ${APP}-cnpg-rw -p 5432 -U postgres -d postgres; do sleep 2; done"]
+        containers:
+          app:
+            image:
+              repository: ghcr.io/pocket-id/pocket-id
+              tag: v2.5.0@sha256:1549f31f76a6c158af0056a4f2c62a590627886a84e9da9bda76eb1e142a449a
+            env:
+              PUID: "568"
+              PGID: "568"
+              APP_URL: https://auth.${DOMAIN_0}
+              TRUST_PROXY: true
+              TRUSTED_PLATFORM: CF-Connecting-IP
+              FILE_BACKEND: database
+              ANALYTICS_DISABLED: true
+              VERSION_CHECK_DISABLED: true
+              UI_CONFIG_DISABLED: true
+              EMAILS_VERIFIED: true
+              EMAIL_ONE_TIME_ACCESS_AS_UNAUTHENTICATED_ENABLED: true
+              EMAIL_VERIFICATION_ENABLED: true
+              SMTP_HOST: ${SMTP_HOST_0}
+              SMTP_PORT: 587
+              SMTP_TLS: starttls
+              SMTP_FROM: auth@${DOMAIN_0}
+              SMTP_USER: ${SMTP_USERNAME_0}
+              SMTP_PASSWORD_FILE: /secrets/SMTP_PASSWORD
+              MAXMIND_LICENSE_KEY_FILE: /secrets/MAXMIND_LICENSE_KEY
+              ENCRYPTION_KEY_FILE: /secrets/ENCRYPTION_KEY
+              DB_CONNECTION_STRING:
+                valueFrom:
+                  secretKeyRef:
+                    name: pocket-id-cnpg-app
+                    key: fqdn-uri
+            probes:
+              liveness: &probe
+                custom: true
+                spec:
+                  exec:
+                    command: ["/app/pocket-id", "healthcheck"]
+              readiness: *probe
+            resources:
+              requests: { cpu: 25m, memory: 128Mi }
+              limits: { memory: 512Mi }
+            securityContext:
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
+    persistence:
+      data:
+        type: emptyDir
+        globalMounts:
+          - path: /app/data
+      secret:
+        type: secret
+        name: pocket-id-app-secret
+        globalMounts:
+          - path: /secrets
+            readOnly: true
+    route:
+      app:
+        hostnames: ['auth.${DOMAIN_0}']
+        parentRefs:
+          - name: envoy-external
+            namespace: envoy-gateway
+            sectionName: https
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: 1411

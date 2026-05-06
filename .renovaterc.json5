@@ -1,0 +1,31 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    "config:recommended",
+    "docker:enableMajor",
+    "helpers:pinGitHubActionDigests",
+    "github>gravelfreeman/k8s-gitops//.renovate/autoMerge.json5",
+    "github>gravelfreeman/k8s-gitops//.renovate/customManagers.json5",
+    "github>gravelfreeman/k8s-gitops//.renovate/groups.json5",
+    "github>gravelfreeman/k8s-gitops//.renovate/labels.json5",
+    "github>gravelfreeman/k8s-gitops//.renovate/overrides.json5",
+    "github>gravelfreeman/k8s-gitops//.renovate/semanticCommits.json5",
+    ":automergeBranch",
+    ":dependencyDashboard",
+    ":disableRateLimiting",
+    ":gitSignOff",
+    ":semanticCommits",
+    ":timezone(America/Montreal)",
+  ],
+  dependencyDashboardTitle: "Renovate Dashboard",
+  ignorePaths: ["**/resources/**"],
+  flux: {
+    managerFilePatterns: ["/\\.yaml(?:\\.j2)?$/"],
+  },
+  kubernetes: {
+    managerFilePatterns: ["/\\.yaml(?:\\.j2)?$/"],
+  },
+  registryAliases: {
+    "mirror.gcr.io": "docker.io",
+  },
+}

@@ -1,0 +1,46 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app external-secrets
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/common
+  interval: 1h
+  path: kubernetes/apps/core/external-secrets/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: external-secrets
+  timeout: 5m
+  wait: true
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app external-secrets-store
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  dependsOn:
+    - name: external-secrets
+    - name: onepassword-connect
+  healthCheckExprs:
+    - apiVersion: external-secrets.io/v1
+      kind: ClusterSecretStore
+      failed: status.conditions.exists(e, e.type == 'Ready' && e.status == 'False')
+      current: status.conditions.exists(e, e.type == 'Ready' && e.status == 'True')
+  interval: 1h
+  path: kubernetes/apps/core/external-secrets/store
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: external-secrets
+  timeout: 5m
+  wait: true

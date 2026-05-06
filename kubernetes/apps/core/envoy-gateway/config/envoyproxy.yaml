@@ -1,0 +1,30 @@
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: envoy-external
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyDeployment:
+        name: envoy-external
+        replicas: 2
+      envoyService:
+        name: envoy-external
+        externalTrafficPolicy: Cluster
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: envoy-internal
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyDeployment:
+        name: envoy-internal
+        replicas: 2
+      envoyService:
+        name: envoy-internal
+        externalTrafficPolicy: Cluster

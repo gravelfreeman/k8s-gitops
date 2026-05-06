@@ -1,0 +1,26 @@
+views:
+  v1/persistentvolumeclaims:
+    sortColumn: NAME:asc
+    columns:
+      - NAMESPACE:.metadata.namespace|S
+      - NAME:.metadata.name
+      - STATUS:.status.phase
+      - SIZE:.metadata.annotations.df-pv-used|R
+      - CAPACITY:.status.capacity.storage|R
+      - '% USED:.metadata.annotations.df-pv-used-pct|N'
+      - VOLUME:.spec.volumeName|S
+      - STORAGECLASS:.spec.storageClassName|S
+      - AGE:.metadata.creationTimestamp|T
+      - ACCESS MODES
+      - MOUNTED:.metadata.annotations.pv-mounter
+  v1/services:
+    sortColumn: NAME:asc
+    columns:
+      - NAMESPACE
+      - NAME
+      - TYPE
+      - CLUSTER-IP
+      - AGE
+      - EXTERNAL-IP
+      - INTERNAL DNS:.metadata.annotations.fqdn|S
+      - PORTS

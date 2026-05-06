@@ -1,0 +1,43 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app tuppr
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/common
+  interval: 1h
+  path: kubernetes/apps/system/tuppr/app
+  postBuild:
+    substitute:
+      APP: *app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: system-upgrade
+  timeout: 5m
+  wait: true
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: tuppr-plans
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: tuppr
+  dependsOn:
+    - name: tuppr
+    - name: volsync
+  interval: 1h
+  path: kubernetes/apps/system/tuppr/plans
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  timeout: 5m
+  wait: false

@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+case " $* " in
+  *" -out "*) exit 0 ;;
+esac
+
+data="$(cat)"
+[ -z "$data" ] && exit 0
+
+b64="$(printf '%s' "$data" | base64 | tr -d '\n')"
+printf '\033]52;c;%s\a' "$b64" > /dev/tty

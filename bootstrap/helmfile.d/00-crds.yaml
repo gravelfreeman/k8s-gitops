@@ -1,0 +1,15 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/helmfile
+helmDefaults:
+  args: ["--include-crds", "--no-hooks"]
+
+releases:
+  - name: envoy-gateway
+    namespace: envoy-gateway
+    chart: oci://mirror.gcr.io/envoyproxy/gateway-helm
+    version: v1.7.2
+
+  - name: kube-prometheus-stack
+    namespace: kube-prometheus-stack
+    chart: oci://ghcr.io/prometheus-community/charts/kube-prometheus-stack
+    version: 83.7.0

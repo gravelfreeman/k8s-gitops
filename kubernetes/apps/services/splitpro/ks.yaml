@@ -1,0 +1,48 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app splitpro
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/common
+    - ../../../../components/cnpg
+    - ../../../../components/volsync
+  dependsOn:
+    - name: cloudnative-pg
+    - name: envoy-gateway-config
+    - name: external-secrets-store
+    - name: rook-ceph-cluster
+    - name: volsync
+  interval: 1h
+  patches:
+    - patch: |-
+        - op: add
+          path: /spec/postgresql/parameters/cron.database_name
+          value: app
+        - op: add
+          path: /spec/postgresql/parameters/cron.timezone
+          value: America/Toronto
+      target:
+        group: postgresql.cnpg.io
+        kind: Cluster
+  path: kubernetes/apps/services/splitpro/app
+  postBuild:
+    substitute:
+      APP: *app
+      CNPG_IMAGE_CATALOG_MAJOR: "17"
+      CNPG_IMAGE_CATALOG_NAME: postgresql-ossapps
+      CNPG_POSTGRES_GID: "999"
+      CNPG_POSTGRES_UID: "999"
+      CNPG_SHARED_PRELOAD_LIBRARIES: '[pg_cron]'
+      VOLSYNC_CAPACITY: 10Gi
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: *app
+  timeout: 5m
+  wait: true

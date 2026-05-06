@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationDestination
+metadata:
+  name: ${APP}-data
+spec:
+  restic:
+    copyMethod: Snapshot
+    repository: ${APP}-volsync-secret
+    cacheCapacity: ${VOLSYNC_CACHE_CAPACITY:=1Gi}
+    capacity: ${VOLSYNC_CAPACITY:=5Gi}
+    cacheStorageClassName: openebs-hostpath
+    volumeSnapshotClassName: csi-ceph-block
+    accessModes:
+      - ${VOLSYNC_ACCESSMODES:=ReadWriteOnce}
+    storageClassName: ceph-block
+    cleanupCachePVC: true
+    cleanupTempPVC: true
+    moverSecurityContext:
+      seccompProfile:
+        type: RuntimeDefault
+      runAsNonRoot: ${VOLSYNC_RUN_AS_NON_ROOT:=true}
+      runAsUser: ${VOLSYNC_PUID:=568}
+      runAsGroup: ${VOLSYNC_PGID:=568}
+      fsGroup: ${VOLSYNC_FS_GROUP:=568}
+      fsGroupChangePolicy: ${VOLSYNC_FS_GROUP_CHANGE_POLICY:=OnRootMismatch}
+  trigger:
+    manual: restore-once

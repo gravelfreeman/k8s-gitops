@@ -1,0 +1,166 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app grimmory
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+    defaultContainerOptions:
+      securityContext:
+        readOnlyRootFilesystem: true
+        allowPrivilegeEscalation: false
+        capabilities: { drop: ["ALL"] }
+    controllers:
+      grimmory:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          mariadb:
+            image:
+              repository: docker.io/library/mariadb
+              tag: 12.2.2-noble
+            env:
+              PUID: "568"
+              PGID: "568"
+              MARIADB_USER: *app
+              MARIADB_DATABASE: test
+              MARIADB_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: grimmory-mariadbcreds
+                    key: mariadb-password
+              MARIADB_ROOT_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: grimmory-mariadbcreds
+                    key: mariadb-root-password
+            probes:
+              liveness:
+                custom: true
+                spec:
+                  exec:
+                    command: ["bash", "-c", "mariadb-admin ping --socket=/run/mysqld/mysqld.sock --user=root --password=$${MARIADB_ROOT_PASSWORD}"]
+          db-wait:
+            image:
+              repository: wait4x/wait4x
+              tag: 3.6.0
+            args: ["mysql", "grimmory:$(DB_PASSWORD)@tcp(localhost:3306)/test"]
+            env:
+              DB_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: grimmory-mariadbcreds
+                    key: mariadb-password
+        containers:
+          grimmory:
+            image:
+              repository: ghcr.io/grimmory-tools/grimmory
+              tag: v2.3.0
+            command: ["java"]
+            args: ["-jar", "/app/app.jar"]
+            env:
+              USER_ID: "568"
+              GROUP_ID: "568"
+              DATABASE_URL: jdbc:mariadb://localhost:3306/test
+              DATABASE_USERNAME: *app
+              DATABASE_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: grimmory-mariadbcreds
+                    key: mariadb-password
+            probes:
+              liveness: &probe
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v1/healthcheck
+                    port: &httpPort 6060
+              readiness: *probe
+            resources:
+              requests: { cpu: 50m, memory: 1Gi }
+              limits: { memory: 2Gi }
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        existingClaim: grimmory-data
+        advancedMounts:
+          grimmory:
+            grimmory:
+              - path: /app/data
+                subPath: app
+            mariadb:
+              - path: /var/lib/mysql
+                subPath: mariadb/data
+      books:
+        type: nfs
+        server: ${NFS_SERVER_0}
+        path: ${DATASET_MEDIA}/library/books
+        advancedMounts:
+          grimmory:
+            grimmory:
+              - path: /books
+      bookdrop:
+        type: nfs
+        server: ${NFS_SERVER_0}
+        path: ${DATASET_MEDIA}/temp/bookdrop
+        advancedMounts:
+          grimmory:
+            grimmory:
+              - path: /bookdrop
+      mysqld:
+        type: emptyDir
+        medium: Memory
+        sizeLimit: 1Mi
+        advancedMounts:
+          grimmory:
+            mariadb:
+              - path: /run/mysqld
+      tmpfs:
+        type: emptyDir
+        advancedMounts:
+          grimmory:
+            grimmory:
+              - path: /tmp
+                subPath: app
+            mariadb:
+              - path: /tmp
+                subPath: mysql
+    route:
+      app:
+        forceRename: *app
+        hostnames: ['grimmory.${DOMAIN_1}']
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy-gateway
+            sectionName: https
+      kobo:
+        hostnames: ['grimmory.${DOMAIN_1}']
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy-gateway
+            sectionName: https
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /api/kobo
+    service:
+      grimmory:
+        controller: *app
+        ports:
+          http:
+            port: *httpPort

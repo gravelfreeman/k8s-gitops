@@ -1,0 +1,59 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/cert-manager.io/clusterissuer_v1.json
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: selfsigned
+spec:
+  selfSigned: {}
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/cert-manager.io/clusterissuer_v1.json
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: domain-0-le
+spec:
+  acme:
+    privateKeySecretRef:
+      name: domain-0-le-acme-account-key
+    server: https://acme-v02.api.letsencrypt.org/directory
+    solvers:
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              name: clusterissuer-secret
+              key: CLOUDFLARE_API_TOKEN
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/cert-manager.io/clusterissuer_v1.json
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: domain-1-le
+spec:
+  acme:
+    privateKeySecretRef:
+      name: domain-1-le-acme-account-key
+    server: https://acme-v02.api.letsencrypt.org/directory
+    solvers:
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              name: clusterissuer-secret
+              key: CLOUDFLARE_API_TOKEN
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/cert-manager.io/clusterissuer_v1.json
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: domain-2-le
+spec:
+  acme:
+    privateKeySecretRef:
+      name: domain-2-le-acme-account-key
+    server: https://acme-v02.api.letsencrypt.org/directory
+    solvers:
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              name: clusterissuer-secret
+              key: CLOUDFLARE_API_TOKEN

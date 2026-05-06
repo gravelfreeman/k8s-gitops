@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/refs/heads/main/postgresql.cnpg.io/clusterimagecatalog_v1.json
+apiVersion: postgresql.cnpg.io/v1
+kind: ClusterImageCatalog
+metadata:
+  name: postgresql-tensorchord
+  labels:
+    app.kubernetes.io/managed-by: gitops
+    images.freedscript.io/profile: tensorchord
+spec:
+  images:
+    - major: 16
+      image: ghcr.io/tensorchord/cloudnative-vectorchord:16.10-0.5.3@sha256:a0776b514bb23858d8aa59b08587223f8b449bba1b278ffbcf85e097d6504eb0

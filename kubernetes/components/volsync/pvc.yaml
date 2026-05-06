@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ${APP}-data
+  annotations:
+    volsync.backube/use-copy-trigger: "true"
+spec:
+  accessModes:
+    - ${VOLSYNC_ACCESSMODES:=ReadWriteOnce}
+  dataSource:
+    apiGroup: volsync.backube
+    kind: ReplicationDestination
+    name: ${APP}-data
+  dataSourceRef:
+    apiGroup: volsync.backube
+    kind: ReplicationDestination
+    name: ${APP}-data
+  resources:
+    requests:
+      storage: ${VOLSYNC_CAPACITY:=1Gi}
+  storageClassName: ceph-block
+  volumeMode: Filesystem

@@ -1,0 +1,68 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app descheduler
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  values:
+    kind: Deployment
+    replicas: 2
+    leaderElection:
+      enabled: true
+    deschedulerPolicy:
+      maxNoOfPodsToEvictPerNamespace: 1
+      maxNoOfPodsToEvictPerNode: 1
+      maxNoOfPodsToEvictTotal: 3
+      profiles:
+        - name: Default
+          pluginConfig:
+            - name: DefaultEvictor
+              args:
+                nodeFit: true
+                podProtections:
+                  defaultDisabled: [FailedBarePods]
+            - name: RemoveFailedPods
+              args:
+                excludeOwnerKinds: [Job]
+                includingInitContainers: true
+                minPodLifetimeSeconds: 1800
+                reasons:
+                  - ContainerStatusUnknown
+                  - NodeAffinity
+                  - NodeShutdown
+                  - Terminated
+                  - UnexpectedAdmissionError
+            - name: RemovePodsViolatingInterPodAntiAffinity
+            - name: RemovePodsViolatingNodeAffinity
+              args:
+                nodeAffinityType: [requiredDuringSchedulingIgnoredDuringExecution]
+            - name: RemovePodsViolatingNodeTaints
+            - name: RemovePodsViolatingTopologySpreadConstraint
+              args:
+                constraints: [DoNotSchedule, ScheduleAnyway]
+                topologyBalanceNodeFit: true
+                labelSelector:
+                  matchExpressions:
+                    - key: cnpg.io/cluster
+                      operator: Exists
+                    - key: cnpg.io/instanceRole
+                      operator: In
+                      values: [replica]
+          plugins:
+            balance:
+              enabled: [RemovePodsViolatingTopologySpreadConstraint]
+            deschedule:
+              enabled:
+                - RemoveFailedPods
+                - RemovePodsViolatingInterPodAntiAffinity
+                - RemovePodsViolatingNodeAffinity
+                - RemovePodsViolatingNodeTaints
+    service:
+      enabled: true
+    serviceMonitor:
+      enabled: true
