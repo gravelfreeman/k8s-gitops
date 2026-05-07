@@ -8,6 +8,7 @@ spec:
     kind: OCIRepository
     name: *app
   values:
+    additionalArgs: ["--log-level=info"]
     fullnameOverride: *app
     serviceAccount:
       name: plugin-barman-cloud
