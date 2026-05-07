@@ -3,6 +3,9 @@ kind: Kustomization
 resources:
   - cronjob.yaml
   - rbac.yaml
+generatorOptions:
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled
 configMapGenerator:
   - name: volsync-queue-script
     files:
