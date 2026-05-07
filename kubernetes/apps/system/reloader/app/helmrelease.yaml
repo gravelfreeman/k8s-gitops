@@ -12,5 +12,11 @@ spec:
     fullnameOverride: *app
     reloader:
       readOnlyRootFileSystem: true
+      deployment:
+        containerSecurityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          readOnlyRootFilesystem: true
       podMonitor:
         enabled: true

@@ -11,6 +11,29 @@ spec:
     name: *app
   releaseName: *app
   values:
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: ["ALL"]
+      runAsNonRoot: true
+      runAsUser: 2016
+      runAsGroup: 2016
+      seccompProfile:
+        type: RuntimeDefault
+    ceph-csi-operator:
+      controllerManager:
+        manager:
+          containerSecurityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
+        podSecurityContext:
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
     csi:
       enableCephfsDriver: false
       enableCephfsSnapshotter: false

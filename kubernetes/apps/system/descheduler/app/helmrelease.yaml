@@ -12,6 +12,9 @@ spec:
   values:
     kind: Deployment
     replicas: 2
+    podSecurityContext:
+      seccompProfile:
+        type: RuntimeDefault
     leaderElection:
       enabled: true
     deschedulerPolicy:
