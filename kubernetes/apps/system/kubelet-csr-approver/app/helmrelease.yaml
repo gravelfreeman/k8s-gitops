@@ -10,6 +10,7 @@ spec:
     kind: OCIRepository
     name: *app
   values:
+    bypassDnsResolution: true
     priorityClassName: system-cluster-critical
     providerIpPrefixes: [10.0.10.0/24]
     providerRegex: '^m[1-3]$'
