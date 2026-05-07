@@ -34,6 +34,7 @@ k8s-gitops
 - Do not run Flux operations that modify live cluster state.
 - Do not modify generated or sensitive artifacts.
 - Do not run destructive operations or alter persistent state, versions, storage, ingress, or backups.
+- Do not attempt local sandbox reads; use escalated read-only `rg`, `sed`, `ls`, `find`, and `wc` directly.
 
 ## Editing
 
