@@ -19,6 +19,9 @@ spec:
           value:
             kustomize.toolkit.fluxcd.io/prune: disabled
   path: kubernetes/apps/system/rook-ceph/app
+  postBuild:
+    substitute:
+      POD_SECURITY_ENFORCE: privileged
   prune: true
   sourceRef:
     kind: GitRepository
