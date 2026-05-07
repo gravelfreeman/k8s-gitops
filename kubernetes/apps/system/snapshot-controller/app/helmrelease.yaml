@@ -10,6 +10,11 @@ spec:
   values:
     controller:
       replicaCount: 2
+      podSecurityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      securityContext:
+        allowPrivilegeEscalation: false
       serviceMonitor:
         create: true
     webhook:

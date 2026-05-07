@@ -35,4 +35,5 @@ spec:
         - openebs
         - reloader
         - rook-ceph
+        - snapshot-controller
         - system-upgrade
