@@ -27,5 +27,12 @@ spec:
           name: k8tz-webhook-issuer
           kind: Issuer
       ignoredNamespaces:
-        - kube-system
+        - descheduler
+        - dragonfly
         - envoy-gateway
+        - external-dns
+        - kube-system
+        - openebs
+        - reloader
+        - rook-ceph
+        - system-upgrade
