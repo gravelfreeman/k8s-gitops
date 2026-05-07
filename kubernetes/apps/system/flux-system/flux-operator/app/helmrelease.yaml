@@ -33,5 +33,4 @@ spec:
   valuesFrom:
     - kind: Secret
       name: flux-operator-app-secret
-      valuesKey: OIDC_CLIENT_SECRET
-      targetPath: web.config.authentication.oauth2.clientSecret
+      valuesKey: values.yaml
