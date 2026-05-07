@@ -39,7 +39,7 @@ spec:
       owner: ${CNPG_USERNAME:=${APP}}
   storage:
     size: ${CNPG_STORAGE_SIZE:=1Gi}
-    storageClass: openebs-hostpath
+    storageClass: openebs-lvm
   postgresql:
     parameters:
       max_connections: '100'

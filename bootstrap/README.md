@@ -11,7 +11,14 @@ Normal order after applying the Talos configs:
 
 ```bash
 task bootstrap:talos
+```
+```bash
 task talos:generate-kubeconfig
+```
+```bash
+task bootstrap:openebs-lvm
+```
+```bash
 task bootstrap:apps
 ```
 
@@ -22,7 +29,8 @@ task bootstrap:apps
 | Command | Purpose |
 | ------- | ------- |
 | `talos` | Bootstrap the Talos control plane and refresh the local kubeconfig after all node configs are applied. |
-| `apps` | Install the initial Kubernetes components with Helmfile after Talos is bootstrapped. |
+| `openebs-lvm` | Prepare the `lvmvg` volume group on every Talos node. |
+| `apps` | Install the initial Kubernetes components with Helmfile after Talos and OpenEBS LVM are prepared. |
 | `helmfile` | Internal task used by `apps` to apply bootstrap CRDs, then sync the bootstrap Helm releases. |
 
 ## Files

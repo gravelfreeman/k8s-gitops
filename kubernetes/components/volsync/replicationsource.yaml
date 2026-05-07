@@ -10,7 +10,7 @@ spec:
     copyMethod: Snapshot
     repository: ${APP}-volsync-secret
     cacheCapacity: ${VOLSYNC_CACHE_CAPACITY:=1Gi}
-    cacheStorageClassName: openebs-hostpath
+    cacheStorageClassName: openebs-lvm
     volumeSnapshotClassName: csi-ceph-block
     retain:
       daily: 7

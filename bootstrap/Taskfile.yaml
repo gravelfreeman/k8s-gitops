@@ -1,6 +1,10 @@
 ---
 version: "3"
 
+vars:
+  OPENEBS_LVM_DEBUG: talosctl --nodes "$node" debug docker.io/openebs/lvm-driver:1.8.0
+  OPENEBS_LVM_NODES: for node in {{splitList "," .NODES | join " "}}; do
+
 tasks:
   talos:
     desc: Bootstrap Talos
@@ -8,9 +12,6 @@ tasks:
     cmds:
       - until talosctl --nodes {{.RANDOM_CONTROLLER}} bootstrap; do sleep 5; done
       - talosctl kubeconfig --nodes {{.RANDOM_CONTROLLER}} --force
-    vars:
-      RANDOM_CONTROLLER:
-        sh: talosctl config info --output json | jq --raw-output '.endpoints[]' | shuf -n 1
     preconditions:
       - talosctl config info
       - talosctl --nodes {{.RANDOM_CONTROLLER}} get machineconfig
@@ -31,13 +32,27 @@ tasks:
     vars:
       CONTEXT:
         sh: talosctl config info --output json | jq --raw-output '.context'
-      RANDOM_CONTROLLER:
-        sh: talosctl config info --output json | jq --raw-output '.endpoints[]' | shuf -n 1
     preconditions:
       - op user get --me
       - talosctl config info
       - talosctl --nodes {{.RANDOM_CONTROLLER}} get machineconfig
+      - "{{.OPENEBS_LVM_NODES}} {{.OPENEBS_LVM_DEBUG}} --args=vgs --args=lvmvg || exit 1; done"
       - which jq kubectl op talosctl
+
+  openebs-lvm:
+    desc: Prepare OpenEBS LVM volume group on Talos nodes
+    prompt: Prepare OpenEBS LVM volume group on Talos nodes ...?
+    cmds:
+      - >-
+        {{.OPENEBS_LVM_NODES}} device="$(talosctl --nodes "$node" get volumestatus {{.OPENEBS_LVM_VOLUME}}
+        --output=jsonpath='{.spec.location}')"; {{.OPENEBS_LVM_DEBUG}} --args=/bin/sh --args=-ec
+        --args="pvcreate -y $device && vgcreate lvmvg $device" || exit 1; done
+    vars:
+      OPENEBS_LVM_VOLUME: r-openebs-lvm
+    preconditions:
+      - talosctl config info
+      - talosctl --nodes {{.NODES}} get machineconfig
+      - which jq talosctl
 
   helmfile:
     internal: true

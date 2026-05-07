@@ -9,4 +9,4 @@ spec:
     operation: copy
   ref:
     tag: 4.4.0
-  url: oci://ghcr.io/openebs/charts/localpv-provisioner
+  url: oci://ghcr.io/openebs/charts/openebs

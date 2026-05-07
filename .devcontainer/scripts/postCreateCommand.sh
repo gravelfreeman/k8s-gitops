@@ -91,7 +91,7 @@ process_talosconfig() {
 generate_kubeconfig() {
   cd "$workspace_dir"
   install -d -m 0700 "$HOME/.kube"
-  task talos:generate-kubeconfig
+  task talos:generate-kubeconfig || true
 }
 
 post_create() {

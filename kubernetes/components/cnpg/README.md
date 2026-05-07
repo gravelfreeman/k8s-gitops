@@ -78,4 +78,4 @@ patches:
 - The Backblaze credentials are read from the `backblaze` 1Password item.
 - Restic repositories use `s3://${S3_BUCKET}/cnpg/${APP}` through the generated secret.
 - Backups run daily at `05:00 EST/EDT` and target the standby when available.
-- PVCs use `openebs-hostpath`, letting CNPG replicate without adding write load to Ceph.
+- PVCs use `openebs-lvm`, letting CNPG replicate without adding write load to Ceph.

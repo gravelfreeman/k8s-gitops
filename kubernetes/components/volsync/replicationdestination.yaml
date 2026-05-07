@@ -10,7 +10,7 @@ spec:
     repository: ${APP}-volsync-secret
     cacheCapacity: ${VOLSYNC_CACHE_CAPACITY:=1Gi}
     capacity: ${VOLSYNC_CAPACITY:=5Gi}
-    cacheStorageClassName: openebs-hostpath
+    cacheStorageClassName: openebs-lvm
     volumeSnapshotClassName: csi-ceph-block
     accessModes:
       - ${VOLSYNC_ACCESSMODES:=ReadWriteOnce}

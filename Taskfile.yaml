@@ -5,11 +5,13 @@ set: [pipefail]
 shopt: [globstar]
 
 vars:
+  OP_VAULT: Kubernetes
   BOOTSTRAP_DIR: "{{.ROOT_DIR}}/bootstrap"
   KUBERNETES_DIR: "{{.ROOT_DIR}}/kubernetes"
   TALOS_DIR: "{{.ROOT_DIR}}/talos"
   GIT_REPOSITORY_URL: https://github.com/gravelfreeman/k8s-gitops.git
-  OP_VAULT: Kubernetes
+  RANDOM_CONTROLLER: { sh: "talosctl config info --output json | jq --raw-output '.endpoints[]' | shuf -n 1" }
+  NODES: { sh: "talosctl config info --output json | jq --join-output '[.nodes[]] | join(\",\")'" }
 
 env:
   GIT_REPOSITORY_URL: "{{.GIT_REPOSITORY_URL}}"

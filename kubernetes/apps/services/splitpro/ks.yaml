@@ -15,6 +15,7 @@ spec:
     - name: cloudnative-pg
     - name: envoy-gateway-config
     - name: external-secrets-store
+    - name: openebs
     - name: rook-ceph-cluster
     - name: volsync
   interval: 1h

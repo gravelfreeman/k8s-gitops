@@ -11,6 +11,9 @@ spec:
     - ../../../../components/common
   interval: 1h
   path: kubernetes/apps/system/openebs/app
+  postBuild:
+    substitute:
+      POD_SECURITY_ENFORCE: privileged
   prune: true
   sourceRef:
     kind: GitRepository

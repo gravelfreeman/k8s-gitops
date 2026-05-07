@@ -14,6 +14,7 @@ spec:
     - name: cloudnative-pg
     - name: envoy-gateway-config
     - name: external-secrets-store
+    - name: openebs
   interval: 1h
   patches:
     - patch: |-

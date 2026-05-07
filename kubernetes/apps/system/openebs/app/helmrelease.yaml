@@ -8,36 +8,44 @@ spec:
     kind: OCIRepository
     name: *app
   values:
-    analytics:
+    alloy:
       enabled: false
-    localpv:
-      basePath: /var/mnt/local-hostpath
-    podSecurityContext:
-      runAsNonRoot: true
-      runAsUser: 65532
-      runAsGroup: 65532
-      seccompProfile:
-        type: RuntimeDefault
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              kind: Deployment
-              name: openebs-localpv-provisioner
-            patch: |-
-              apiVersion: apps/v1
-              kind: Deployment
-              metadata:
-                name: openebs-localpv-provisioner
-              spec:
-                template:
-                  spec:
-                    containers:
-                      - name: openebs-localpv-provisioner
-                        securityContext:
-                          allowPrivilegeEscalation: false
-                          capabilities:
-                            drop: ["ALL"]
-                          runAsNonRoot: true
-                          runAsUser: 65532
-                          runAsGroup: 65532
+    engines:
+      local:
+        lvm:
+          enabled: true
+        rawfile:
+          enabled: false
+        zfs:
+          enabled: false
+      replicated:
+        mayastor:
+          enabled: false
+    localpv-provisioner:
+      hostpathClass:
+        enabled: false
+      localpv:
+        enabled: false
+      rbac:
+        create: false
+      serviceAccount:
+        create: false
+    loki:
+      enabled: false
+    lvm-localpv:
+      analytics:
+        enabled: false
+      crds:
+        csi:
+          volumeSnapshots:
+            enabled: false
+        lvmLocalPv:
+          enabled: true
+      lvmNode:
+        kubeletDir: /var/lib/kubelet/
+    openebs-crds:
+      csi:
+        volumeSnapshots:
+          enabled: false
+    preUpgradeHook:
+      enabled: false

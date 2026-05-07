@@ -2,7 +2,6 @@
 version: '3'
 
 vars:
-  NODES: { sh: "talosctl config info --output json | jq --join-output '[.nodes[]] | join(\",\")'" }
   TALOS_CACHE_DIR: '{{.TALOS_CACHE_DIR | default "/tmp/talos"}}'
 
 tasks:
@@ -107,9 +106,6 @@ tasks:
     cmd: |-
       talosctl kubeconfig --nodes {{.RANDOM_CONTROLLER}} --force /home/vscode/.kube/config
       chmod 600 /home/vscode/.kube/config
-    vars:
-      RANDOM_CONTROLLER:
-        sh: talosctl config info --output json | jq --raw-output '.endpoints[]' | shuf -n 1
     preconditions:
       - talosctl config info
       - talosctl --nodes {{.RANDOM_CONTROLLER}} get machineconfig
