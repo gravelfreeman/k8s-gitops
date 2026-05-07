@@ -11,6 +11,9 @@ spec:
     - ../../../../components/common
   interval: 1h
   path: kubernetes/apps/system/snapshot-controller/app
+  postBuild:
+    substitute:
+      bootstrap: "true"
   prune: true
   sourceRef:
     kind: GitRepository

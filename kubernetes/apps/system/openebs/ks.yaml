@@ -9,6 +9,8 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../../components/common
+  dependsOn:
+    - name: snapshot-controller
   interval: 1h
   path: kubernetes/apps/system/openebs/app
   postBuild:
