@@ -26,3 +26,6 @@ spec:
         issuerRef:
           name: k8tz-webhook-issuer
           kind: Issuer
+      ignoredNamespaces:
+        - kube-system
+        - envoy-gateway
