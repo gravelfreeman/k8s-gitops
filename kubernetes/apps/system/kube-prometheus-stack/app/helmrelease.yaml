@@ -57,6 +57,7 @@ spec:
     prometheus:
       prometheusSpec:
         externalUrl: https://prometheus.${DOMAIN_0}
+        serviceDiscoveryRole: EndpointSlice
         version: v2.55.1
         image:
           registry: docker.io
