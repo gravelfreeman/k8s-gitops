@@ -27,6 +27,8 @@ bindkey "\e[4~" end-of-line
 bindkey "\e[5~" up-line-or-history
 bindkey "\e[6~" down-line-or-history
 
+source "$HOME/.config/zsh/bindkey.zsh"
+
 export FZF_DEFAULT_OPTS=" \
 --color=bg+:#414559,bg:#303446,spinner:#F2D5CF,hl:#E78284 \
 --color=fg:#C6D0F5,header:#E78284,info:#CA9EE6,pointer:#F2D5CF \
