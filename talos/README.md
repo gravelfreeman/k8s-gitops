@@ -80,12 +80,6 @@ talosctl config endpoint 10.0.10.101 10.0.10.102 10.0.10.103
 talosctl config node 10.0.10.101 10.0.10.102 10.0.10.103
 ```
 
-## Thunderbolt
-
-```
-watch -n 2 'talosctl --nodes 10.0.10.101,10.0.10.102,10.0.10.103 get links --output=yaml | awk '\''/^node:/{node=$2} /^[[:space:]]+id:/{id=$2; mac=""; bus=""} /^[[:space:]]+hardwareAddr:/{mac=$2} /^[[:space:]]+busPath:/{bus=$2} /^[[:space:]]+driver: thunderbolt-net/{printf "%-12s %-18s %-18s %s\n", node, id, mac, bus}'\'''
-```
-
 ## Notes
 
 - Rendered configs are generated in memory, injected with `op`, then sent to Talos with `talosctl`.

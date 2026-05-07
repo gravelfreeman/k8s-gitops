@@ -2,9 +2,17 @@
 version: '3'
 
 vars:
+  NODES: { sh: "talosctl config info --output json | jq --join-output '[.nodes[]] | join(\",\")'" }
   TALOS_CACHE_DIR: '{{.TALOS_CACHE_DIR | default "/tmp/talos"}}'
 
 tasks:
+
+  dashboard:
+    desc: Open control plane Talos dashboard
+    cmd: talosctl dashboard --nodes {{.NODES}}
+    preconditions:
+      - talosctl config info
+      - which talosctl
 
   apply-node:
     desc: Apply Talos config to a node [NODE=required] [MODE={{.MODE}}]
@@ -69,9 +77,6 @@ tasks:
     desc: Shutdown Talos across the whole cluster
     prompt: Shutdown the Talos cluster ... continue?
     cmd: talosctl --nodes {{.NODES}} shutdown --force
-    vars:
-      NODES:
-        sh: talosctl config info --output json | jq --join-output '[.nodes[]] | join(",")'
     preconditions:
       - talosctl config info
       - talosctl --nodes {{.NODES}} get machineconfig
@@ -92,9 +97,6 @@ tasks:
     desc: Reset Talos across the whole cluster
     prompt: Reset the Talos cluster ... continue?
     cmd: talosctl --nodes {{.NODES}} reset --reboot=true --graceful=false
-    vars:
-      NODES:
-        sh: talosctl config info --output json | jq --join-output '[.nodes[]] | join(",")'
     preconditions:
       - talosctl config info
       - talosctl --nodes {{.NODES}} get machineconfig
@@ -139,3 +141,23 @@ tasks:
       - test -f {{.TALOS_DIR}}/schematic.yaml.j2
       - test -f {{.TALOS_DIR}}/networking.yaml
       - which base64 curl jq minijinja-cli zstd
+
+  watch-resources:
+    desc: Watch [RESOURCE=services|members|addresses|routes|links|disks|mounts|containers|pods]
+    cmd: |-
+      watch -c -t -n 2 -- "talosctl --nodes {{.NODES}} get {{.RESOURCE}} \
+        | awk 'NR == 1 { header = \$0; next } \$1 != node { if (node) print \"\"; printf \"\\033[1m%s\\033[0m\\n\", header; node = \$1 } { print }'"
+    vars:
+      RESOURCE: '{{.RESOURCE | default "services"}}'
+    preconditions:
+      - talosctl config info
+      - which awk jq talosctl watch
+
+  watch-thunderbolt:
+    desc: Watch control plane Thunderbolt links
+    cmd: |-
+      watch -t -n 2 -- "talosctl --nodes {{.NODES}} get links --output=yaml \
+        | yq -o=tsv 'select(.spec.driver == \"thunderbolt-net\") | [.node, .metadata.id, .spec.hardwareAddr, .spec.busPath]'"
+    preconditions:
+      - talosctl config info
+      - which talosctl watch yq
