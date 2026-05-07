@@ -13,6 +13,9 @@ spec:
     - name: external-secrets
   interval: 1h
   path: kubernetes/apps/core/onepassword-connect/app
+  postBuild:
+    substitute:
+      bootstrap: "true"
   prune: true
   sourceRef:
     kind: GitRepository
