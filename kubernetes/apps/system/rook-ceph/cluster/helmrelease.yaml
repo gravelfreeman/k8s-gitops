@@ -53,6 +53,7 @@ spec:
           replicated:
             size: 3
         storageClass:
+          enabled: true
           name: ceph-block
           allowVolumeExpansion: true
           isDefault: true

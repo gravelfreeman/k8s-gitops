@@ -19,6 +19,7 @@ spec:
   postBuild:
     substitute:
       APP: kube-prometheus-stack-prometheus
+      POD_SECURITY_ENFORCE: privileged
       ENVOY_OIDC_SUBDOMAIN: prometheus
   prune: true
   sourceRef:
