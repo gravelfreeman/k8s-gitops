@@ -20,7 +20,7 @@ spec:
     cluster:
       id: 1
       name: ms01
-    devices: [enp89s0]
+    devices: [enp89s0, enp87s0, enp87s0.25]
     endpointRoutes:
       enabled: true
     ipam:
