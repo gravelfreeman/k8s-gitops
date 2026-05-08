@@ -29,14 +29,11 @@ spec:
             image:
               repository: docker.io/cloudflare/cloudflared
               tag: 2026.3.0@sha256:6b599ca3e974349ead3286d178da61d291961182ec3fe9c505e1dd02c8ac31b0
-            args: [tunnel, run]
+            args: [tunnel, --config, /etc/cloudflared/config.yaml, run]
             env:
               NO_AUTOUPDATE: "true"
               TUNNEL_METRICS: 0.0.0.0:8080
               TUNNEL_TRANSPORT_PROTOCOL: quic
-            envFrom:
-              - secretRef:
-                  name: cloudflared-secret
             probes:
               liveness: &probe
                 enabled: true
@@ -60,6 +57,13 @@ spec:
         globalMounts:
           - path: /etc/cloudflared/config.yaml
             subPath: config.yaml
+            readOnly: true
+      credentials:
+        type: secret
+        name: cloudflared-secret
+        globalMounts:
+          - path: /etc/cloudflared/e677e019-4baa-49f1-9e0a-8b3b6f481405.json
+            subPath: e677e019-4baa-49f1-9e0a-8b3b6f481405.json
             readOnly: true
     service:
       app:

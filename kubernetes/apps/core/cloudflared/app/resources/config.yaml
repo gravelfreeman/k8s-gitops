@@ -1,4 +1,6 @@
 # yaml-language-server: $schema=https://www.schemastore.org/any.json
+tunnel: e677e019-4baa-49f1-9e0a-8b3b6f481405
+credentials-file: /etc/cloudflared/e677e019-4baa-49f1-9e0a-8b3b6f481405.json
 ingress:
   - hostname: "*.${DOMAIN_0}"
     originRequest:
