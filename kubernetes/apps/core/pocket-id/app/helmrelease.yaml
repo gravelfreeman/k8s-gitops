@@ -57,7 +57,7 @@ spec:
               EMAILS_VERIFIED: true
               EMAIL_ONE_TIME_ACCESS_AS_ADMIN_ENABLED: true
               EMAIL_VERIFICATION_ENABLED: true
-              ACCENT_COLOR: '#F9AAFF'
+              ACCENT_COLOR: '#FAAAFF'
               SMTP_HOST: ${SMTP_HOST_0}
               SMTP_PORT: 587
               SMTP_TLS: starttls
