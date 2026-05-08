@@ -13,7 +13,6 @@ spec:
   values:
     defaultContainerOptions:
       securityContext:
-        readOnlyRootFilesystem: true
         allowPrivilegeEscalation: false
         capabilities: { drop: ["ALL"] }
     controllers:
@@ -79,6 +78,8 @@ spec:
             resources:
               requests: { cpu: 25m, memory: 128Mi }
               limits: { memory: 512Mi }
+            securityContext:
+              readOnlyRootFilesystem: true
     persistence:
       data:
         type: emptyDir
