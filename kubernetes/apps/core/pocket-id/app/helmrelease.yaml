@@ -107,7 +107,7 @@ spec:
                   value: /setup
               - path:
                   type: PathPrefix
-                  value: /signup/setup
+                  value: /signup
             filters:
               - type: RequestRedirect
                 requestRedirect:
