@@ -11,10 +11,6 @@ spec:
     name: app-template
     namespace: flux-system
   values:
-    defaultContainerOptions:
-      securityContext: &securityContext
-        allowPrivilegeEscalation: false
-        capabilities: { drop: ["ALL"] }
     controllers:
       pocket-id:
         annotations:
@@ -37,7 +33,10 @@ spec:
             command: ["/bin/sh", "-ec"]
             args: ["until pg_isready -q -h ${APP}-cnpg-rw -p 5432 -U postgres -d postgres; do sleep 2; done"]
             image: { repository: postgres, tag: "18.3-alpine3.23@sha256:52098013b4b64a746626437d38afc03cabff6cdeb4d3d92e2342aa95f0ce56ea" }
-            securityContext: *securityContext
+            securityContext: &securityContext
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
         containers:
           app:
             image:
@@ -79,8 +78,7 @@ spec:
             resources:
               requests: { cpu: 25m, memory: 128Mi }
               limits: { memory: 512Mi }
-            securityContext:
-              readOnlyRootFilesystem: true
+            securityContext: *securityContext
     persistence:
       data:
         type: emptyDir
