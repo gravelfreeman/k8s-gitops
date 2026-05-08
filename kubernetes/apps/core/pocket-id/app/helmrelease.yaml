@@ -45,7 +45,9 @@ spec:
             env:
               PUID: "568"
               PGID: "568"
-              APP_URL: https://auth.${DOMAIN_0}
+              APP_NAME: Freeman ID
+              HOME_PAGE_URL: /settings/apps
+              APP_URL: https://id.${DOMAIN_0}
               TRUST_PROXY: true
               TRUSTED_PLATFORM: CF-Connecting-IP
               FILE_BACKEND: database
@@ -55,12 +57,13 @@ spec:
               EMAILS_VERIFIED: true
               EMAIL_ONE_TIME_ACCESS_AS_UNAUTHENTICATED_ENABLED: true
               EMAIL_VERIFICATION_ENABLED: true
+              ACCENT_COLOR: '#F9AAFF'
               SMTP_HOST: ${SMTP_HOST_0}
               SMTP_PORT: 587
               SMTP_TLS: starttls
-              SMTP_FROM: auth@${DOMAIN_0}
+              SMTP_FROM: id@${DOMAIN_0}
               SMTP_USER: ${SMTP_USERNAME_0}
-              SMTP_PASSWORD_FILE: /secrets/SMTP_PASSWORD
+              SMTP_PASSWORD_FILE: /secrets/SMTP_PASSWORD_0
               MAXMIND_LICENSE_KEY_FILE: /secrets/MAXMIND_LICENSE_KEY
               ENCRYPTION_KEY_FILE: /secrets/ENCRYPTION_KEY
               DB_CONNECTION_STRING:
@@ -92,7 +95,7 @@ spec:
             readOnly: true
     route:
       app:
-        hostnames: ['auth.${DOMAIN_0}']
+        hostnames: ['id.${DOMAIN_0}']
         parentRefs:
           - name: envoy-external
             namespace: envoy-gateway
