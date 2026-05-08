@@ -1,0 +1,11 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/externaldns.k8s.io/dnsendpoint_v1alpha1.json
+apiVersion: externaldns.k8s.io/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: cloudflared
+spec:
+  endpoints:
+    - dnsName: external.${DOMAIN_0}
+      recordType: CNAME
+      targets: [e677e019-4baa-49f1-9e0a-8b3b6f481405.cfargotunnel.com]
