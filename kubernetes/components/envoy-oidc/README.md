@@ -8,7 +8,7 @@ Authorization is based on the `groups` claim from the ID token. Requests are den
 
 ## Usage
 
-For the common case where the app host is `${APP}.${DOMAIN_0}`, only include the component:
+For the common admin-only case where the app host is `${APP}.${DOMAIN_0}`, only include the component:
 
 ```yaml
 components:
@@ -33,13 +33,13 @@ postBuild:
     ENVOY_OIDC_SUBDOMAIN: home
 ```
 
-For an app restricted to a dedicated group, set `ENVOY_OIDC_GROUP`:
+For an app available to non-admin users, set `ENVOY_OIDC_GROUP`:
 
 ```yaml
 postBuild:
   substitute:
     APP: *app
-    ENVOY_OIDC_GROUP: restricted
+    ENVOY_OIDC_GROUP: user
 ```
 
 ## Split Routes
@@ -88,10 +88,10 @@ route:
 
 | Name | Default | Description |
 | ---- | ------- | ----------- |
-| `APP` *(required)* | none | Application name. The component targets the `HTTPRoute` named `${APP}` and creates `${APP}-oidc`. |
+| `APP` *(required)* | none | Application name. |
 | `ENVOY_OIDC_DOMAIN` | `${DOMAIN_0}` | Root domain used by the protected app callback URL. Use `${DOMAIN_1}` or `${DOMAIN_2}` for apps on those domains. |
-| `ENVOY_OIDC_SUBDOMAIN` | `${APP}` | Subdomain used by the protected app callback URL. Set this only when the public subdomain differs from `APP`. |
-| `ENVOY_OIDC_GROUP` | `user` | Primary Pocket ID group allowed to access the app. Use app-specific groups for restricted apps. |
+| `ENVOY_OIDC_SUBDOMAIN` | `${APP}` | Subdomain used by the protected app callback URL. |
+| `ENVOY_OIDC_GROUP` | `admin` | Primary Pocket ID group allowed to access the app. |
 
 ## Resources
 

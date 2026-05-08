@@ -42,4 +42,4 @@ spec:
             claims:
               - name: groups
                 valueType: StringArray
-                values: [admin,'${ENVOY_OIDC_GROUP:=user}']
+                values: [admin]

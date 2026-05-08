@@ -55,7 +55,7 @@ spec:
               VERSION_CHECK_DISABLED: true
               UI_CONFIG_DISABLED: true
               EMAILS_VERIFIED: true
-              EMAIL_ONE_TIME_ACCESS_AS_UNAUTHENTICATED_ENABLED: true
+              EMAIL_ONE_TIME_ACCESS_AS_ADMIN_ENABLED: true
               EMAIL_VERIFICATION_ENABLED: true
               ACCENT_COLOR: '#F9AAFF'
               SMTP_HOST: ${SMTP_HOST_0}
@@ -100,6 +100,24 @@ spec:
           - name: envoy-external
             namespace: envoy-gateway
             sectionName: https
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /setup
+              - path:
+                  type: PathPrefix
+                  value: /signup/setup
+            filters:
+              - type: RequestRedirect
+                requestRedirect:
+                  path:
+                    type: ReplaceFullPath
+                    replaceFullPath: /login
+                  statusCode: 302
+          - backendRefs:
+              - identifier: app
+                port: 1411
     service:
       app:
         controller: *app
