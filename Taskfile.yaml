@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
 ---
 version: "3"
 
@@ -20,4 +21,5 @@ env:
 includes:
   bootstrap: bootstrap/Taskfile.yaml
   kubernetes: kubernetes/Taskfile.yaml
+  flux: kubernetes/flux/Taskfile.yaml
   talos: talos/Taskfile.yaml
