@@ -3,6 +3,7 @@
   "name": "k8s-gitops",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu@sha256:7ee7da33a68d997971660d91ecc8372e55a38a777c3c6bd6808daf91928052db",
   "features": {
+    "ghcr.io/devcontainers/features/aws-cli:1": {},
     "ghcr.io/devcontainers/features/common-utils:2": {
       "installZsh": true,
       "installOhMyZsh": true,
@@ -10,7 +11,7 @@
     },
     "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": { "minikube": "none" },
     "ghcr.io/devcontainers-extra/features/apt-get-packages:1": {
-      "packages": "file,fzf,jq,libimage-exiftool-perl,netcat-openbsd,python3,python3-pip,python3-venv,ripgrep,sshfs,tree,unzip,xz-utils,zip,zsh,zstd" },
+      "packages": "file,fzf,jq,libimage-exiftool-perl,netcat-openbsd,python3,python3-pip,python3-venv,restic,ripgrep,sshfs,tree,unzip,xz-utils,zip,zsh,zstd" },
     "ghcr.io/devcontainers-extra/features/cloudflared:1": {},
     "ghcr.io/devcontainers-extra/features/go-task:1": {},
     "ghcr.io/devcontainers-extra/features/helmfile:1": {},
