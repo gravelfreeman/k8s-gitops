@@ -13,7 +13,7 @@ spec:
       name: ${APP}
   oidc:
     provider:
-      issuer: "https://auth.${DOMAIN_0}"
+      issuer: "https://id.${DOMAIN_0}"
     clientIDRef:
       name: envoy-oidc-secret
     clientSecret:
@@ -26,9 +26,9 @@ spec:
   jwt:
     providers:
       - name: pocketid
-        issuer: "https://auth.${DOMAIN_0}"
+        issuer: "https://id.${DOMAIN_0}"
         remoteJWKS:
-          uri: "https://auth.${DOMAIN_0}/.well-known/jwks.json"
+          uri: "https://id.${DOMAIN_0}/.well-known/jwks.json"
         extractFrom:
           cookies: [pocketid-token]
   authorization:

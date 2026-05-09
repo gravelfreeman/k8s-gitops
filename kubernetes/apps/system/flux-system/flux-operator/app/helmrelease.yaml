@@ -21,8 +21,14 @@ spec:
           oauth2:
             provider: OIDC
             clientID: flux-operator
-            issuerURL: https://auth.${DOMAIN_0}
+            issuerURL: https://id.${DOMAIN_0}
+            impersonation:
+              username: "claims.email"
+              groups: "claims.groups"
             scopes: [openid, profile, email, groups]
+            validations:
+              - expression: "has(claims.groups) && size(claims.groups) > 0"
+                message: user must belong to at least one Pocket ID group
       httpRoute:
         enabled: true
         parentRefs:

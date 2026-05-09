@@ -2,7 +2,7 @@
 
 Kustomize component that adds Pocket ID OIDC authentication and group-based authorization to an Envoy Gateway `HTTPRoute` with a `SecurityPolicy`.
 
-The issuer is always `https://auth.${DOMAIN_0}`. Apps can live on any configured root domain by overriding `ENVOY_OIDC_DOMAIN`; Envoy sends the browser to Pocket ID on `${DOMAIN_0}` for identity, then returns to the app host for the callback.
+The issuer is always `https://id.${DOMAIN_0}`. Apps can live on any configured root domain by overriding `ENVOY_OIDC_DOMAIN`; Envoy sends the browser to Pocket ID on `${DOMAIN_0}` for identity, then returns to the app host for the callback.
 
 Authorization is based on the `groups` claim from the ID token. Requests are denied by default unless the user belongs to the configured app group or admin group.
 
