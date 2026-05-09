@@ -20,7 +20,7 @@ spec:
           type: OAuth2
           oauth2:
             provider: OIDC
-            clientID: flux-operator
+            clientID: 22b48539-9dae-487b-907b-f63d48385aa9
             issuerURL: https://id.${DOMAIN_0}
             impersonation:
               username: "claims.email"
