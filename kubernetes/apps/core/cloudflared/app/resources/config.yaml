@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://www.schemastore.org/any.json
-tunnel: ""
+tunnel: "ded5b95c-0d29-477b-bfd1-f1942f251da8"
 credentials-file: /etc/cloudflared/cloudflare-tunnel.json
 ingress:
   - hostname: "*.${DOMAIN_0}"

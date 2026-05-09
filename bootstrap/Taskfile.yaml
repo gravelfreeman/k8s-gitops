@@ -56,10 +56,12 @@ tasks:
         tunnel_id="$(yq -r '.TunnelID' "$tmp_dir/cloudflare-tunnel.json")"
         op item edit cloudflared "cloudflare-tunnel\\.json[file]=$tmp_dir/cloudflare-tunnel.json" --vault {{.OP_VAULT | shellQuote}} > /dev/null
 
-        TUNNEL_ID="$tunnel_id" yq --inplace '
-          select(fileIndex == 0).spec.endpoints[0].targets = [strenv(TUNNEL_ID) + ".cfargotunnel.com"] |
-          select(fileIndex == 1).tunnel = strenv(TUNNEL_ID)
-        ' {{.CLOUDFLARED_DIR | shellQuote}}/dnsendpoint.yaml {{.CLOUDFLARED_DIR | shellQuote}}/resources/config.yaml
+        TUNNEL_ID="$tunnel_id" yq --inplace \
+          '.spec.endpoints[0].targets = [strenv(TUNNEL_ID) + ".cfargotunnel.com"]' \
+          {{.CLOUDFLARED_DIR | shellQuote}}/dnsendpoint.yaml
+        TUNNEL_ID="$tunnel_id" yq --inplace \
+          '.tunnel = strenv(TUNNEL_ID)' \
+          {{.CLOUDFLARED_DIR | shellQuote}}/resources/config.yaml
 
         printf 'Created tunnel %s, updated manifests, and updated 1Password item.\n' "$tunnel_id"
     vars:
