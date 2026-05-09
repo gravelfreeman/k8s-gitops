@@ -29,6 +29,7 @@ spec:
       - --gateway-name=envoy-external
     policy: sync
     sources: [crd, gateway-httproute]
+    triggerLoopOnEvent: true
     txtOwnerId: cloudflare
     txtPrefix: k8s.
     domainFilters:

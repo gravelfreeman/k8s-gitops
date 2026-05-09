@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
 ---
 version: "3"
 
@@ -38,6 +39,38 @@ tasks:
       - talosctl --nodes {{.RANDOM_CONTROLLER}} get machineconfig
       - "{{.OPENEBS_LVM_NODES}} {{.OPENEBS_LVM_DEBUG}} --args=vgs --args=lvmvg || exit 1; done"
       - which jq kubectl op talosctl
+
+  cloudflare:
+    desc: Create Cloudflare local tunnel [NAME=required]
+    prompt: Create Cloudflare local tunnel NAME={{.NAME}} and update 1Password/GitOps target ...?
+    cmds:
+      - |-
+        tmp_dir="$(mktemp -d)"
+        trap 'rm -rf "$tmp_dir"' EXIT
+        rm -f "$HOME/.cloudflared/cert.pem"
+
+        cloudflared tunnel login
+        cloudflared tunnel delete --force {{.NAME | shellQuote}} >/dev/null 2>&1 || true
+        cloudflared tunnel create --credentials-file "$tmp_dir/cloudflare-tunnel.json" {{.NAME | shellQuote}}
+
+        tunnel_id="$(yq -r '.TunnelID' "$tmp_dir/cloudflare-tunnel.json")"
+        op item edit cloudflared "cloudflare-tunnel\\.json[file]=$tmp_dir/cloudflare-tunnel.json" --vault {{.OP_VAULT | shellQuote}} > /dev/null
+
+        TUNNEL_ID="$tunnel_id" yq --inplace '
+          select(fileIndex == 0).spec.endpoints[0].targets = [strenv(TUNNEL_ID) + ".cfargotunnel.com"] |
+          select(fileIndex == 1).tunnel = strenv(TUNNEL_ID)
+        ' {{.CLOUDFLARED_DIR | shellQuote}}/dnsendpoint.yaml {{.CLOUDFLARED_DIR | shellQuote}}/resources/config.yaml
+
+        printf 'Created tunnel %s, updated manifests, and updated 1Password item.\n' "$tunnel_id"
+    vars:
+      CLOUDFLARED_DIR: "{{.ROOT_DIR}}/kubernetes/apps/core/cloudflared/app"
+    preconditions:
+      - sh: test -n {{.NAME | shellQuote}}
+        msg: "NAME is required, example: task bootstrap:cloudflare NAME=ms01-external"
+      - op item get cloudflared --vault {{.OP_VAULT | shellQuote}} > /dev/null
+      - test -f {{.CLOUDFLARED_DIR | shellQuote}}/resources/config.yaml
+      - test -f {{.CLOUDFLARED_DIR | shellQuote}}/dnsendpoint.yaml
+      - which cloudflared op yq
 
   openebs-lvm:
     desc: Prepare OpenEBS LVM volume group on Talos nodes

@@ -11,6 +11,7 @@
     "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": { "minikube": "none" },
     "ghcr.io/devcontainers-extra/features/apt-get-packages:1": {
       "packages": "file,fzf,jq,libimage-exiftool-perl,netcat-openbsd,python3,python3-pip,python3-venv,ripgrep,sshfs,tree,unzip,xz-utils,zip,zsh,zstd" },
+    "ghcr.io/devcontainers-extra/features/cloudflared:1": {},
     "ghcr.io/devcontainers-extra/features/go-task:1": {},
     "ghcr.io/devcontainers-extra/features/helmfile:1": {},
     "ghcr.io/devcontainers-extra/features/talosctl:1": {},
@@ -18,7 +19,7 @@
     "ghcr.io/devcontainer-community/devcontainer-features/yq:1": {},
     "ghcr.io/flexwie/devcontainer-features/op:1": {},
     "ghcr.io/jsburckhardt/devcontainer-features/flux:1": {},
-    "ghcr.io/rio/features/kustomize:1": {}
+    "ghcr.io/rio/features/kustomize:1": { "version": "5.8.1" }
   },
   "mounts": [
     "source=/tmp/1password-ssh-agent.sock,target=/tmp/ssh-agent.sock,type=bind",

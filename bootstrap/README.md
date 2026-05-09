@@ -16,6 +16,9 @@ task bootstrap:talos
 task talos:generate-kubeconfig
 ```
 ```bash
+task bootstrap:cloudflare NAME=<tunnel-name>
+```
+```bash
 task bootstrap:openebs-lvm
 ```
 ```bash
@@ -29,6 +32,7 @@ task bootstrap:apps
 | Command | Purpose |
 | ------- | ------- |
 | `talos` | Bootstrap the Talos control plane and refresh the local kubeconfig after all node configs are applied. |
+| `cloudflare` | Create Cloudflare local tunnel. |
 | `openebs-lvm` | Prepare the `lvmvg` volume group on every Talos node. |
 | `apps` | Install the initial Kubernetes components with Helmfile after Talos and OpenEBS LVM are prepared. |
 | `helmfile` | Internal task used by `apps` to apply bootstrap CRDs, then sync the bootstrap Helm releases. |

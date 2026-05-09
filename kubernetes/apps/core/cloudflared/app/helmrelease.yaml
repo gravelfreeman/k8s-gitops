@@ -62,8 +62,8 @@ spec:
         type: secret
         name: cloudflared-secret
         globalMounts:
-          - path: /etc/cloudflared/e677e019-4baa-49f1-9e0a-8b3b6f481405.json
-            subPath: e677e019-4baa-49f1-9e0a-8b3b6f481405.json
+          - path: /etc/cloudflared/cloudflare-tunnel.json
+            subPath: cloudflare-tunnel.json
             readOnly: true
     service:
       app:
