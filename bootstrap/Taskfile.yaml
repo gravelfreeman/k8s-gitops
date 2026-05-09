@@ -54,7 +54,7 @@ tasks:
         cloudflared tunnel create --credentials-file "$tmp_dir/cloudflare-tunnel.json" {{.NAME | shellQuote}}
 
         tunnel_id="$(yq -r '.TunnelID' "$tmp_dir/cloudflare-tunnel.json")"
-        op item edit cloudflared "cloudflare-tunnel\\.json[file]=$tmp_dir/cloudflare-tunnel.json" --vault {{.OP_VAULT | shellQuote}} > /dev/null
+        op document create "$tmp_dir/cloudflare-tunnel.json" --title cloudflared --file-name cloudflare-tunnel.json --vault {{.OP_VAULT | shellQuote}} > /dev/null
 
         TUNNEL_ID="$tunnel_id" yq --inplace \
           '.spec.endpoints[0].targets = [strenv(TUNNEL_ID) + ".cfargotunnel.com"]' \
@@ -69,7 +69,6 @@ tasks:
     preconditions:
       - sh: test -n {{.NAME | shellQuote}}
         msg: "NAME is required, example: task bootstrap:cloudflare NAME=ms01-external"
-      - op item get cloudflared --vault {{.OP_VAULT | shellQuote}} > /dev/null
       - test -f {{.CLOUDFLARED_DIR | shellQuote}}/resources/config.yaml
       - test -f {{.CLOUDFLARED_DIR | shellQuote}}/dnsendpoint.yaml
       - which cloudflared op yq
