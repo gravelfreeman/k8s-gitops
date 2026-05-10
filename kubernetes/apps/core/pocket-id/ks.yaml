@@ -16,17 +16,6 @@ spec:
     - name: external-secrets-store
     - name: openebs
   interval: 1h
-  patches:
-    - patch: |-
-        - op: replace
-          path: /spec/bootstrap
-          value:
-            initdb:
-              database: pocket-id
-              owner: pocket-id
-      target:
-        group: postgresql.cnpg.io
-        kind: Cluster
   path: kubernetes/apps/core/pocket-id/app
   postBuild:
     substitute:
