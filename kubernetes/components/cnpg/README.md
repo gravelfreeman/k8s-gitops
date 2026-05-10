@@ -25,7 +25,7 @@ postBuild:
 | `CNPG_DATABASE` | `${APP}` | Application database restored/created by CNPG. |
 | `CNPG_USERNAME` | `${APP}` | Application owner/user restored/created by CNPG. |
 | `CNPG_RECOVERY_SERVER_NAME` | `${APP}` | Barman recovery server name. |
-| `CNPG_STORAGE_SIZE` | `1Gi` | Primary data PVC size. |
+| `CNPG_STORAGE_SIZE` | `10Gi` | Primary data PVC size. |
 
 ### PostgreSQL Runtime
 

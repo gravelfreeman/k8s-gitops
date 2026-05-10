@@ -38,7 +38,7 @@ spec:
       database: ${CNPG_DATABASE:=${APP}}
       owner: ${CNPG_USERNAME:=${APP}}
   storage:
-    size: ${CNPG_STORAGE_SIZE:=1Gi}
+    size: ${CNPG_STORAGE_SIZE:=10Gi}
     storageClass: openebs-lvm
   postgresql:
     parameters:
