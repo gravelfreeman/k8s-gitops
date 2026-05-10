@@ -28,7 +28,7 @@ tasks:
       task githooks:secrets:list \
       | while IFS="$(printf '\t')" read -r app item file_name file_path; do
           field_name="$(printf '%s' "$file_name" | sed 's/[.=\\]/\\&/g')"
-          op item edit "$item" "$field_name[file]=$file_path" --vault {{.OP_VAULT | shellQuote}} < /dev/tty > /dev/null || exit 1
+          op item edit "$item" "$field_name[file]=$file_path" --vault "{{.OP_VAULT}}" < /dev/tty > /dev/null || exit 1
           echo "$app/$file_name -> $item"
         done
     preconditions:

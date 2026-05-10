@@ -6,20 +6,19 @@ set: [pipefail]
 shopt: [globstar]
 
 vars:
-  OP_VAULT: Kubernetes
-  BOOTSTRAP_DIR: "{{.ROOT_DIR}}/bootstrap"
-  KUBERNETES_DIR: "{{.ROOT_DIR}}/kubernetes"
-  TALOS_DIR: "{{.ROOT_DIR}}/talos"
-  GIT_REPOSITORY_URL: https://github.com/gravelfreeman/k8s-gitops.git
-  RANDOM_CONTROLLER: { sh: "talosctl config info --output json | jq --raw-output '.endpoints[]' | shuf -n 1" }
   NODES: { sh: "talosctl config info --output json | jq --join-output '[.nodes[]] | join(\",\")'" }
+  RANDOM_CONTROLLER: { sh: "talosctl config info --output json | jq --raw-output '.endpoints[]' | shuf -n 1" }
 
 env:
-  GIT_REPOSITORY_URL: "{{.GIT_REPOSITORY_URL}}"
-  OP_VAULT: "{{.OP_VAULT}}"
+  OP_VAULT: Kubernetes
+  AWS_ACCESS_KEY_ID: { sh: 'op read "op://{{.OP_VAULT}}/backblaze/AWS_ACCESS_KEY_ID"' }
+  AWS_SECRET_ACCESS_KEY: { sh: 'op read "op://{{.OP_VAULT}}/backblaze/AWS_SECRET_ACCESS_KEY"' }
+  S3_BUCKET: { sh: 'op read "op://{{.OP_VAULT}}/backblaze/S3_BUCKET"' }
+  S3_ENDPOINT: { sh: 'op read "op://{{.OP_VAULT}}/backblaze/S3_ENDPOINT"' }
 
 includes:
-  bootstrap: bootstrap/Taskfile.yaml
-  kubernetes: kubernetes/Taskfile.yaml
-  flux: kubernetes/flux/Taskfile.yaml
-  talos: talos/Taskfile.yaml
+  bootstrap: .taskfiles/bootstrap/Taskfile.yaml
+  cnpg: .taskfiles/cnpg/Taskfile.yaml
+  flux: .taskfiles/flux/Taskfile.yaml
+  kubernetes: .taskfiles/kubernetes/Taskfile.yaml
+  talos: .taskfiles/talos/Taskfile.yaml

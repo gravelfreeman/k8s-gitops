@@ -83,6 +83,6 @@ talosctl config node 10.0.10.101 10.0.10.102 10.0.10.103
 ## Notes
 
 - Rendered configs are generated in memory, injected with `op`, then sent to Talos with `talosctl`.
-- `OP_VAULT`, `GIT_REPOSITORY_URL`, `TALOS_DIR`, and `KUBERNETES_DIR` come from the root `Taskfile.yaml`.
+- `OP_VAULT` comes from the root `Taskfile.yaml`.
 - `KUBECONFIG` and `TALOSCONFIG` come from the devcontainer and point to `$HOME`, not the repo.
 - Talos artifacts, such as ISO images, are written to `/tmp/talos`, mounted from the host cache.

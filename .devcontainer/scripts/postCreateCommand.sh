@@ -54,6 +54,17 @@ install_krew_plugins() {
     pv-mounter browse-pvc df-pv
 }
 
+install_barman_cli_cloud() {
+  sudo install -d -m 0755 /usr/share/postgresql-common/pgdg
+  curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+    | sudo tee /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc >/dev/null
+  printf 'deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main\n' \
+    | sudo tee /etc/apt/sources.list.d/pgdg.list >/dev/null
+
+  sudo apt-get update
+  sudo apt-get install -y barman-cli-cloud
+}
+
 install_krr() {
   local venv_dir="$HOME/.local/share/krr-venv"
   local tmp_dir="$(mktemp -d)"
@@ -102,6 +113,7 @@ post_create() {
   run_step "Installing minijinja-cli" install_minijinja_cli
   run_step "Installing krew" install_krew
   run_step "Installing krew plugins" install_krew_plugins
+  run_step "Installing barman-cli-cloud" install_barman_cli_cloud
   # run_step "Installing krr" install_krr
   run_step "Processing talosconfig" process_talosconfig
   run_step "Generating kubeconfig" generate_kubeconfig

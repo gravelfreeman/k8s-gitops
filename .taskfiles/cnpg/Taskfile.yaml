@@ -1,0 +1,87 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+---
+version: "3"
+
+env:
+  BACKUP_NAME:
+    sh: printf '%s-cnpg-manual-%s\n' "{{.APP | default ""}}" "$(date -u +%Y%m%d%H%M%S)"
+
+tasks:
+
+  backup:
+    desc: Create an on-demand CloudNativePG backup [APP=required]
+    cmds:
+      - APP="{{.APP}}" envsubst < .taskfiles/cnpg/templates/backup.yaml | kubectl create -f -
+      - kubectl wait backup "$BACKUP_NAME" -n "{{.APP}}" --for=jsonpath='{.status.phase}'=completed --timeout=30m
+      - kubectl exec -n "{{.APP}}" "$(kubectl get cluster "{{.APP}}-cnpg" -n "{{.APP}}" -ojsonpath='{.status.currentPrimary}')" -- psql -Atc 'SELECT pg_switch_wal()'
+      - .taskfiles/cnpg/scripts/verify.sh "{{.APP}}" "$(kubectl get backup "$BACKUP_NAME" -n "{{.APP}}" -ojsonpath='{.status.backupId}')" --list
+    requires:
+      vars: [APP]
+    preconditions:
+      - kubectl get cluster "{{.APP}}-cnpg" -n "{{.APP}}"
+      - test -f .taskfiles/cnpg/templates/backup.yaml
+      - test -f .taskfiles/cnpg/scripts/verify.sh
+      - which barman-cloud-backup-show barman-cloud-wal-restore date envsubst jq kubectl mktemp perl task timeout
+
+  verify:
+    desc: Verify a CloudNativePG backup has recoverable critical WALs [APP=required BACKUP=required]
+    silent: true
+    cmd: .taskfiles/cnpg/scripts/verify.sh "{{.APP}}" "{{.BACKUP}}" || true
+    requires:
+      vars: [APP, BACKUP]
+    preconditions:
+      - test -f .taskfiles/cnpg/scripts/verify.sh
+      - which bash barman-cloud-backup-show barman-cloud-wal-restore jq mktemp perl task timeout
+
+  delete:
+    desc: Delete a CloudNativePG backup from the Barman catalog [APP=required BACKUP=required]
+    prompt: Delete CNPG backup {{.BACKUP}} for {{.APP}} from the Barman catalog?
+    silent: true
+    cmds:
+      - |-
+        stats="$(aws --endpoint-url "https://${S3_ENDPOINT}" s3api list-objects-v2 --bucket "$S3_BUCKET" --prefix "cnpg/{{.APP}}/base/{{.BACKUP}}/" \
+          | jq -r '(.Contents // []) | [length, (map(.Size) | add // 0), (map(.LastModified) | max // "")] | @tsv')"
+        barman-cloud-backup-delete --endpoint-url "https://${S3_ENDPOINT}" -b "{{.BACKUP}}" "s3://${S3_BUCKET}/cnpg" "{{.APP}}"
+        task cnpg:list APP="{{.APP}}" DELETED="{{.BACKUP}}" STATS="$stats"
+    requires:
+      vars: [APP, BACKUP]
+    preconditions:
+      - aws --endpoint-url "https://${S3_ENDPOINT}" s3 ls "s3://${S3_BUCKET}/cnpg/{{.APP}}/base/{{.BACKUP}}/" >/dev/null
+      - test -f .taskfiles/cnpg/scripts/list.sh
+      - which aws barman-cloud-backup-delete jq task
+
+  restore:
+    desc: Restore a CloudNativePG backup over the live cluster [APP=required BACKUP=required]
+    prompt: This deletes {{.APP}}-cnpg and restores backup {{.BACKUP}} in place. Continue?
+    cmds:
+      - flux suspend ks "{{.APP}}" -n flux-system
+      - flux suspend hr "{{.APP}}" -n "{{.APP}}"
+      - kubectl scale deploy --all -n "{{.APP}}" --replicas=0
+      - kubectl wait po -l app.kubernetes.io/name="{{.APP}}" -n "{{.APP}}" --for=delete --timeout=10m
+      - kubectl delete cluster "{{.APP}}-cnpg" -n "{{.APP}}" --wait
+      - kubectl delete pvc -l cnpg.io/cluster="{{.APP}}-cnpg" -n "{{.APP}}" --ignore-not-found --wait
+      - printf '%s\n' "$RESTORE_MANIFEST" | kubectl create -f -
+      - kubectl wait cluster "{{.APP}}-cnpg" -n "{{.APP}}" --for=condition=Ready --timeout=30m
+      - kubectl scale deploy --all -n "{{.APP}}" --replicas=1
+      - flux resume hr "{{.APP}}" -n "{{.APP}}"
+      - flux resume ks "{{.APP}}" -n flux-system
+    requires:
+      vars: [APP, BACKUP]
+    env:
+      RESTORE_MANIFEST:
+        sh: kubectl get cluster "{{.APP}}-cnpg" -n "{{.APP}}" -o json | jq --arg app "{{.APP}}" --arg backup "{{.BACKUP}}" -f .taskfiles/cnpg/scripts/restore.jq
+    preconditions:
+      - kubectl get cluster "{{.APP}}-cnpg" -n "{{.APP}}"
+      - kubectl get objectstore "{{.APP}}-barman-store" -n "{{.APP}}"
+      - aws --endpoint-url "https://${S3_ENDPOINT}" s3 ls "s3://${S3_BUCKET}/cnpg/{{.APP}}/base/{{.BACKUP}}/" >/dev/null
+      - test -f .taskfiles/cnpg/scripts/restore.jq
+      - which aws flux jq kubectl task
+
+  list:
+    desc: List CloudNativePG backups stored on Backblaze B2
+    silent: true
+    cmd: .taskfiles/cnpg/scripts/list.sh "{{.APP | default ""}}" "{{.DELETED | default ""}}" "{{.STATS | default ""}}" "{{.VERIFIED | default ""}}"
+    preconditions:
+      - op user get --me
+      - test -f .taskfiles/cnpg/scripts/list.sh
+      - which aws awk bash column jq op

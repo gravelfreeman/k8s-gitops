@@ -44,8 +44,6 @@ spec:
     parameters:
       max_connections: '100'
     shared_preload_libraries: ${CNPG_SHARED_PRELOAD_LIBRARIES:=[]}
-  monitoring:
-    enablePodMonitor: true
   plugins:
     - name: barman-cloud.cloudnative-pg.io
       isWALArchiver: true

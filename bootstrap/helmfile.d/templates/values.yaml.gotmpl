@@ -11,8 +11,4 @@
 {{- $query = printf "%s | .web.enabled = false | .web.httpRoute.enabled = false" $query -}}
 {{- end -}}
 {{- $values := exec "yq" (list $query (index $paths .Release.Name)) -}}
-{{- if eq .Release.Name "flux-instance" -}}
-{{ $values | replace "${GIT_REPOSITORY_URL}" (requiredEnv "GIT_REPOSITORY_URL") }}
-{{- else -}}
 {{ $values }}
-{{- end }}

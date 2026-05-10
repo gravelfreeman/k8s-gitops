@@ -70,6 +70,7 @@ patches:
 
 - `Cluster` named `${APP}-cnpg`
 - `ObjectStore` named `${APP}-barman-store`
+- `PodMonitor` named `${APP}-cnpg`
 - `ScheduledBackup` named `${APP}-cnpg`
 - `ExternalSecret` named `${APP}-b2-secret`
 

@@ -56,4 +56,4 @@ task bootstrap:apps
 
 ## Notes
 
-- `GIT_REPOSITORY_URL` and `OP_VAULT` are defined in the root `Taskfile.yaml`.
+- `OP_VAULT` is defined in the root `Taskfile.yaml`.

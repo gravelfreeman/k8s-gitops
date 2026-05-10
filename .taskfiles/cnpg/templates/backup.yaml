@@ -1,0 +1,13 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Backup
+metadata:
+  name: ${BACKUP_NAME}
+  namespace: ${APP}
+spec:
+  cluster:
+    name: ${APP}-cnpg
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io
+  target: prefer-standby
