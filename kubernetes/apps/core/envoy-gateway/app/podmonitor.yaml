@@ -1,0 +1,30 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: envoy-gateway
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: envoy-gateway
+      control-plane: envoy-gateway
+  podMetricsEndpoints:
+    - path: /metrics
+      port: metrics
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: envoy-proxy
+spec:
+  selector:
+    matchExpressions:
+      - key: gateway.envoyproxy.io/owning-gateway-namespace
+        operator: In
+        values: [envoy-gateway]
+      - key: gateway.envoyproxy.io/owning-gateway-name
+        operator: In
+        values: [envoy-external, envoy-internal]
+  podMetricsEndpoints:
+    - path: /stats/prometheus
+      portNumber: 19001

@@ -75,6 +75,12 @@ spec:
           scopes: openid profile email groups
           token_url: https://id.${DOMAIN_0}/api/oidc/token
           use_pkce: true
+      additionalDataSources:
+        - name: Loki
+          type: loki
+          uid: loki
+          access: proxy
+          url: http://loki.loki.svc.cluster.local:3100
       resources:
         requests: { cpu: 50m, memory: 128Mi }
         limits: { memory: 512Mi }

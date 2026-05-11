@@ -1,0 +1,11 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: alloy
+spec:
+  interval: 5m
+  provider: generic
+  ref:
+    tag: 1.8.1
+  url: oci://ghcr.io/home-operations/charts-mirror/alloy

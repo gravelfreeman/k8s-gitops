@@ -1,0 +1,22 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app alloy
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/common
+  dependsOn:
+    - name: loki
+  interval: 1h
+  path: kubernetes/apps/system/alloy/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: *app
+  timeout: 5m
+  wait: true

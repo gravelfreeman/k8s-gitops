@@ -86,6 +86,7 @@ spec:
     monitoring:
       enabled: true
       createPrometheusRules: true
+      metricsDisabled: false
     route:
       dashboard:
         host:

@@ -38,5 +38,7 @@ spec:
           labelSelector:
             matchLabels:
               app.kubernetes.io/name: *app
+    grafanaDashboard:
+      enabled: true
     serviceMonitor:
       enabled: true

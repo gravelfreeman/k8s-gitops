@@ -9,5 +9,7 @@ spec:
     kind: OCIRepository
     name: *app
   values:
+    grafanaDashboard:
+      enabled: true
     serviceMonitor:
       enabled: true

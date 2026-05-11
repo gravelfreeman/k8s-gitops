@@ -9,12 +9,8 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../../components/common/system
-    - ../../../../components/envoy-oidc
   interval: 1h
   path: kubernetes/apps/system/cilium/app
-  postBuild:
-    substitute:
-      APP: cilium
   prune: true
   sourceRef:
     kind: GitRepository

@@ -1,0 +1,78 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: loki
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: loki
+  values:
+    deploymentMode: SingleBinary
+    defaults:
+      automountServiceAccountToken: false
+    serviceAccount:
+      automountServiceAccountToken: false
+    rbac:
+      namespaced: true
+    loki:
+      auth_enabled: false
+      analytics:
+        reporting_enabled: false
+      commonConfig:
+        replication_factor: 1
+      compactor:
+        delete_request_store: filesystem
+        retention_enabled: true
+        working_directory: /var/loki/compactor/retention
+      ingester:
+        chunk_encoding: snappy
+      limits_config:
+        allow_structured_metadata: true
+        discover_log_levels: true
+        retention_period: 14d
+      pattern_ingester:
+        enabled: true
+      schemaConfig:
+        configs:
+          - from: "2024-04-01"
+            index:
+              period: 24h
+              prefix: loki_index_
+            object_store: filesystem
+            schema: v13
+            store: tsdb
+      storage:
+        type: filesystem
+    backend:
+      replicas: 0
+    chunksCache:
+      enabled: false
+    gateway:
+      enabled: false
+    lokiCanary:
+      enabled: false
+    memcached:
+      enabled: false
+    monitoring:
+      serviceMonitor:
+        enabled: true
+    read:
+      replicas: 0
+    resultsCache:
+      enabled: false
+    singleBinary:
+      persistence:
+        enabled: true
+        size: 20Gi
+        storageClass: ceph-block
+      replicas: 1
+      resources:
+        requests: { cpu: 100m, memory: 256Mi }
+        limits: { memory: 1500Mi }
+    test:
+      enabled: false
+    write:
+      replicas: 0
