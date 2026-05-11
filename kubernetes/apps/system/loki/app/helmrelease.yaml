@@ -72,6 +72,7 @@ spec:
       resources:
         requests: { cpu: 100m, memory: 256Mi }
         limits: { memory: 1500Mi }
+      sidecar: false
     test:
       enabled: false
     write:
