@@ -47,7 +47,49 @@ spec:
     nodeExporter:
       enabled: true
     grafana:
-      enabled: false
+      enabled: true
+      envFromSecrets:
+        - name: grafana-oauth-secret
+      grafana.ini:
+        server:
+          root_url: https://grafana.${DOMAIN_0}
+        auth:
+          disable_login_form: true
+        auth.basic:
+          enabled: false
+        auth.generic_oauth:
+          enabled: true
+          name: Pocket ID
+          allow_sign_up: true
+          allow_assign_grafana_admin: true
+          allowed_groups: admin
+          api_url: https://id.${DOMAIN_0}/api/oidc/userinfo
+          auth_url: https://id.${DOMAIN_0}/authorize
+          auto_login: true
+          client_id: eddd917b-ee07-4f5b-b086-6d3cbcd8c4ec
+          groups_attribute_path: groups
+          jwk_set_url: https://id.${DOMAIN_0}/.well-known/jwks.json
+          login_attribute_path: preferred_username
+          role_attribute_path: "contains(groups[*], 'admin') && 'GrafanaAdmin' || 'Viewer'"
+          role_attribute_strict: true
+          scopes: openid profile email groups
+          token_url: https://id.${DOMAIN_0}/api/oidc/token
+          use_pkce: true
+      resources:
+        requests: { cpu: 50m, memory: 128Mi }
+        limits: { memory: 512Mi }
+      route:
+        main:
+          enabled: true
+          hostnames: ["grafana.${DOMAIN_0}"]
+          parentRefs:
+            - name: envoy-internal
+              namespace: envoy-gateway
+              sectionName: https
+      sidecar:
+        datasources:
+          alertmanager:
+            enabled: false
     prometheusOperator:
       resources:
         requests: { cpu: 10m, memory: 100Mi }
@@ -56,7 +98,6 @@ spec:
         requests: { cpu: 10m, memory: 100Mi }
     prometheus:
       prometheusSpec:
-        externalUrl: https://prometheus.${DOMAIN_0}
         serviceDiscoveryRole: EndpointSlice
         version: v2.55.1
         image:
@@ -86,14 +127,6 @@ spec:
               storageClassName: ceph-block
               resources:
                 requests: { storage: 50Gi }
-      route:
-        main:
-          enabled: true
-          hostnames: ["prometheus.${DOMAIN_0}"]
-          parentRefs:
-            - name: envoy-internal
-              namespace: envoy-gateway
-              sectionName: https
     kube-state-metrics:
       fullnameOverride: kube-state-metrics
     prometheus-node-exporter:

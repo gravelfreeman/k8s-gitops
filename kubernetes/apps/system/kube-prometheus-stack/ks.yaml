@@ -9,7 +9,6 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../../components/common
-    - ../../../../components/envoy-oidc
   dependsOn:
     - name: envoy-gateway-config
     - name: external-secrets-store
@@ -18,9 +17,7 @@ spec:
   path: kubernetes/apps/system/kube-prometheus-stack/app
   postBuild:
     substitute:
-      APP: prometheus
       POD_SECURITY_ENFORCE: privileged
-      ENVOY_OIDC_HTTP_ROUTE: kube-prometheus-stack-prometheus
   prune: true
   sourceRef:
     kind: GitRepository
