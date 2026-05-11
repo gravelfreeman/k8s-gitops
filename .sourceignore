@@ -1,0 +1,4 @@
+# exclude all
+/*
+# include GitOps root
+!/kubernetes
