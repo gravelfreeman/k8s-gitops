@@ -23,7 +23,7 @@ postBuild:
 | `APP` *(required)* | none | App name and resource prefix. |
 | `VOLSYNC_ACCESSMODES` | `ReadWriteOnce` | PVC access mode. |
 | `VOLSYNC_CACHE_CAPACITY` | `1Gi` | Restic cache PVC size. |
-| `VOLSYNC_CAPACITY` | `5Gi` | Application data PVC size. |
+| `VOLSYNC_CAPACITY` | `10Gi` | Application data PVC size. |
 | `VOLSYNC_TRIGGER_SCHEDULE` | `0 5 * * *` | Backup schedule. |
 
 ### Permissions

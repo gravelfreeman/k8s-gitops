@@ -19,6 +19,6 @@ spec:
     name: ${APP}-data
   resources:
     requests:
-      storage: ${VOLSYNC_CAPACITY:=1Gi}
+      storage: ${VOLSYNC_CAPACITY:=10Gi}
   storageClassName: ceph-block
   volumeMode: Filesystem
