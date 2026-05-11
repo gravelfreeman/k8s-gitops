@@ -3,5 +3,5 @@ kind: Kustomization
 namespace: flux-system
 resources:
   - homepage/ks.yaml
-  # - immich/ks.yaml
+  - immich/ks.yaml
   # - splitpro/ks.yaml
