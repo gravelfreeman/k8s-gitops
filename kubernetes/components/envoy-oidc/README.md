@@ -44,7 +44,7 @@ postBuild:
 
 ## Split Routes
 
-This component creates the `SecurityPolicy` for you and targets only the `HTTPRoute` named `${APP}`. If an app also needs an API, webhook, callback, or health endpoint that must not go through browser OIDC, create a second route with a different name such as `${APP}-api`.
+This component creates the `SecurityPolicy` for you and targets only the `HTTPRoute` named `${APP}`, unless *overridden*. If an app also needs an **API**, **webhook**, **callback**, or **health** endpoint that must not go through browser OIDC, create a second route with a different name such as `${APP}-api`.
 
 Example app `ks.yaml`:
 
@@ -89,9 +89,10 @@ route:
 | Name | Default | Description |
 | ---- | ------- | ----------- |
 | `APP` *(required)* | none | Application name. |
-| `ENVOY_OIDC_DOMAIN` | `${DOMAIN_0}` | Root domain used by the protected app callback URL. Use `${DOMAIN_1}` or `${DOMAIN_2}` for apps on those domains. |
-| `ENVOY_OIDC_SUBDOMAIN` | `${APP}` | Subdomain used by the protected app callback URL. |
 | `ENVOY_OIDC_GROUP` | `admin` | Primary Pocket ID group allowed to access the app. |
+| `ENVOY_OIDC_HTTP_ROUTE` | `${APP}` | HTTPRoute name targeted by the SecurityPolicy. |
+| `ENVOY_OIDC_SUBDOMAIN` | `${APP}` | Subdomain used by the protected app callback URL. |
+| `ENVOY_OIDC_DOMAIN` | `${DOMAIN_0}` | Root domain used by the protected app callback URL. |
 
 ## Resources
 

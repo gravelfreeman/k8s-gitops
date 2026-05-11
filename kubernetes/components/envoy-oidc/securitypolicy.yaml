@@ -10,25 +10,25 @@ spec:
   targetRefs:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
-      name: ${APP}
+      name: ${ENVOY_OIDC_HTTP_ROUTE:=${APP}}
   oidc:
     provider:
-      issuer: "https://id.${DOMAIN_0}"
+      issuer: https://id.${DOMAIN_0}
     clientIDRef:
-      name: envoy-oidc-secret
+      name: ${APP}-oidc-secret
     clientSecret:
-      name: envoy-oidc-secret
+      name: ${APP}-oidc-secret
     forwardAccessToken: true
     cookieNames:
       idToken: pocketid-token
     scopes: [profile,email,groups]
-    redirectURL: "https://${ENVOY_OIDC_SUBDOMAIN:=${APP}}.${ENVOY_OIDC_DOMAIN:=${DOMAIN_0}}/oauth2/callback"
+    redirectURL: https://${ENVOY_OIDC_SUBDOMAIN:=${APP}}.${ENVOY_OIDC_DOMAIN:=${DOMAIN_0}}/oauth2/callback
   jwt:
     providers:
       - name: pocketid
-        issuer: "https://id.${DOMAIN_0}"
+        issuer: https://id.${DOMAIN_0}
         remoteJWKS:
-          uri: "https://id.${DOMAIN_0}/.well-known/jwks.json"
+          uri: https://id.${DOMAIN_0}/.well-known/jwks.json
         extractFrom:
           cookies: [pocketid-token]
   authorization:

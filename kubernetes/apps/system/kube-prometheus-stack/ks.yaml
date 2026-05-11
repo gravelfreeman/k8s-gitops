@@ -18,9 +18,9 @@ spec:
   path: kubernetes/apps/system/kube-prometheus-stack/app
   postBuild:
     substitute:
-      APP: kube-prometheus-stack-prometheus
+      APP: prometheus
       POD_SECURITY_ENFORCE: privileged
-      ENVOY_OIDC_SUBDOMAIN: prometheus
+      ENVOY_OIDC_HTTP_ROUTE: kube-prometheus-stack-prometheus
   prune: true
   sourceRef:
     kind: GitRepository
