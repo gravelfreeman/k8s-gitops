@@ -13,6 +13,8 @@ spec:
     crds:
       enabled: true
     cleanPrometheusOperatorObjectNames: true
+    nameOverride: kps
+    fullnameOverride: kps
     alertmanager:
       enabled: false
     kubeApiServer:
@@ -48,6 +50,7 @@ spec:
       enabled: true
     grafana:
       enabled: true
+      fullnameOverride: grafana
       envFromSecrets:
         - name: grafana-oauth-secret
       grafana.ini:
@@ -102,14 +105,17 @@ spec:
       persistence:
         enabled: true
         type: pvc
-        existingClaim: kube-prometheus-stack-data
+        existingClaim: grafana-data
     prometheusOperator:
+      fullnameOverride: prometheus-operator
       resources:
         requests: { cpu: 10m, memory: 100Mi }
     prometheusConfigReloader:
       resources:
         requests: { cpu: 10m, memory: 100Mi }
     prometheus:
+      serviceAccount:
+        name: prometheus
       prometheusSpec:
         serviceDiscoveryRole: EndpointSlice
         version: v2.55.1
@@ -136,6 +142,8 @@ spec:
           limits: { memory: 2000Mi }
         storageSpec:
           volumeClaimTemplate:
+            metadata:
+              name: data
             spec:
               storageClassName: ceph-block
               resources:

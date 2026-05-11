@@ -20,7 +20,7 @@ spec:
   postBuild:
     substitute:
       POD_SECURITY_ENFORCE: privileged
-      APP: kube-prometheus-stack
+      APP: grafana
       VOLSYNC_PUID: "472"
       VOLSYNC_PGID: "472"
       VOLSYNC_FS_GROUP: "472"

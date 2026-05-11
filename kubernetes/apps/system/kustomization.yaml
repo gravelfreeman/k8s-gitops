@@ -8,7 +8,7 @@ resources:
   - descheduler/ks.yaml
   - flux-system
   - k8tz/ks.yaml
-  - kube-prometheus-stack/ks.yaml
+  # - kube-prometheus-stack/ks.yaml
   - kubelet-csr-approver/ks.yaml
   - loki/ks.yaml
   - metrics-server/ks.yaml
