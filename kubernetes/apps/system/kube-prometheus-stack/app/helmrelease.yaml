@@ -96,6 +96,12 @@ spec:
         datasources:
           alertmanager:
             enabled: false
+      deploymentStrategy:
+        type: Recreate
+      persistence:
+        enabled: true
+        type: pvc
+        existingClaim: kube-prometheus-stack-data
     prometheusOperator:
       resources:
         requests: { cpu: 10m, memory: 100Mi }

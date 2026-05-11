@@ -9,15 +9,21 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../../components/common
+    - ../../../../components/volsync
   dependsOn:
     - name: envoy-gateway-config
     - name: external-secrets-store
     - name: rook-ceph-cluster
+    - name: volsync
   interval: 1h
   path: kubernetes/apps/system/kube-prometheus-stack/app
   postBuild:
     substitute:
       POD_SECURITY_ENFORCE: privileged
+      APP: kube-prometheus-stack
+      VOLSYNC_PUID: "472"
+      VOLSYNC_PGID: "472"
+      VOLSYNC_FS_GROUP: "472"
   prune: true
   sourceRef:
     kind: GitRepository
