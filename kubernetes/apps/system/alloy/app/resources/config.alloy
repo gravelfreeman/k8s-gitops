@@ -63,7 +63,7 @@ loki.source.kubernetes_events "cluster_events" {
 loki.process "cluster_events" {
   stage.labels {
     values = {
-      kubernetes_cluster_events = "job"
+      kubernetes_cluster_events = "job",
     }
   }
 
