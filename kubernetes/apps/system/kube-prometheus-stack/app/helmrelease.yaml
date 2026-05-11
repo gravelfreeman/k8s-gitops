@@ -60,7 +60,6 @@ spec:
         auth.generic_oauth:
           enabled: true
           name: Pocket ID
-          allow_sign_up: true
           allow_assign_grafana_admin: true
           allowed_groups: admin
           api_url: https://id.${DOMAIN_0}/api/oidc/userinfo
