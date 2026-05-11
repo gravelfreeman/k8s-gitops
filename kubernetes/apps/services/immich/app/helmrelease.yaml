@@ -19,11 +19,6 @@ spec:
         fsGroup: 568
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile: { type: RuntimeDefault }
-    defaultContainerOptions:
-      securityContext:
-        readOnlyRootFilesystem: true
-        allowPrivilegeEscalation: false
-        capabilities: { drop: ["ALL"] }
     controllers:
       server:
         annotations:
@@ -56,6 +51,10 @@ spec:
             resources:
               requests: { cpu: 100m, memory: 768Mi }
               limits: { memory: 2Gi }
+            securityContext: &securityContext
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
       machine-learning:
         annotations:
           reloader.stakater.com/auto: "true"
@@ -75,6 +74,7 @@ spec:
             resources:
               requests: { cpu: 50m, memory: 1Gi }
               limits: { memory: 4Gi }
+            securityContext: *securityContext
     persistence:
       data:
         type: persistentVolumeClaim
@@ -93,7 +93,7 @@ spec:
         size: 50Gi
         advancedMounts:
           machine-learning:
-            main:
+            app:
               - path: /cache
                 subPath: cache
       backups:
