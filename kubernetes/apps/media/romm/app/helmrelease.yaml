@@ -95,19 +95,19 @@ spec:
             subPath: resources
       library:
         type: nfs
-        server: ${NFS_SERVER_0}
+        server: 10.0.10.15
         path: ${DATASET_MEDIA}/library/games
         globalMounts:
           - path: /romm/library/games
       launchbox-metadata:
         type: nfs
-        server: ${NFS_SERVER_0}
+        server: 10.0.10.15
         path: ${DATASET_BACKUPS}/launchbox
         globalMounts:
           - path: /romm/launchbox
       launchbox-media:
         type: nfs
-        server: ${NFS_SERVER_0}
+        server: 10.0.10.15
         path: ${DATASET_BACKUPS}/launchbox
         globalMounts:
           - path: /romm/library/Images

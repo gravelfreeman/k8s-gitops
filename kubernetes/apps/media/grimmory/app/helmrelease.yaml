@@ -107,7 +107,7 @@ spec:
                 subPath: mariadb/data
       books:
         type: nfs
-        server: ${NFS_SERVER_0}
+        server: 10.0.10.15
         path: ${DATASET_MEDIA}/library/books
         advancedMounts:
           grimmory:
@@ -115,7 +115,7 @@ spec:
               - path: /books
       bookdrop:
         type: nfs
-        server: ${NFS_SERVER_0}
+        server: 10.0.10.15
         path: ${DATASET_MEDIA}/temp/bookdrop
         advancedMounts:
           grimmory:
