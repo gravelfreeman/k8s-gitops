@@ -31,9 +31,8 @@ spec:
             command: ["tini", "--", "/bin/bash", "-ec"]
             args: [. /scripts/init-cache.sh && bash /scripts/init-storage.sh && exec start.sh]
             env:
-              DB_DATABASE_NAME: app
-              DB_USERNAME: app
               DB_HOSTNAME: immich-cnpg-rw
+              DB_USERNAME: immich
               DB_PASSWORD:
                 valueFrom:
                   secretKeyRef:

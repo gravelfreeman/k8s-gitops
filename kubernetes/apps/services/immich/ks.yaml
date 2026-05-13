@@ -39,8 +39,6 @@ spec:
       CNPG_SHARED_PRELOAD_LIBRARIES: '[vchord.so]'
       DRAGONFLY_CLIENT_COMMON_NAME: immich-server
       VOLSYNC_CAPACITY: 20Gi
-      CNPG_USERNAME: app
-      CNPG_DATABASE: app
   prune: true
   sourceRef:
     kind: GitRepository
