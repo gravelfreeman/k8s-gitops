@@ -4,7 +4,7 @@ set -euo pipefail
 export REDIS_URL="$(node <<'NODE'
 const fs = require("fs");
 const certDir = "/certs/dragonfly";
-const readCert = (name) => fs.readFileSync(`${certDir}/${name}`, "utf8");
+const readCert = (name) => fs.readFileSync(certDir + "/" + name, "utf8");
 
 const options = {
   host: "immich-dragonfly.immich.svc.cluster.local",
@@ -17,6 +17,6 @@ const options = {
   },
 };
 
-process.stdout.write(`ioredis://${Buffer.from(JSON.stringify(options)).toString("base64")}`);
+process.stdout.write("ioredis://" + Buffer.from(JSON.stringify(options)).toString("base64"));
 NODE
 )"
