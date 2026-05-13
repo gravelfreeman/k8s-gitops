@@ -10,7 +10,7 @@ tasks:
   reconcile:
     desc: Reconcile Flux Kustomization with source [APP=optional]
     cmds:
-      - flux reconcile kustomization "{{.APP}}" -n flux-system --with-source --timeout=10s || true
+      - flux reconcile kustomization "{{.APP}}" -n flux-system --with-source --timeout=5s || true
       - task: watch
     preconditions:
       - which flux
