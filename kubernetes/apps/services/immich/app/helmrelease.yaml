@@ -110,8 +110,8 @@ spec:
         advancedMounts:
           server:
             app:
-              - path: /mnt/users/${USER_0}
-                subPath: ${USER_0}/.immich
+              - path: /mnt/users/${USER_1}
+                subPath: ${USER_1}/.immich
       dragonfly-client-tls:
         type: secret
         name: immich-dragonfly-client-tls
