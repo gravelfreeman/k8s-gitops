@@ -75,6 +75,16 @@ spec:
               limits: { memory: 4Gi }
             securityContext: *securityContext
     persistence:
+      cache:
+        type: persistentVolumeClaim
+        nameOverride: cache
+        storageClass: openebs-lvm
+        accessMode: ReadWriteOnce
+        size: 50Gi
+        advancedMounts:
+          machine-learning:
+            app:
+              - path: /cache
       data:
         type: persistentVolumeClaim
         existingClaim: immich-data
@@ -85,15 +95,6 @@ spec:
                 subPath: profile
               - path: /usr/src/app/upload/thumbs
                 subPath: thumbs
-      machine-learning-cache:
-        type: persistentVolumeClaim
-        storageClass: openebs-lvm
-        accessMode: ReadWriteOnce
-        size: 50Gi
-        advancedMounts:
-          machine-learning:
-            app:
-              - path: /cache
       users:
         type: custom
         volumeSpec:
