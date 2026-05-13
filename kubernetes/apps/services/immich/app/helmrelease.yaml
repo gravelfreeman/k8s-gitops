@@ -62,6 +62,7 @@ spec:
               repository: ghcr.io/immich-app/immich-machine-learning
               tag: v2.7.5@sha256:a2501141440f10516d329fdfba2c68082e19eb9ba6016c061ac80d23beadf7f3
             env:
+              GUNICORN_CMD_ARGS: --no-control-socket
               HF_XET_CACHE: /cache/huggingface-xet
               MPLCONFIGDIR: /cache/matplotlib-config
             probes:
