@@ -39,7 +39,6 @@ k8s-gitops
 ## Editing
 
 - Keep edits surgical and localized.
-- Before modifying an existing file, create a backup copy under `/tmp`.
 - No hacks, workarounds, or outdated methods; use clean modern patterns.
 - Use `.agents/skills/add-app/SKILL.md` for app-specific workflows.
 
