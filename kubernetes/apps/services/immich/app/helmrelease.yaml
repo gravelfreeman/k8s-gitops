@@ -99,7 +99,7 @@ spec:
             app:
               - path: /cache
                 subPath: cache
-      library:
+      users:
         type: custom
         volumeSpec:
           csi:
@@ -129,16 +129,15 @@ spec:
               - path: /scripts/storage-mapping.sh
                 subPath: storage-mapping.sh
                 readOnly: true
-      upload:
+      workdir:
         type: emptyDir
         advancedMounts:
           server:
             app:
               - path: /usr/src/app/upload
-      tmp:
-        type: emptyDir
-        globalMounts:
-          - path: /tmp
+                subPath: upload
+              - path: /tmp
+                subPath: tmp
     route:
       app:
         hostnames: ['immich.${DOMAIN_0}']
