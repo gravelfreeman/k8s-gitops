@@ -30,7 +30,10 @@ spec:
               tag: v2.7.5@sha256:c15bff75068effb03f4355997d03dc7e0fc58720c2b54ad6f7f10d1bc57efaa5
             command: ["tini", "--", "/bin/bash", "-ec"]
             args:
-              - export REDIS_URL="ioredis://$(node -e 'const fs=require(\"fs\"),d=\"/certs/dragonfly\",r=p=>fs.readFileSync(d+\"/\"+p,\"utf8\");process.stdout.write(Buffer.from(JSON.stringify({host:\"immich-dragonfly.immich.svc.cluster.local\",port:6379,db:0,tls:{ca:r(\"ca.crt\"),cert:r(\"tls.crt\"),key:r(\"tls.key\")}})).toString(\"base64\"));')"; exec start.sh
+              - |
+                bash /scripts/storage-mapping.sh
+                export REDIS_URL="ioredis://$(node -e 'const fs=require(\"fs\"),d=\"/certs/dragonfly\",r=p=>fs.readFileSync(d+\"/\"+p,\"utf8\");process.stdout.write(Buffer.from(JSON.stringify({host:\"immich-dragonfly.immich.svc.cluster.local\",port:6379,db:0,tls:{ca:r(\"ca.crt\"),cert:r(\"tls.crt\"),key:r(\"tls.key\")}})).toString(\"base64\"));')"
+                exec start.sh
             env:
               DB_DATABASE_NAME: app
               DB_USERNAME: app
@@ -96,38 +99,19 @@ spec:
             app:
               - path: /cache
                 subPath: cache
-      backups:
-        type: nfs
-        server: 10.0.10.15
-        path: ${DATASET_BACKUPS}/immich/backups
-        advancedMounts:
-          server:
-            app:
-              - path: /usr/src/app/upload/backups
       library:
-        type: nfs
-        server: 10.0.10.15
-        path: ${DATASET_BACKUPS}/immich/library
+        type: custom
+        volumeSpec:
+          csi:
+            driver: nfs.csi.k8s.io
+            volumeAttributes:
+              server: 10.0.10.15
+              share: /mnt/eden/users
         advancedMounts:
           server:
             app:
-              - path: /usr/src/app/upload/library
-      uploads:
-        type: nfs
-        server: 10.0.10.15
-        path: ${DATASET_BACKUPS}/immich/upload
-        advancedMounts:
-          server:
-            app:
-              - path: /usr/src/app/upload/upload
-      video:
-        type: nfs
-        server: 10.0.10.15
-        path: ${DATASET_BACKUPS}/immich/encoded-video
-        advancedMounts:
-          server:
-            app:
-              - path: /usr/src/app/upload/encoded-video
+              - path: /mnt/users/${USER_0}
+                subPath: ${USER_0}/.immich
       dragonfly-client-tls:
         type: secret
         name: immich-dragonfly-client-tls
@@ -136,6 +120,21 @@ spec:
             app:
               - path: /certs/dragonfly
                 readOnly: true
+      scripts:
+        type: configMap
+        name: scripts
+        advancedMounts:
+          server:
+            app:
+              - path: /scripts/storage-mapping.sh
+                subPath: storage-mapping.sh
+                readOnly: true
+      upload:
+        type: emptyDir
+        advancedMounts:
+          server:
+            app:
+              - path: /usr/src/app/upload
       tmp:
         type: emptyDir
         globalMounts:
