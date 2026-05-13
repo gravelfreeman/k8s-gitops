@@ -47,8 +47,8 @@ spec:
                     port: &serverPort 2283
               readiness: *serverProbe
             resources:
-              requests: { cpu: 100m, memory: 768Mi }
-              limits: { memory: 2Gi }
+              requests: { cpu: '1', memory: 6Gi }
+              limits: { cpu: '4', memory: 12Gi }
             securityContext: &securityContext
               readOnlyRootFilesystem: true
               allowPrivilegeEscalation: false
@@ -74,8 +74,8 @@ spec:
                     port: &machineLearningPort 3003
               readiness: *machineLearningProbe
             resources:
-              requests: { cpu: 50m, memory: 1Gi }
-              limits: { memory: 4Gi }
+              requests: { cpu: '1', memory: 6Gi }
+              limits: { cpu: '4', memory: 12Gi }
             securityContext: *securityContext
     persistence:
       cache:
