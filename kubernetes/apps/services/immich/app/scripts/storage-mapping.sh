@@ -3,7 +3,7 @@ set -euo pipefail
 
 mkdir -p /usr/src/app/upload/{encoded-video,library,upload}
 
-users="$(node <<'NODE'
+users="$(cd /usr/src/app/server && node <<'NODE'
 const { Client } = require("pg");
 
 const client = new Client({
