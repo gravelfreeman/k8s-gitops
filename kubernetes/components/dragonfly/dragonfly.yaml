@@ -28,6 +28,7 @@ spec:
     - --maxmemory=512Mi
     - --proactor_threads=1
     - --cluster_mode=emulated
+    - --default_lua_flags=allow-undeclared-keys
   topologySpreadConstraints:
     - maxSkew: 1
       topologyKey: kubernetes.io/hostname

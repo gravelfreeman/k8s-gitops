@@ -22,14 +22,6 @@ spec:
     - name: rook-ceph-cluster
     - name: volsync
   interval: 1h
-  patches:
-    - patch: |-
-        - op: add
-          path: /spec/args/-
-          value: --default_lua_flags=allow-undeclared-keys
-      target:
-        group: dragonflydb.io
-        kind: Dragonfly
   path: kubernetes/apps/services/immich/app
   postBuild:
     substitute:
