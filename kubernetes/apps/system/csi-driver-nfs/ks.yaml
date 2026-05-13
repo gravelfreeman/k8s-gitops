@@ -1,0 +1,22 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app csi-driver-nfs
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/common/system
+  dependsOn:
+    - name: snapshot-controller
+  interval: 1h
+  path: kubernetes/apps/system/csi-driver-nfs/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: kube-system
+  timeout: 5m
+  wait: true
