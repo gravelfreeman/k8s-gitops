@@ -29,11 +29,7 @@ spec:
               repository: ghcr.io/immich-app/immich-server
               tag: v2.7.5@sha256:c15bff75068effb03f4355997d03dc7e0fc58720c2b54ad6f7f10d1bc57efaa5
             command: ["tini", "--", "/bin/bash", "-ec"]
-            args:
-              - |
-                bash /scripts/storage-mapping.sh
-                export REDIS_URL="ioredis://$(node -e 'const fs=require(\"fs\"),d=\"/certs/dragonfly\",r=p=>fs.readFileSync(d+\"/\"+p,\"utf8\");process.stdout.write(Buffer.from(JSON.stringify({host:\"immich-dragonfly.immich.svc.cluster.local\",port:6379,db:0,tls:{ca:r(\"ca.crt\"),cert:r(\"tls.crt\"),key:r(\"tls.key\")}})).toString(\"base64\"));')"
-                exec start.sh
+            args: [bash /scripts/init-storage.sh && . /scripts/init-cache.sh && exec start.sh]
             env:
               DB_DATABASE_NAME: app
               DB_USERNAME: app
@@ -98,7 +94,6 @@ spec:
           machine-learning:
             app:
               - path: /cache
-                subPath: cache
       users:
         type: custom
         volumeSpec:
@@ -112,6 +107,22 @@ spec:
             app:
               - path: /mnt/users/${USER_1}
                 subPath: ${USER_1}/.immich
+      workdir:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
+        advancedMounts:
+          server:
+            app:
+              - path: /usr/src/app/upload
+      scripts:
+        type: configMap
+        name: scripts
+        advancedMounts:
+          server:
+            app:
+              - path: /scripts
+                readOnly: true
       dragonfly-client-tls:
         type: secret
         name: immich-dragonfly-client-tls
@@ -120,24 +131,6 @@ spec:
             app:
               - path: /certs/dragonfly
                 readOnly: true
-      scripts:
-        type: configMap
-        name: scripts
-        advancedMounts:
-          server:
-            app:
-              - path: /scripts/storage-mapping.sh
-                subPath: storage-mapping.sh
-                readOnly: true
-      workdir:
-        type: emptyDir
-        advancedMounts:
-          server:
-            app:
-              - path: /usr/src/app/upload
-                subPath: upload
-              - path: /tmp
-                subPath: tmp
     route:
       app:
         hostnames: ['immich.${DOMAIN_0}']

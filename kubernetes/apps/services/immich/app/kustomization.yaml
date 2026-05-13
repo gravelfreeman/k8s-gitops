@@ -5,6 +5,7 @@ resources:
 configMapGenerator:
   - name: scripts
     files:
-      - storage-mapping.sh=./scripts/storage-mapping.sh
+      - init-cache.sh=./scripts/init-cache.sh
+      - init-storage.sh=./scripts/init-storage.sh
 generatorOptions:
   disableNameSuffixHash: true
