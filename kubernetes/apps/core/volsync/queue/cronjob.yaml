@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: &name volsync-queue
 spec:
-  suspend: true
+  suspend: false
   schedule: "0 5 * * *"
   timeZone: America/Toronto
   concurrencyPolicy: Forbid
