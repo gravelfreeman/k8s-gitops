@@ -77,7 +77,7 @@ spec:
     persistence:
       cache:
         type: persistentVolumeClaim
-        nameOverride: cache
+        suffix: cache
         storageClass: openebs-lvm
         accessMode: ReadWriteOnce
         size: 50Gi
