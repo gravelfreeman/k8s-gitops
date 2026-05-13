@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-mkdir -p /usr/src/app/upload/{encoded-video,library,upload}
+mkdir -p /usr/src/app/upload/{backups,encoded-video,library,profile,thumbs,upload}
+for folder in backups encoded-video library profile thumbs upload; do
+  touch "/usr/src/app/upload/$${folder}/.immich"
+done
 
 users="$(cd /usr/src/app/server && node <<'NODE'
 const { Client } = require("pg");
