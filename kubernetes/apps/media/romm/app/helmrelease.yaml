@@ -15,26 +15,12 @@ spec:
       romm:
         annotations:
           reloader.stakater.com/auto: "true"
-        pod:
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 568
-            runAsGroup: 568
-            fsGroup: 568
-            fsGroupChangePolicy: OnRootMismatch
-            seccompProfile: { type: RuntimeDefault }
-          automountServiceAccountToken: false
         containers:
           app:
             image:
               repository: ghcr.io/rommapp/romm
               tag: 4.8.1@sha256:2b7a1714b287f69b081ad2a63bb8c2fa673666a17b2f21322b580b0cd51cb266
-            envFrom:
-              - secretRef:
-                  name: romm-app-secret
             env:
-              ROMM_BASE_PATH: /romm
-              ROMM_DB_DRIVER: postgresql
               DB_HOST: romm-cnpg-rw
               DB_PORT: 5432
               DB_USER: *app
@@ -44,21 +30,23 @@ spec:
                     name: romm-cnpg-app
                     key: password
               REDIS_HOST: romm-dragonfly
-              REDIS_PORT: 6379
               REDIS_PASSWORD:
                 valueFrom:
                   secretKeyRef:
-                    name: romm-app-secret
-                    key: DRAGONFLY_KEY
-              OIDC_ENABLED: true
-              OIDC_PROVIDER: pocket-id
-              OIDC_REDIRECT_URI: https://romm.${DOMAIN_1}/api/oauth/openid
-              OIDC_SERVER_APPLICATION_URL: https://id.${DOMAIN_0}
-              DISABLE_USERPASS_LOGIN: true
+                    name: romm-dragonfly-secret
+                    key: password
+              ROMM_DB_DRIVER: postgresql
               ENABLE_SCHEDULED_CONVERT_IMAGES_TO_WEBP: true
               ENABLE_SCHEDULED_RETROACHIEVEMENTS_PROGRESS_SYNC: true
               HASHEOUS_API_ENABLED: true
-              LAUNCHBOX_API_ENABLED: true
+              DISABLE_USERPASS_LOGIN: true
+              OIDC_ENABLED: true
+              OIDC_PROVIDER: pocket-id
+              OIDC_SERVER_APPLICATION_URL: https://id.${DOMAIN_0}
+              OIDC_REDIRECT_URI: https://romm.${DOMAIN_1}/api/oauth/openid
+            envFrom:
+              - secretRef:
+                  name: romm-app-secret
             probes:
               liveness: &probe
                 custom: true
@@ -73,16 +61,19 @@ spec:
             securityContext:
               readOnlyRootFilesystem: true
               allowPrivilegeEscalation: false
-              capabilities: { drop: ["ALL"] }
-
+              capabilities:
+                drop: ["ALL"]
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+          automountServiceAccountToken: false
     persistence:
-      config:
-        type: configMap
-        name: romm-config
-        globalMounts:
-          - path: /romm/config/config.yml
-            subPath: config.yml
-            readOnly: true
       data:
         type: persistentVolumeClaim
         existingClaim: romm-data
@@ -93,30 +84,25 @@ spec:
             subPath: assets
           - path: /romm/resources
             subPath: resources
-      library:
-        type: nfs
-        server: 10.0.10.15
-        path: ${DATASET_MEDIA}/library/games
+      media:
+        type: custom
+        volumeSpec:
+          csi:
+            driver: nfs.csi.k8s.io
+            volumeAttributes:
+              server: 10.0.10.15
+              share: /mnt/eden/media
         globalMounts:
           - path: /romm/library/games
-      launchbox-metadata:
-        type: nfs
-        server: 10.0.10.15
-        path: ${DATASET_BACKUPS}/launchbox
+            subPath: library/games
+      config:
+        type: configMap
+        name: romm-config
         globalMounts:
-          - path: /romm/launchbox
-      launchbox-media:
-        type: nfs
-        server: 10.0.10.15
-        path: ${DATASET_BACKUPS}/launchbox
-        globalMounts:
-          - path: /romm/library/Images
-            subPath: Images
-          - path: /romm/library/Manuals
-            subPath: Manuals
-          - path: /romm/library/Videos
-            subPath: Videos
-      tmp:
+          - path: /romm/config/config.yml
+            subPath: config.yml
+            readOnly: true
+      tmpfs:
         type: emptyDir
         globalMounts:
           - path: /tmp
