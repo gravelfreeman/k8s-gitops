@@ -23,18 +23,11 @@ spec:
             env:
               PUID: "568"
               PGID: "568"
-              MARIADB_USER: *app
               MARIADB_DATABASE: *app
-              MARIADB_PASSWORD: &mariadb-password
-                valueFrom:
-                  secretKeyRef:
-                    name: grimmory-mariadbcreds
-                    key: mariadb-password
-              MARIADB_ROOT_PASSWORD:
-                valueFrom:
-                  secretKeyRef:
-                    name: grimmory-mariadbcreds
-                    key: mariadb-root-password
+              MARIADB_USER: *app
+            envFrom:
+              - secretRef:
+                  name: grimmory-app-secret
         containers:
           grimmory:
             image:
@@ -47,7 +40,9 @@ spec:
               GROUP_ID: "568"
               DATABASE_URL: jdbc:mariadb://localhost:3306/grimmory
               DATABASE_USERNAME: *app
-              DATABASE_PASSWORD: *mariadb-password
+            envFrom:
+              - secretRef:
+                  name: grimmory-app-secret
             probes:
               liveness: &probe
                 custom: true
