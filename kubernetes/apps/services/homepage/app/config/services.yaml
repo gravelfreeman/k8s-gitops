@@ -261,19 +261,19 @@
           podSelector: 'app.kubernetes.io/instance=romm,app.kubernetes.io/name=romm,app.kubernetes.io/component=romm'
   - Immich:
       icon: 'sh-immich.svg'
-      href: 'https://photos.${DOMAIN_0}'
-      siteMonitor: 'http://immich.immich.svc.cluster.local:10323'
+      href: 'https://immich.${DOMAIN_0}'
+      siteMonitor: 'http://immich-server.immich.svc.cluster.local:2283'
       namespace: 'immich'
-      podSelector: 'app.kubernetes.io/instance=immich,app.kubernetes.io/name=immich,app.kubernetes.io/component=server'
+      podSelector: 'app.kubernetes.io/instance=immich,app.kubernetes.io/name=immich,app.kubernetes.io/controller=server'
       widgets:
         - type: 'immich'
-          url: 'http://immich.immich.svc.cluster.local:10323'
+          url: 'http://immich-server.immich.svc.cluster.local:2283'
           key: '{{HOMEPAGE_FILE_IMMICH_KEY}}'
           version: 2
         - type: 'kubernetes'
           namespace: 'immich'
           app: 'immich'
-          podSelector: 'app.kubernetes.io/instance=immich,app.kubernetes.io/name=immich,app.kubernetes.io/component=server'
+          podSelector: 'app.kubernetes.io/instance=immich,app.kubernetes.io/name=immich,app.kubernetes.io/controller=server'
   - Audiobookshelf:
       icon: 'sh-audiobookshelf.svg'
       href: 'https://audiobook.${DOMAIN_1}'
