@@ -19,14 +19,6 @@ spec:
     - name: rook-ceph-cluster
     - name: volsync
   interval: 1h
-  patches:
-    - patch: |-
-        - op: add
-          path: /spec/postgresql/parameters/cron.database_name
-          value: app
-      target:
-        group: postgresql.cnpg.io
-        kind: Cluster
   path: kubernetes/apps/services/splitpro/app
   postBuild:
     substitute:
