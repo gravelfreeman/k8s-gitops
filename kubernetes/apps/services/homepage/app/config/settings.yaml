@@ -29,6 +29,11 @@ layout:
     icon: 'mdi-server-network-#1E293B'
     style: 'row'
     columns: '4'
+  Management:
+    tab: 'Home'
+    icon: 'mdi-gauge-#1E293B'
+    style: 'row'
+    columns: '3'
   Network:
     tab: 'Home'
     icon: 'mdi-wan-#1E293B'
