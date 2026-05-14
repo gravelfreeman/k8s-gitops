@@ -24,9 +24,6 @@ spec:
         - op: add
           path: /spec/postgresql/parameters/cron.database_name
           value: app
-        - op: add
-          path: /spec/postgresql/parameters/cron.timezone
-          value: America/Toronto
       target:
         group: postgresql.cnpg.io
         kind: Cluster
@@ -39,7 +36,6 @@ spec:
       CNPG_POSTGRES_GID: "999"
       CNPG_POSTGRES_UID: "999"
       CNPG_SHARED_PRELOAD_LIBRARIES: '[pg_cron]'
-      VOLSYNC_CAPACITY: 10Gi
   prune: true
   sourceRef:
     kind: GitRepository

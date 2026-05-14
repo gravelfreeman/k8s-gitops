@@ -46,13 +46,13 @@ spec:
                     key: fqdn-uri
               DEFAULT_HOMEPAGE: /balances
               ENABLE_SENDING_INVITES: true
-              FROM_EMAIL: split@${DOMAIN_0}
+              FROM_EMAIL: id@${DOMAIN_0}
               EMAIL_SERVER_PORT: 587
-              NEXTAUTH_URL: https://split.${DOMAIN_0}
-              OIDC_WELL_KNOWN_URL: https://id.${DOMAIN_0}/.well-known/openid-configuration
+              OIDC_NAME: freeman-id
               OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: true
-              OIDC_NAME: PocketID
-              OIDC_CLIENT_ID: splitpro
+              OIDC_CLIENT_ID: 31e06d58-9a6b-4e3f-8e10-819f5ab1e2fd
+              OIDC_WELL_KNOWN_URL: https://id.${DOMAIN_0}/.well-known/openid-configuration
+              NEXTAUTH_URL: https://split.${DOMAIN_0}
             probes:
               liveness: &probe
                 custom: true
