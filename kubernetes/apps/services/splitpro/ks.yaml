@@ -28,6 +28,7 @@ spec:
       CNPG_POSTGRES_GID: "999"
       CNPG_POSTGRES_UID: "999"
       CNPG_SHARED_PRELOAD_LIBRARIES: '[pg_cron]'
+      ENVOY_GATEWAY_ACCESS: external
   prune: true
   sourceRef:
     kind: GitRepository
