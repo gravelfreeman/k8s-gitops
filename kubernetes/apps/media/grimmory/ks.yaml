@@ -9,7 +9,6 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../../components/common
-    - ../../../../components/envoy-oidc
     - ../../../../components/volsync
   dependsOn:
     - name: envoy-gateway-config
@@ -22,7 +21,6 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      VOLSYNC_CAPACITY: 10Gi
   prune: true
   sourceRef:
     kind: GitRepository

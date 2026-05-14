@@ -1,13 +1,4 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-patches:
-  - patch: |-
-      - op: replace
-        path: /spec/oidc/redirectURL
-        value: https://grimmory.${DOMAIN_1}/oauth2/callback
-    target:
-      group: gateway.envoyproxy.io
-      kind: SecurityPolicy
-      version: v1alpha1
 resources:
   - helmrelease.yaml

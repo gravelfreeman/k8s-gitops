@@ -29,59 +29,45 @@ spec:
         annotations:
           reloader.stakater.com/auto: "true"
         initContainers:
-          mariadb:
+          db-wait:
             image:
-              repository: docker.io/library/mariadb
-              tag: 12.2.2-noble
+              repository: wait4x/wait4x
+              tag: 3.6.0@sha256:bec7ac18547781d854562c3729d3195c3880116d6758c49fdf4573ad58805f14
+            args: ["mysql", "grimmory:$(DB_PASSWORD)@tcp(localhost:3306)/grimmory"]
             env:
-              PUID: "568"
-              PGID: "568"
-              MARIADB_USER: *app
-              MARIADB_DATABASE: test
-              MARIADB_PASSWORD:
+              DB_PASSWORD: &mariadb-password
                 valueFrom:
                   secretKeyRef:
                     name: grimmory-mariadbcreds
                     key: mariadb-password
+          mariadb:
+            image:
+              repository: docker.io/library/mariadb
+              tag: 12.2.2-noble@sha256:e0236fc6386e7eacd9359e59d0a078bd7aa0d18280d36d13061121bedeaee903
+            env:
+              PUID: "568"
+              PGID: "568"
+              MARIADB_USER: *app
+              MARIADB_DATABASE: *app
+              MARIADB_PASSWORD: *mariadb-password
               MARIADB_ROOT_PASSWORD:
                 valueFrom:
                   secretKeyRef:
                     name: grimmory-mariadbcreds
                     key: mariadb-root-password
-            probes:
-              liveness:
-                custom: true
-                spec:
-                  exec:
-                    command: ["bash", "-c", "mariadb-admin ping --socket=/run/mysqld/mysqld.sock --user=root --password=$${MARIADB_ROOT_PASSWORD}"]
-          db-wait:
-            image:
-              repository: wait4x/wait4x
-              tag: 3.6.0
-            args: ["mysql", "grimmory:$(DB_PASSWORD)@tcp(localhost:3306)/test"]
-            env:
-              DB_PASSWORD:
-                valueFrom:
-                  secretKeyRef:
-                    name: grimmory-mariadbcreds
-                    key: mariadb-password
         containers:
           grimmory:
             image:
               repository: ghcr.io/grimmory-tools/grimmory
-              tag: v2.3.0
+              tag: v3.0.3@sha256:a903a2b44c308bd1738b6f7cdb5a2e5a2a1ae23a092f30eb68581e2be1af50cd
             command: ["java"]
             args: ["-jar", "/app/app.jar"]
             env:
               USER_ID: "568"
               GROUP_ID: "568"
-              DATABASE_URL: jdbc:mariadb://localhost:3306/test
+              DATABASE_URL: jdbc:mariadb://localhost:3306/grimmory
               DATABASE_USERNAME: *app
-              DATABASE_PASSWORD:
-                valueFrom:
-                  secretKeyRef:
-                    name: grimmory-mariadbcreds
-                    key: mariadb-password
+              DATABASE_PASSWORD: *mariadb-password
             probes:
               liveness: &probe
                 custom: true
@@ -91,8 +77,8 @@ spec:
                     port: &httpPort 6060
               readiness: *probe
             resources:
-              requests: { cpu: 50m, memory: 1Gi }
-              limits: { memory: 2Gi }
+              requests: { cpu: 50m, memory: 2Gi }
+              limits: { memory: 6Gi }
     persistence:
       data:
         type: persistentVolumeClaim
@@ -105,22 +91,21 @@ spec:
             mariadb:
               - path: /var/lib/mysql
                 subPath: mariadb/data
-      books:
-        type: nfs
-        server: 10.0.10.15
-        path: ${DATASET_MEDIA}/library/books
+      media:
+        type: custom
+        volumeSpec:
+          csi:
+            driver: nfs.csi.k8s.io
+            volumeAttributes:
+              server: 10.0.10.15
+              share: /mnt/eden/media
         advancedMounts:
           grimmory:
             grimmory:
               - path: /books
-      bookdrop:
-        type: nfs
-        server: 10.0.10.15
-        path: ${DATASET_MEDIA}/temp/bookdrop
-        advancedMounts:
-          grimmory:
-            grimmory:
+                subPath: library/books
               - path: /bookdrop
+                subPath: temp/bookdrop
       mysqld:
         type: emptyDir
         medium: Memory
@@ -131,14 +116,8 @@ spec:
               - path: /run/mysqld
       tmpfs:
         type: emptyDir
-        advancedMounts:
-          grimmory:
-            grimmory:
-              - path: /tmp
-                subPath: app
-            mariadb:
-              - path: /tmp
-                subPath: mysql
+        globalMounts:
+          - path: /tmp
     route:
       app:
         forceRename: *app
