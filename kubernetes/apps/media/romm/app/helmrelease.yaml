@@ -42,6 +42,7 @@ spec:
               DISABLE_USERPASS_LOGIN: true
               OIDC_ENABLED: true
               OIDC_PROVIDER: pocket-id
+              OIDC_CLIENT_ID: f9c92072-e9cb-4fc6-a2de-458d4eaa2533
               OIDC_SERVER_APPLICATION_URL: https://id.${DOMAIN_0}
               OIDC_REDIRECT_URI: https://romm.${DOMAIN_1}/api/oauth/openid
             envFrom:
