@@ -307,6 +307,11 @@
       href: 'https://grimmory.${DOMAIN_1}'
       siteMonitor: 'http://grimmory.grimmory.svc.cluster.local:6060'
       podSelector: 'app.kubernetes.io/instance=grimmory,app.kubernetes.io/name=grimmory,app.kubernetes.io/controller=grimmory'
+      widgets:
+        - type: 'kubernetes'
+          namespace: 'grimmory'
+          app: 'grimmory'
+          podSelector: 'app.kubernetes.io/instance=grimmory,app.kubernetes.io/name=grimmory,app.kubernetes.io/controller=grimmory'
   - Stash:
       icon: 'sh-stash.svg'
       href: 'https://stash.${DOMAIN_0}'
