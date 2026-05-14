@@ -11,4 +11,5 @@ spec:
     name: *app
   values:
     feature:
+      enableFSGroupPolicy: false
       enableInlineVolume: true
