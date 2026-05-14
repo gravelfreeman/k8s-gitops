@@ -15,36 +15,6 @@ spec:
       grimmory:
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          mariadb-reset-sql:
-            image:
-              repository: docker.io/library/mariadb
-              tag: 12.2.2-noble@sha256:e0236fc6386e7eacd9359e59d0a078bd7aa0d18280d36d13061121bedeaee903
-            command: ["sh", "-ec"]
-            args:
-              - |
-                test -n "$MARIADB_PASSWORD"
-                test -n "$MARIADB_ROOT_PASSWORD"
-                APP_PW="$(printf '%s' "$MARIADB_PASSWORD" | sed "s/'/''/g")"
-                ROOT_PW="$(printf '%s' "$MARIADB_ROOT_PASSWORD" | sed "s/'/''/g")"
-                cat >/tmp/reset.sql <<EOF
-                CREATE USER IF NOT EXISTS 'grimmory'@'127.0.0.1' IDENTIFIED BY '$APP_PW';
-                CREATE USER IF NOT EXISTS 'grimmory'@'localhost' IDENTIFIED BY '$APP_PW';
-                CREATE USER IF NOT EXISTS 'grimmory'@'%' IDENTIFIED BY '$APP_PW';
-                ALTER USER 'grimmory'@'127.0.0.1' IDENTIFIED BY '$APP_PW';
-                ALTER USER 'grimmory'@'localhost' IDENTIFIED BY '$APP_PW';
-                ALTER USER 'grimmory'@'%' IDENTIFIED BY '$APP_PW';
-                GRANT ALL PRIVILEGES ON grimmory.* TO 'grimmory'@'127.0.0.1';
-                GRANT ALL PRIVILEGES ON grimmory.* TO 'grimmory'@'localhost';
-                GRANT ALL PRIVILEGES ON grimmory.* TO 'grimmory'@'%';
-                CREATE USER IF NOT EXISTS 'root'@'localhost' IDENTIFIED BY '$ROOT_PW';
-                ALTER USER 'root'@'localhost' IDENTIFIED BY '$ROOT_PW';
-                GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
-                FLUSH PRIVILEGES;
-                EOF
-            envFrom:
-              - secretRef:
-                  name: grimmory-app-secret
         containers:
           grimmory:
             image:
