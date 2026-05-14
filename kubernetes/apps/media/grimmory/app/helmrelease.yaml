@@ -25,6 +25,7 @@ spec:
             env:
               DATABASE_URL: jdbc:mariadb://localhost:3306/grimmory
               DATABASE_USERNAME: *app
+              APP_CORS_ALLOWED_ORIGINS: https://grimmory.${DOMAIN_1}
               JDK_JAVA_OPTIONS: --enable-native-access=ALL-UNNAMED
             envFrom:
               - secretRef:
