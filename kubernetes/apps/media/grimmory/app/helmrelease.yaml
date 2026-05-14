@@ -15,19 +15,6 @@ spec:
       grimmory:
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          mariadb:
-            image:
-              repository: docker.io/library/mariadb
-              tag: 12.2.2-noble@sha256:e0236fc6386e7eacd9359e59d0a078bd7aa0d18280d36d13061121bedeaee903
-            env:
-              PUID: "568"
-              PGID: "568"
-              MARIADB_DATABASE: *app
-              MARIADB_USER: *app
-            envFrom:
-              - secretRef:
-                  name: grimmory-app-secret
         containers:
           grimmory:
             image:
@@ -36,8 +23,6 @@ spec:
             command: ["java"]
             args: ["-jar", "/app/app.jar"]
             env:
-              USER_ID: "568"
-              GROUP_ID: "568"
               DATABASE_URL: jdbc:mariadb://localhost:3306/grimmory
               DATABASE_USERNAME: *app
             envFrom:
@@ -54,6 +39,16 @@ spec:
             resources:
               requests: { cpu: 50m, memory: 2Gi }
               limits: { memory: 6Gi }
+          mariadb:
+            image:
+              repository: docker.io/library/mariadb
+              tag: 12.2.2-noble@sha256:e0236fc6386e7eacd9359e59d0a078bd7aa0d18280d36d13061121bedeaee903
+            env:
+              MARIADB_DATABASE: *app
+              MARIADB_USER: *app
+            envFrom:
+              - secretRef:
+                  name: grimmory-app-secret
         defaultContainerOptions:
           securityContext:
             readOnlyRootFilesystem: true
