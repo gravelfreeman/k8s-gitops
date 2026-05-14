@@ -49,14 +49,17 @@ spec:
                     name: splitpro-cnpg-app
                     key: fqdn-uri
               DEFAULT_HOMEPAGE: /balances
+              DISABLE_EMAIL_SIGNUP: true
               ENABLE_SENDING_INVITES: true
               FROM_EMAIL: id@${DOMAIN_0}
               EMAIL_SERVER_PORT: 587
+              EMAIL_SERVER_HOST: ${SMTP_HOST_0}
+              EMAIL_SERVER_USER: ${SMTP_USERNAME_0}
+              NEXTAUTH_URL: https://split.${DOMAIN_0}
               OIDC_NAME: Freeman ID
-              OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: true
               OIDC_CLIENT_ID: 31e06d58-9a6b-4e3f-8e10-819f5ab1e2fd
               OIDC_WELL_KNOWN_URL: https://id.${DOMAIN_0}/.well-known/openid-configuration
-              NEXTAUTH_URL: https://split.${DOMAIN_0}
+              OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: true
             probes:
               liveness: &probe
                 custom: true
