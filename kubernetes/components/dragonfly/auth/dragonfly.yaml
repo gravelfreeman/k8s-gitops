@@ -6,5 +6,5 @@ metadata:
 spec:
   authentication:
     passwordFromSecret:
-      name: ${DRAGONFLY_AUTH_SECRET_NAME:=${APP}-app-secret}
-      key: ${DRAGONFLY_AUTH_SECRET_KEY:=DRAGONFLY_KEY}
+      name: ${APP}-dragonfly-secret
+      key: password

@@ -27,15 +27,14 @@ components:
 | Name | Default | Description |
 | ---- | ------- | ----------- |
 | `DRAGONFLY_CLIENT_COMMON_NAME`| `${APP}` | Client certificate common name. |
-| `DRAGONFLY_AUTH_SECRET_KEY` | `DRAGONFLY_KEY` | Password key in the auth secret. |
 | `DRAGONFLY_CA_SECRET_NAME` | `${APP}-dragonfly-ca` | CA secret name. |
 | `DRAGONFLY_TLS_SECRET_NAME` | `${APP}-dragonfly-tls` | Server TLS secret name. |
 | `DRAGONFLY_CLIENT_TLS_SECRET_NAME` | `${APP}-dragonfly-client-tls` | Client certificate secret name. |
-| `DRAGONFLY_AUTH_SECRET_NAME` | `${APP}-app-secret` | Secret containing the Dragonfly password. |
 
 ## Resources
 
 - `Dragonfly` named `${APP}-dragonfly`
+- `ExternalSecret` and `Password` generator named `${APP}-dragonfly-secret` (with **auth**)
 
 ## Notes
 
