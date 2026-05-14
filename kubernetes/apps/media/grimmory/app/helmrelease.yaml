@@ -23,8 +23,8 @@ spec:
             command: ["sh", "-ec"]
             args:
               - |
-                test -n "${MARIADB_PASSWORD:-}"
-                test -n "${MARIADB_ROOT_PASSWORD:-}"
+                test -n "$MARIADB_PASSWORD"
+                test -n "$MARIADB_ROOT_PASSWORD"
                 APP_PW="$(printf '%s' "$MARIADB_PASSWORD" | sed "s/'/''/g")"
                 ROOT_PW="$(printf '%s' "$MARIADB_ROOT_PASSWORD" | sed "s/'/''/g")"
                 cat >/tmp/reset.sql <<EOF
