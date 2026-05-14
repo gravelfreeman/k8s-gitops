@@ -42,6 +42,8 @@ spec:
     storageClass: openebs-lvm
   postgresql:
     parameters:
+      cron.database_name: ${APP}
+      cron.timezone: America/Toronto
       max_connections: '100'
     shared_preload_libraries: ${CNPG_SHARED_PRELOAD_LIBRARIES:=[]}
   plugins:
