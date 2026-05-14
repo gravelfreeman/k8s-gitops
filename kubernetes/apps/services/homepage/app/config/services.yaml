@@ -1,7 +1,7 @@
 ---
   # TAB 1 - ROW 1
 - Servers:
-  - Scale-01:
+  - Scale-1:
       icon: 'sh-truenas-scale.svg'
       href: 'https://10.0.10.15'
       siteMonitor: 'http://10.0.10.15'
@@ -11,7 +11,7 @@
           key: '{{HOMEPAGE_FILE_SCALE_01_KEY}}'
           enablePools: 'true'
           nasType: 'scale'
-  - Scale-02:
+  - Scale-2:
       icon: 'sh-truenas-scale.svg'
       href: 'http://10.1.10.15'
       siteMonitor: 'http://10.1.10.15'
@@ -21,16 +21,6 @@
           key: '{{HOMEPAGE_FILE_SCALE_02_KEY}}'
           enablePools: 'true'
           nasType: 'scale'
-  - PVE-01:
-      icon: 'sh-proxmox.svg'
-      href: 'https://10.0.10.10:8006/#v1:0:=node%2Fpve-01:4'
-      siteMonitor: 'https://10.0.10.10:8006'
-      widgets:
-        - type: 'proxmox'
-          url: 'https://10.0.10.10:8006'
-          username: '{{HOMEPAGE_VAR_PVE_01_USERNAME}}'
-          password: '{{HOMEPAGE_FILE_PVE_01_PASSWORD}}'
-          fields: ["vms", "resources.cpu", "resources.mem"]
   - Plex:
       icon: 'sh-plex.svg'
       href: 'https://plex.${DOMAIN_1}'
@@ -56,6 +46,44 @@
           key: '{{HOMEPAGE_FILE_HAOS_KEY}}'
           fields: ["people_home", "lights_on", "switches_on"]
   # TAB 1 - ROW 2
+- Management:
+  - Flux:
+      icon: 'https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/flux-operator.svg'
+      href: 'https://flux.${DOMAIN_0}'
+      siteMonitor: 'http://flux-operator.flux-system.svc.cluster.local:9080'
+      namespace: 'flux-system'
+      podSelector: 'app.kubernetes.io/instance=flux-operator,app.kubernetes.io/name=flux-operator'
+      widgets:
+        - type: 'kubernetes'
+          namespace: 'flux-system'
+          app: 'flux-operator'
+          podSelector: 'app.kubernetes.io/instance=flux-operator,app.kubernetes.io/name=flux-operator'
+
+  - Grafana:
+      icon: 'sh-grafana.svg'
+      href: 'https://grafana.${DOMAIN_0}'
+      siteMonitor: 'http://grafana.kube-prometheus-stack.svc.cluster.local'
+      namespace: 'kube-prometheus-stack'
+      podSelector: 'app.kubernetes.io/instance=kube-prometheus-stack,app.kubernetes.io/name=grafana'
+      widgets:
+        - type: 'kubernetes'
+          namespace: 'kube-prometheus-stack'
+          app: 'grafana'
+          podSelector: 'app.kubernetes.io/instance=kube-prometheus-stack,app.kubernetes.io/name=grafana'
+
+  - Pocket ID:
+      icon: 'sh-pocket-id-dark.svg'
+      href: 'https://id.${DOMAIN_0}'
+      siteMonitor: 'http://pocket-id.pocket-id.svc.cluster.local:1411'
+      namespace: 'pocket-id'
+      podSelector: 'app.kubernetes.io/instance=pocket-id,app.kubernetes.io/name=pocket-id,app.kubernetes.io/controller=pocket-id'
+      widgets:
+        - type: 'kubernetes'
+          namespace: 'pocket-id'
+          app: 'pocket-id'
+          podSelector: 'app.kubernetes.io/instance=pocket-id,app.kubernetes.io/name=pocket-id,app.kubernetes.io/controller=pocket-id'
+
+  # TAB 1 - ROW 3
 - Network:
   -  UDM-SE:
       icon: '/images/icons/udm-se.png'
@@ -274,14 +302,11 @@
           namespace: 'immich'
           app: 'immich'
           podSelector: 'app.kubernetes.io/instance=immich,app.kubernetes.io/name=immich,app.kubernetes.io/controller=server'
-  - Audiobookshelf:
-      icon: 'sh-audiobookshelf.svg'
-      href: 'https://audiobook.${DOMAIN_1}'
-      siteMonitor: 'http://audiobookshelf.audiobookshelf.svc.cluster.local:10223'
-      # widgets:
-      #   - type: 'audiobookshelf'
-      #     url: 'http://audiobookshelf.audiobookshelf.svc.cluster.local:10223'
-      #     key: '{{HOMEPAGE_FILE_AUDIOBOOKSHELF_KEY}}'
+  - Grimmory:
+      icon: 'sh-grimmory.svg'
+      href: 'https://grimmory.${DOMAIN_1}'
+      siteMonitor: 'http://grimmory.grimmory.svc.cluster.local:6060'
+      podSelector: 'app.kubernetes.io/instance=grimmory,app.kubernetes.io/name=grimmory,app.kubernetes.io/controller=grimmory'
   - Stash:
       icon: 'sh-stash.svg'
       href: 'https://stash.${DOMAIN_0}'

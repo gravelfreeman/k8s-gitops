@@ -40,7 +40,6 @@ spec:
               HOMEPAGE_FILE_MEALIE_KEY: /secrets/MEALIE_KEY
               HOMEPAGE_FILE_PLEX_KEY: /secrets/PLEX_KEY
               HOMEPAGE_FILE_PROWLARR_KEY: /secrets/PROWLARR_KEY
-              HOMEPAGE_FILE_PVE_01_PASSWORD: /secrets/PVE_01_PASSWORD
               HOMEPAGE_FILE_QB_PASSWORD: /secrets/QB_PASSWORD
               HOMEPAGE_FILE_RADARR_KEY: /secrets/RADARR_KEY
               HOMEPAGE_FILE_SABNZBD_ALT_KEY: /secrets/SABNZBD_ALT_KEY
