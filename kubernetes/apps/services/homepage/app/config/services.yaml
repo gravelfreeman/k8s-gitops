@@ -158,14 +158,14 @@
   - Flatnotes:
       icon: 'sh-flatnotes.svg'
       href: 'https://docs.${DOMAIN_0}'
-      siteMonitor: 'http://flatnotes-app-template.flatnotes.svc.cluster.local:8080'
+      siteMonitor: 'http://flatnotes.flatnotes.svc.cluster.local:8080'
       namespace: 'flatnotes'
-      podSelector: 'app.kubernetes.io/instance=flatnotes,app.kubernetes.io/name=app-template,pod.name=main'
+      podSelector: 'app.kubernetes.io/instance=flatnotes,app.kubernetes.io/name=flatnotes'
       widgets:
         - type: 'kubernetes'
           namespace: 'flatnotes'
-          app: 'app-template'
-          podSelector: 'app.kubernetes.io/instance=flatnotes,app.kubernetes.io/name=app-template,pod.name=main'
+          app: 'flatnotes'
+          podSelector: 'app.kubernetes.io/instance=flatnotes,app.kubernetes.io/name=flatnotes'
   - Vikunja:
       icon: 'sh-vikunja.svg'
       href: 'https://todo.${DOMAIN_0}'
