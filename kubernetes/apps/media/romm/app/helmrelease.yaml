@@ -24,18 +24,11 @@ spec:
               DB_HOST: romm-cnpg-rw
               DB_PORT: 5432
               DB_USER: *app
-              DB_PASSWD:
-                valueFrom:
-                  secretKeyRef:
-                    name: romm-cnpg-app
-                    key: password
+              DB_PASSWD_FILE: /secrets/cnpg/password
               REDIS_HOST: romm-dragonfly
-              REDIS_PASSWORD:
-                valueFrom:
-                  secretKeyRef:
-                    name: romm-dragonfly-secret
-                    key: password
+              REDIS_PASSWORD_FILE: /secrets/dragonfly/password
               ROMM_DB_DRIVER: postgresql
+              ROMM_AUTH_SECRET_KEY_FILE: /secrets/ROMM_AUTH_SECRET_KEY
               ENABLE_SCHEDULED_CONVERT_IMAGES_TO_WEBP: true
               ENABLE_SCHEDULED_RETROACHIEVEMENTS_PROGRESS_SYNC: true
               HASHEOUS_API_ENABLED: true
@@ -43,11 +36,10 @@ spec:
               OIDC_ENABLED: true
               OIDC_PROVIDER: pocket-id
               OIDC_CLIENT_ID: f9c92072-e9cb-4fc6-a2de-458d4eaa2533
+              OIDC_CLIENT_SECRET_FILE: /secrets/OIDC_CLIENT_SECRET
               OIDC_SERVER_APPLICATION_URL: https://id.${DOMAIN_0}
               OIDC_REDIRECT_URI: https://romm.${DOMAIN_1}/api/oauth/openid
-            envFrom:
-              - secretRef:
-                  name: romm-app-secret
+              RETROACHIEVEMENTS_API_KEY_FILE: /secrets/RETROACHIEVEMENTS_API_KEY
             probes:
               liveness: &probe
                 custom: true
@@ -103,6 +95,26 @@ spec:
           - path: /romm/config/config.yml
             subPath: config.yml
             readOnly: true
+      secrets:
+        type: custom
+        globalMounts:
+          - path: /secrets
+            readOnly: true
+        volumeSpec:
+          projected:
+            sources:
+              - secret:
+                  name: romm-cnpg-app
+                  items:
+                    - key: password
+                      path: cnpg/password
+              - secret:
+                  name: romm-dragonfly-secret
+                  items:
+                    - key: password
+                      path: dragonfly/password
+              - secret:
+                  name: romm-app-secret
       tmpfs:
         type: emptyDir
         globalMounts:
