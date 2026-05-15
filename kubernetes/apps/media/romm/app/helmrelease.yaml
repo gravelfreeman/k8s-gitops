@@ -100,13 +100,13 @@ spec:
           romm:
             app:
               - path: /romm/launchbox
-                subPath: backups/launchbox
+                subPath: launchbox
               - path: /romm/library/Images
-                subPath: backups/launchbox/Images
+                subPath: launchbox/Images
               - path: /romm/library/Manuals
-                subPath: backups/launchbox/Manuals
+                subPath: launchbox/Manuals
               - path: /romm/library/Videos
-                subPath: backups/launchbox/Videos
+                subPath: launchbox/Videos
       config:
         type: configMap
         name: romm-config
