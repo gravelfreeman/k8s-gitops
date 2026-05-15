@@ -58,6 +58,7 @@ spec:
               allowPrivilegeEscalation: false
               capabilities:
                 drop: ["ALL"]
+                add: ["DAC_OVERRIDE"] # remove when romm complies with non-root
         pod:
           securityContext:
             runAsNonRoot: true

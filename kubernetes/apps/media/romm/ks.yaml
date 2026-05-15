@@ -26,6 +26,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      POD_SECURITY_ENFORCE: baseline # remove when romm complies with non-root
       VOLSYNC_CAPACITY: 100Gi
   prune: true
   sourceRef:
