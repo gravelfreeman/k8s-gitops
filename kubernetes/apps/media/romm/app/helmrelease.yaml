@@ -95,18 +95,9 @@ spec:
             driver: nfs.csi.k8s.io
             volumeAttributes:
               server: 10.0.10.15
-              share: /mnt/eden/backups
-        advancedMounts:
-          romm:
-            app:
-              - path: /romm/launchbox
-                subPath: launchbox
-              - path: /romm/library/Images
-                subPath: launchbox/Images
-              - path: /romm/library/Manuals
-                subPath: launchbox/Manuals
-              - path: /romm/library/Videos
-                subPath: launchbox/Videos
+              share: /mnt/eden/backups/launchbox
+        globalMounts:
+          - path: /romm/library
       config:
         type: configMap
         name: romm-config

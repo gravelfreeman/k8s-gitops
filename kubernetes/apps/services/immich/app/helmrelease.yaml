@@ -111,6 +111,8 @@ spec:
             app:
               - path: /mnt/users/${USER_1}
                 subPath: ${USER_1}/.immich
+              - path: /mnt/users/${USER_2}
+                subPath: ${USER_2}/.immich
       workdir:
         type: emptyDir
         globalMounts:
