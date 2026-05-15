@@ -133,14 +133,15 @@ spec:
                       path: dragonfly/password
               - secret:
                   name: romm-app-secret
-      nginx:
+      workdir:
         type: emptyDir
         globalMounts:
+          - path: /etc/gunicorn
+            subPath: gunicorn
           - path: /etc/nginx/conf.d
-      tmpfs:
-        type: emptyDir
-        globalMounts:
+            subPath: nginx
           - path: /tmp
+            subPath: tmp
     route:
       app:
         hostnames: ['romm.${DOMAIN_1}']
