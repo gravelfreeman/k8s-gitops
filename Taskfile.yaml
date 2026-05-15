@@ -13,6 +13,7 @@ env:
   OP_VAULT: Kubernetes
   AWS_ACCESS_KEY_ID: { sh: 'op read "op://{{.OP_VAULT}}/backblaze/AWS_ACCESS_KEY_ID"' }
   AWS_SECRET_ACCESS_KEY: { sh: 'op read "op://{{.OP_VAULT}}/backblaze/AWS_SECRET_ACCESS_KEY"' }
+  RESTIC_PASSWORD: { sh: 'op read "op://{{.OP_VAULT}}/backblaze/RESTIC_PASSWORD"' }
   S3_BUCKET: { sh: 'op read "op://{{.OP_VAULT}}/backblaze/S3_BUCKET"' }
   S3_ENDPOINT: { sh: 'op read "op://{{.OP_VAULT}}/backblaze/S3_ENDPOINT"' }
 
@@ -22,3 +23,4 @@ includes:
   flux: .taskfiles/flux/Taskfile.yaml
   kubernetes: .taskfiles/kubernetes/Taskfile.yaml
   talos: .taskfiles/talos/Taskfile.yaml
+  volsync: .taskfiles/volsync/Taskfile.yaml

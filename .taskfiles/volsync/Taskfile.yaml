@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+---
+version: "3"
+
+tasks:
+
+  list:
+    desc: List VolSync restic snapshots on Backblaze B2 [APP=required]
+    cmd: restic -r "s3:https://${S3_ENDPOINT}/${S3_BUCKET}/volsync/{{.APP}}" --password-command 'op read "op://{{.OP_VAULT}}/backblaze/RESTIC_PASSWORD"' snapshots
+    requires:
+      vars: [APP]
+    preconditions:
+      - op user get --me
+      - which op restic
+
+  move:
+    desc: Copy VolSync restic snapshots on Backblaze B2 [SOURCE=required TARGET=required]
+    prompt: Copy VolSync restic snapshots from {{.SOURCE}} to {{.TARGET}}?
+    cmds:
+      - restic -r "s3:https://${S3_ENDPOINT}/${S3_BUCKET}{{.TARGET}}" --password-command 'op read "op://{{.OP_VAULT}}/backblaze/RESTIC_PASSWORD"' init --from-repo "s3:https://${S3_ENDPOINT}/${S3_BUCKET}{{.SOURCE}}" --from-password-command 'op read "op://{{.OP_VAULT}}/backblaze/RESTIC_PASSWORD"' --copy-chunker-params || true
+      - restic -r "s3:https://${S3_ENDPOINT}/${S3_BUCKET}{{.TARGET}}" --password-command 'op read "op://{{.OP_VAULT}}/backblaze/RESTIC_PASSWORD"' copy --from-repo "s3:https://${S3_ENDPOINT}/${S3_BUCKET}{{.SOURCE}}" --from-password-command 'op read "op://{{.OP_VAULT}}/backblaze/RESTIC_PASSWORD"'
+    requires:
+      vars: [SOURCE, TARGET]
+    preconditions:
+      - op user get --me
+      - which op restic
