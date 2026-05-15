@@ -63,10 +63,11 @@ filesystem:
 scan:
   priority:
     metadata:
-      - 'hasheous'
       - 'launchbox'
-    artwork:
       - 'hasheous'
+      - 'hltb'
+      - 'ra'
+    artwork:
       - 'launchbox'
   media:
     - 'box2d'
