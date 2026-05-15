@@ -26,7 +26,7 @@ spec:
               AUTOBRR__OIDC_REDIRECT_URL: https://autobrr.${DOMAIN_1}/api/auth/oidc/callback
               AUTOBRR__OIDC_CLIENT_ID: 5b23a619-d404-437f-b8f5-40bf4d3a684d
               AUTOBRR__OIDC_CLIENT_SECRET_FILE: /secrets/OIDC_CLIENT_SECRET
-              AUTOBRR__OIDC_DISABLE_BUILT_IN_LOGIN: false
+              AUTOBRR__OIDC_DISABLE_BUILT_IN_LOGIN: true
             probes:
               liveness:
                 custom: true
