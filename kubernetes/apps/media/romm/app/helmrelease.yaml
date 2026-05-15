@@ -99,8 +99,6 @@ spec:
         advancedMounts:
           romm:
             app:
-              - path: /romm/library/games
-                subPath: media/library/games
               - path: /romm/launchbox
                 subPath: backups/launchbox
               - path: /romm/library/Images
