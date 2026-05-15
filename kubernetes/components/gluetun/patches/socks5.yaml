@@ -1,0 +1,33 @@
+---
+- op: add
+  path: /spec/values/controllers/${APP}/containers/socks5
+  value:
+    enabled: ${GLUETUN_PROXIES_ENABLED:=true}
+    image:
+      repository: ghcr.io/ariadata/go-socks5-proxy
+      tag: main-4c0d6b6@sha256:5f7399545e7aba33908314413a4b45e28cdcd2a7826b520d317b4724c004d228
+    probes:
+      liveness:
+        custom: true
+        spec:
+          tcpSocket:
+            port: 1080
+      readiness:
+        custom: true
+        spec:
+          tcpSocket:
+            port: 1080
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        memory: 64Mi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: [ALL]
+      readOnlyRootFilesystem: true
+      runAsGroup: 568
+      runAsNonRoot: true
+      runAsUser: 568

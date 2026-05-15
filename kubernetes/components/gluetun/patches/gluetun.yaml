@@ -1,0 +1,84 @@
+---
+- op: add
+  path: /spec/values/gluetun
+  value:
+    proxiesEnabled: ${GLUETUN_PROXIES_ENABLED:=true}
+- op: add
+  path: /spec/values/controllers/${APP}/containers/gluetun
+  value:
+    image:
+      repository: ghcr.io/qdm12/gluetun
+      tag: v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
+    env:
+      VPN_TYPE: wireguard
+      VPN_PORT_FORWARDING: "${GLUETUN_VPN_PORT_FORWARDING:=on}"
+      VPN_SERVICE_PROVIDER_SECRETFILE: /run/secrets/gluetun/vpn_service_provider
+      WIREGUARD_PRIVATE_KEY_SECRETFILE: /run/secrets/gluetun/wireguard_private_key
+      FIREWALL_INPUT_PORTS: '{{- if .Values.gluetun.proxiesEnabled -}}8000,8888,8388,1080,{{ .Values.service.app.ports.http.port }}{{- else -}}8000,{{ .Values.service.app.ports.http.port }}{{- end -}}'
+      FIREWALL_OUTBOUND_SUBNETS: 10.0.0.0/16
+      HTTPPROXY: '{{ ternary "on" "off" .Values.gluetun.proxiesEnabled }}'
+      HTTPPROXY_LOG: '{{ ternary "on" "off" .Values.gluetun.proxiesEnabled }}'
+      SHADOWSOCKS: '{{ ternary "on" "off" .Values.gluetun.proxiesEnabled }}'
+      SHADOWSOCKS_LOG: '{{ ternary "on" "off" .Values.gluetun.proxiesEnabled }}'
+      DNS_UPSTREAM_RESOLVER_TYPE: DoH
+      PUBLICIP_ENABLED: false
+      VERSION_INFORMATION: off
+    probes:
+      liveness:
+        custom: true
+        spec:
+          exec:
+            command:
+              - /gluetun-entrypoint
+              - healthcheck
+      readiness:
+        custom: true
+        spec:
+          exec:
+            command:
+              - /gluetun-entrypoint
+              - healthcheck
+    resources:
+      requests:
+        cpu: 25m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        add: [NET_ADMIN,NET_RAW]
+        drop: [ALL]
+      readOnlyRootFilesystem: false
+      runAsGroup: 568
+      runAsNonRoot: false
+      runAsUser: 0
+- op: add
+  path: /spec/values/persistence/gluetun-auth
+  value:
+    type: secret
+    name: ${APP}-gluetun-secret
+    advancedMounts:
+      ${APP}:
+        gluetun:
+          - path: /gluetun/auth/config.toml
+            subPath: config.toml
+            readOnly: true
+          - path: /run/secrets/gluetun/vpn_service_provider
+            subPath: vpn_service_provider
+            readOnly: true
+          - path: /run/secrets/gluetun/wireguard_private_key
+            subPath: wireguard_private_key
+            readOnly: true
+- op: add
+  path: /spec/values/persistence/gluetun-tun
+  value:
+    type: custom
+    volumeSpec:
+      hostPath:
+        path: /dev/net/tun
+        type: CharDevice
+    advancedMounts:
+      ${APP}:
+        gluetun:
+          - path: /dev/net/tun

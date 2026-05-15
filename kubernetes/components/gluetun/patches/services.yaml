@@ -1,0 +1,59 @@
+---
+- op: add
+  path: /spec/values/service/gluetun
+  value:
+    controller: ${APP}
+    ports:
+      http:
+        port: 8000
+- op: add
+  path: /spec/values/service/proxy
+  value:
+    enabled: ${GLUETUN_PROXIES_ENABLED:=true}
+    type: LoadBalancer
+    annotations:
+      lbipam.cilium.io/ips: ${GLUETUN_LOAD_BALANCER_IP}
+      lbipam.cilium.io/sharing-key: ${APP}-gluetun
+    labels:
+      io.cilium/l2-announcer: "true"
+      io.cilium/l2-network: services
+    controller: ${APP}
+    ports:
+      http:
+        port: 8888
+        targetPort: 8888
+        protocol: TCP
+- op: add
+  path: /spec/values/service/socks
+  value:
+    enabled: ${GLUETUN_PROXIES_ENABLED:=true}
+    type: LoadBalancer
+    annotations:
+      lbipam.cilium.io/ips: ${GLUETUN_LOAD_BALANCER_IP}
+      lbipam.cilium.io/sharing-key: ${APP}-gluetun
+    labels:
+      io.cilium/l2-announcer: "true"
+      io.cilium/l2-network: services
+    controller: ${APP}
+    ports:
+      socks:
+        port: 8388
+        targetPort: 8388
+        protocol: TCP
+- op: add
+  path: /spec/values/service/socks5
+  value:
+    enabled: ${GLUETUN_PROXIES_ENABLED:=true}
+    type: LoadBalancer
+    annotations:
+      lbipam.cilium.io/ips: ${GLUETUN_LOAD_BALANCER_IP}
+      lbipam.cilium.io/sharing-key: ${APP}-gluetun
+    labels:
+      io.cilium/l2-announcer: "true"
+      io.cilium/l2-network: services
+    controller: ${APP}
+    ports:
+      socks5:
+        port: 1080
+        targetPort: 1080
+        protocol: TCP
