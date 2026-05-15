@@ -73,12 +73,14 @@ spec:
         type: persistentVolumeClaim
         existingClaim: romm-data
         globalMounts:
-          - path: /romm/config
-            subPath: config
           - path: /romm/assets
             subPath: assets
+          - path: /romm/config
+            subPath: config
           - path: /romm/resources
             subPath: resources
+          - path: /romm/sync
+            subPath: sync
       media:
         type: custom
         volumeSpec:
