@@ -50,7 +50,7 @@ spec:
               readiness: *probe
             resources:
               requests: { cpu: 25m, memory: 512Mi }
-              limits: { memory: 2Gi }
+              limits: { cpu: '18', memory: 64Gi }
             securityContext:
               readOnlyRootFilesystem: true
               allowPrivilegeEscalation: false
@@ -88,6 +88,27 @@ spec:
         globalMounts:
           - path: /romm/library/games
             subPath: library/games
+      launchbox:
+        type: custom
+        volumeSpec:
+          csi:
+            driver: nfs.csi.k8s.io
+            volumeAttributes:
+              server: 10.0.10.15
+              share: /mnt/eden/backups
+        advancedMounts:
+          romm:
+            app:
+              - path: /romm/library/games
+                subPath: media/library/games
+              - path: /romm/launchbox
+                subPath: backups/launchbox
+              - path: /romm/library/Images
+                subPath: backups/launchbox/Images
+              - path: /romm/library/Manuals
+                subPath: backups/launchbox/Manuals
+              - path: /romm/library/Videos
+                subPath: backups/launchbox/Videos
       config:
         type: configMap
         name: romm-config
