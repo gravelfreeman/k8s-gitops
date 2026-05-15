@@ -136,8 +136,6 @@ spec:
       workdir:
         type: emptyDir
         globalMounts:
-          - path: /etc/gunicorn
-            subPath: gunicorn
           - path: /etc/nginx/conf.d
             subPath: nginx
           - path: /tmp
