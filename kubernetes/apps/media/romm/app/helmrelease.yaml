@@ -85,10 +85,12 @@ spec:
             volumeAttributes:
               server: 10.0.10.15
               share: /mnt/eden/media
-        globalMounts:
-          - path: /romm/library/games
-            subPath: library/games
-      launchbox:
+        advancedMounts:
+          romm:
+            app:
+              - path: /romm/library/games
+                subPath: library/games
+      metadata:
         type: custom
         volumeSpec:
           csi:
@@ -96,8 +98,15 @@ spec:
             volumeAttributes:
               server: 10.0.10.15
               share: /mnt/eden/backups/launchbox
-        globalMounts:
-          - path: /romm/library
+        advancedMounts:
+          romm:
+            app:
+              - path: /romm/library/Images
+                subPath: Images
+              - path: /romm/library/Manuals
+                subPath: Manuals
+              - path: /romm/library/Videos
+                subPath: Videos
       config:
         type: configMap
         name: romm-config
