@@ -64,20 +64,9 @@ scan:
   priority:
     metadata:
       - 'launchbox'
-      - 'hasheous'
-      - 'hltb'
-      - 'ra'
+      # - 'hasheous'
+      # - 'hltb'
+      # - 'ra'
     artwork:
       - 'launchbox'
-  media:
-    - 'box2d'
-    - 'box3d'
-    - 'physical'
-    - 'screenshot'
-    - 'title_screen'
-    - 'fanart'
-    - 'bezel'
-    - 'manual'
-    - 'video'
-    - 'box2d_back'
-    - 'marquee'
+  media: []

@@ -19,7 +19,7 @@ spec:
           app:
             image:
               repository: ghcr.io/rommapp/romm
-              tag: 4.8.1@sha256:2b7a1714b287f69b081ad2a63bb8c2fa673666a17b2f21322b580b0cd51cb266
+              tag: 4.9.0-alpha.2@sha256:1a6972b2b32c42352202d863bbc85197f3b71f2ce52564a459a5c0c3f59a0726
             env:
               DB_HOST: romm-cnpg-rw
               DB_PORT: 5432
@@ -103,12 +103,7 @@ spec:
         advancedMounts:
           romm:
             app:
-              - path: /romm/library/Images
-                subPath: Images
-              - path: /romm/library/Manuals
-                subPath: Manuals
-              - path: /romm/library/Videos
-                subPath: Videos
+              - path: /romm/launchbox
       config:
         type: configMap
         name: romm-config
