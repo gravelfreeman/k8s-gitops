@@ -15,15 +15,6 @@ spec:
       splitpro:
         annotations:
           reloader.stakater.com/auto: "true"
-        pod:
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 568
-            runAsGroup: 568
-            fsGroup: 568
-            fsGroupChangePolicy: OnRootMismatch
-            seccompProfile: { type: RuntimeDefault }
-          automountServiceAccountToken: false
         initContainers:
           db-wait:
             image: { repository: postgres, tag: "18.3-alpine3.23@sha256:52098013b4b64a746626437d38afc03cabff6cdeb4d3d92e2342aa95f0ce56ea" }
@@ -71,6 +62,15 @@ spec:
               requests: { cpu: 25m, memory: 256Mi }
               limits: { memory: 512Mi }
             securityContext: *securityContext
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile: { type: RuntimeDefault }
+          automountServiceAccountToken: false
     persistence:
       data:
         type: persistentVolumeClaim
