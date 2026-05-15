@@ -1,0 +1,89 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app autobrr
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    controllers:
+      autobrr:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/autobrr/autobrr
+              tag: v1.76.0@sha256:f0f4d73fcd77700b1c98233562cd94a78b9bf685a7594a0aac4f8a9436b5044d
+            env:
+              AUTOBRR__OIDC_ENABLED: true
+              AUTOBRR__OIDC_ISSUER: https://id.${DOMAIN_0}
+              AUTOBRR__OIDC_REDIRECT_URL: https://autobrr.${DOMAIN_1}/api/auth/oidc/callback
+              AUTOBRR__OIDC_CLIENT_ID: 5b23a619-d404-437f-b8f5-40bf4d3a684d
+              AUTOBRR__OIDC_CLIENT_SECRET_FILE: /secrets/OIDC_CLIENT_SECRET
+              AUTOBRR__OIDC_DISABLE_BUILT_IN_LOGIN: false
+            probes:
+              liveness:
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/healthz/liveness
+                    port: &httpPort 7474
+              readiness:
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/healthz/readiness
+                    port: *httpPort
+            resources:
+              requests: { cpu: 25m, memory: 128Mi }
+              limits: { memory: 256Mi }
+            securityContext:
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+          automountServiceAccountToken: false
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        existingClaim: autobrr-data
+        globalMounts:
+          - path: /config
+      secrets:
+        type: secret
+        name: autobrr-app-secret
+        globalMounts:
+          - path: /secrets
+            readOnly: true
+      tmpfs:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
+    route:
+      app:
+        hostnames: ['autobrr.${DOMAIN_1}']
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy-gateway
+            sectionName: https
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *httpPort
