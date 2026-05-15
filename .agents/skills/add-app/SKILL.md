@@ -117,26 +117,17 @@ spec:
       <app-name>:
         annotations:
           reloader.stakater.com/auto: "true"
-        pod:
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 568
-            runAsGroup: 568
-            fsGroup: 568
-            fsGroupChangePolicy: OnRootMismatch
-            seccompProfile: { type: RuntimeDefault }
-          automountServiceAccountToken: false
         containers:
           app:
             image:
               repository: <image-repository>
-              tag: <image-tag>@sha256:<digest>
+              tag: <vX.X.X>@sha256:<digest>
             probes:
               liveness: &probe
                 custom: true
                 spec:
                   httpGet:
-                    path: /healthz
+                    path: /health
                     port: &httpPort <port>
               readiness: *probe
             resources:
@@ -144,7 +135,18 @@ spec:
             securityContext:
               readOnlyRootFilesystem: true
               allowPrivilegeEscalation: false
-              capabilities: { drop: ["ALL"] }
+              capabilities:
+                drop: ["ALL"]
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+          automountServiceAccountToken: false
     persistence:
       data:
         type: persistentVolumeClaim
@@ -165,9 +167,19 @@ spec:
 - Use one backed-up PVC named `data`; mount multiple persistent paths with `subPath` or `advancedMounts`.
 - Use *NFS* for shared media/library data.
 
-If there's more than one container, set shared pod-level defaults instead:
+If there's more than one container, set shared pod/container-level defaults instead:
 
 ```yaml
+spec:
+  values:
+    controllers:
+      <app-name>:
+        defaultContainerOptions:
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -175,12 +187,9 @@ If there's more than one container, set shared pod-level defaults instead:
         runAsGroup: 568
         fsGroup: 568
         fsGroupChangePolicy: OnRootMismatch
-        seccompProfile: { type: RuntimeDefault }
-    defaultContainerOptions:
-      securityContext:
-        readOnlyRootFilesystem: true
-        allowPrivilegeEscalation: false
-        capabilities: { drop: ["ALL"] }
+        seccompProfile:
+          type: RuntimeDefault
+      automountServiceAccountToken: false
 ```
 
 ---
