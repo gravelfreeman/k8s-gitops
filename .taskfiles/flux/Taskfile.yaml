@@ -2,23 +2,22 @@
 ---
 version: "3"
 
-vars:
-  APP: '{{.APP | default "cluster-apps"}}'
-
 tasks:
 
   reconcile:
     desc: Reconcile Flux Kustomization with source [APP=optional]
     cmds:
-      - flux reconcile kustomization "{{.APP}}" -n flux-system --with-source --timeout=5s || true
+      - flux reconcile kustomization "{{.APP | default "cluster-apps"}}" -n flux-system --with-source --timeout=5s || true
       - task: watch
+        vars:
+          APP: '{{.APP | default ""}}'
     preconditions:
       - which flux
 
   watch:
     desc: Watch Flux status [APP=optional]
     silent: true
-    cmd: bash .taskfiles/flux/scripts/watch.sh "{{.APP}}"
+    cmd: bash .taskfiles/flux/scripts/watch.sh "{{.APP | default ""}}"
     preconditions:
       - test -f .taskfiles/flux/scripts/watch.sh
       - which awk bash flux kubectl sed sleep stty tput
