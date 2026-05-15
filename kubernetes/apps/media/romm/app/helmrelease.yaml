@@ -32,6 +32,7 @@ spec:
               ENABLE_SCHEDULED_CONVERT_IMAGES_TO_WEBP: true
               ENABLE_SCHEDULED_RETROACHIEVEMENTS_PROGRESS_SYNC: true
               HASHEOUS_API_ENABLED: true
+              LAUNCHBOX_API_ENABLED: true
               DISABLE_USERPASS_LOGIN: true
               OIDC_ENABLED: true
               OIDC_PROVIDER: pocket-id
