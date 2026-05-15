@@ -56,9 +56,8 @@ spec:
             securityContext:
               readOnlyRootFilesystem: false
               allowPrivilegeEscalation: false
-              capabilities:
-                drop: ["ALL"]
-                add: ["DAC_OVERRIDE"] # remove when romm complies with non-root
+              # capabilities:
+              #   drop: ["ALL"]
         pod:
           securityContext:
             runAsNonRoot: true
