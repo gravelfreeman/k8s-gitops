@@ -24,3 +24,18 @@ tasks:
     preconditions:
       - op user get --me
       - which op restic
+
+  restore:
+    desc: Restore VolSync restic snapshots locally [SOURCE=required]
+    prompt: Restore VolSync restic snapshot {{.RESTIC_SNAPSHOT}} from {{.SOURCE}} to {{.RESTORE_TARGET}}?
+    cmds:
+      - mkdir -p "{{.RESTORE_TARGET}}"
+      - restic -r "s3:https://${S3_ENDPOINT}/${S3_BUCKET}{{.SOURCE}}" restore "{{.RESTIC_SNAPSHOT}}" --target "{{.RESTORE_TARGET}}"
+    requires:
+      vars: [SOURCE]
+    vars:
+      RESTIC_SNAPSHOT: "{{.SNAPSHOT | default \"latest\"}}"
+      RESTORE_TARGET: "{{.TARGET | default \"/workspaces/k8s-gitops/restore/volsync\"}}"
+    preconditions:
+      - op user get --me
+      - which mkdir op restic
