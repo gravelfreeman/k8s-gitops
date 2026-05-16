@@ -1,0 +1,150 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app ${VPN}-bravo
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    controllers:
+      bravo:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          gluetun:
+            image:
+              repository: ghcr.io/qdm12/gluetun
+              tag: v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
+            args:
+              - |
+                sysctl -w net.ipv4.ip_forward=1
+                iptables -P FORWARD DROP
+                iptables -A FORWARD -i vpn -o tun0 -j ACCEPT
+                iptables -A FORWARD -i tun0 -o vpn -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+                iptables -t nat -A POSTROUTING -s 100.100.1.0/24 -o tun0 -j MASQUERADE
+                exec /gluetun-entrypoint
+            command: ["/bin/sh", "-ec"]
+            env:
+              VPN_TYPE: wireguard
+              VPN_PORT_FORWARDING: on
+              VPN_SERVICE_PROVIDER_SECRETFILE: /run/secrets/gluetun/vpn_service_provider
+              WIREGUARD_PRIVATE_KEY_SECRETFILE: /run/secrets/gluetun/wireguard_private_key
+              DNS_UPSTREAM_RESOLVER_TYPE: DoH
+              FIREWALL: off
+              HTTPPROXY: on
+              HTTPPROXY_LOG: on
+              SHADOWSOCKS: on
+              SHADOWSOCKS_LOG: on
+              PUBLICIP_ENABLED: off
+              VERSION_INFORMATION: off
+            probes:
+              liveness: &gluetunProbe
+                custom: true
+                spec:
+                  exec:
+                    command: [/gluetun-entrypoint, healthcheck]
+              readiness: *gluetunProbe
+            resources:
+              requests:
+                cpu: 50mi
+                memory: 256Mi
+              limits:
+                memory: 512Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                add: [NET_ADMIN, NET_RAW]
+                drop: [ALL]
+              readOnlyRootFilesystem: false
+              runAsGroup: 568
+              runAsNonRoot: false
+              runAsUser: 0
+          socks5:
+            enabled: true
+            image:
+              repository: ghcr.io/ariadata/go-socks5-proxy
+              tag: main-4c0d6b6@sha256:5f7399545e7aba33908314413a4b45e28cdcd2a7826b520d317b4724c004d228
+            probes:
+              liveness: &socks5Probe
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 1080
+              readiness: *socks5Probe
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 64Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
+              readOnlyRootFilesystem: true
+              runAsGroup: 568
+              runAsNonRoot: true
+              runAsUser: 568
+        pod:
+          annotations:
+            k8s.v1.cni.cncf.io/networks: multus/${VPN}-bravo-gateway@vpn
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+          automountServiceAccountToken: false
+    persistence:
+      gluetun-auth:
+        type: secret
+        name: ${VPN}-bravo-secret
+        advancedMounts:
+          bravo:
+            gluetun:
+              - path: /gluetun/auth/config.toml
+                subPath: config.toml
+                readOnly: true
+              - path: /run/secrets/gluetun/wireguard_private_key
+                subPath: wireguard_private_key
+                readOnly: true
+      gluetun-tun:
+        type: custom
+        volumeSpec:
+          hostPath:
+            path: /dev/net/tun
+            type: CharDevice
+        advancedMounts:
+          bravo:
+            gluetun:
+              - path: /dev/net/tun
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: 8000
+      proxies:
+        enabled: true
+        type: LoadBalancer
+        annotations:
+          external-dns.bravo.kubernetes.io/hostname: bravo.${DOMAIN_2}
+        labels:
+          io.cilium/l2-announcer: "true"
+          io.cilium/l2-network: services
+        controller: *app
+        ports:
+          http:
+            port: 8888
+            targetPort: 8888
+            protocol: TCP
+          shadowsocks:
+            port: 8388
+            targetPort: 8388
+            protocol: TCP
+          socks5:
+            port: 1080
+            targetPort: 1080
+            protocol: TCP

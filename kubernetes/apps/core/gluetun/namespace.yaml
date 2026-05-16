@@ -1,0 +1,8 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gluetun
+  labels:
+    envoy-gateway-access: internal
+    pod-security.kubernetes.io/enforce: privileged

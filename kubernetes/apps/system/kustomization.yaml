@@ -13,9 +13,11 @@ resources:
   - kubelet-csr-approver/ks.yaml
   - loki/ks.yaml
   - metrics-server/ks.yaml
+  - multus/ks.yaml
   - openebs/ks.yaml
   - reloader/ks.yaml
   - rook-ceph/ks.yaml
   - snapshot-controller/ks.yaml
   - spegel/ks.yaml
   - tuppr/ks.yaml
+  - whereabouts/ks.yaml
