@@ -1,0 +1,94 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app qb1
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    controllers:
+      qb1:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/home-operations/qbittorrent
+              tag: 5.1.4@sha256:bb82ad6668f8eda1d0fcce6c1341498bfa879155bb1295cd9d314a2c35c07a01
+            env:
+              QBT_WEBUI_PORT: &httpPort 10095
+            probes:
+              liveness: &probe
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v2/app/version
+                    port: *httpPort
+              readiness: *probe
+            resources:
+              requests:
+                cpu: 150m
+                memory: 3Gi
+              limits:
+                memory: 4Gi
+            securityContext:
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
+        pod:
+          annotations:
+            k8s.v1.cni.cncf.io/networks: multus/${VPN}-alfa-client@vpn
+          dnsConfig:
+            nameservers: [100.100.1.1]
+          dnsPolicy: None
+          labels:
+            network.k8s-gitops.io/vpn-egress: alfa
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+          automountServiceAccountToken: false
+    persistence:
+      config:
+        type: persistentVolumeClaim
+        existingClaim: qb1-data
+        globalMounts:
+          - path: /config
+      media:
+        type: custom
+        volumeSpec:
+          csi:
+            driver: nfs.csi.k8s.io
+            volumeAttributes:
+              server: 10.0.10.15
+              share: /mnt/eden/media
+        globalMounts:
+          - path: /media
+      tmpfs:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
+    route:
+      app:
+        hostnames:
+          - qb1.${DOMAIN_1}
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy-gateway
+            sectionName: https
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *httpPort

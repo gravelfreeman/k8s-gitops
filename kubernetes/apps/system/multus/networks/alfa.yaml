@@ -12,10 +12,10 @@ spec:
       "master": "enp87s0",
       "mode": "bridge",
       "ipam": {
-        "type": "whereabouts",
-        "range": "100.100.1.0/24",
-        "range_start": "100.100.1.1",
-        "range_end": "100.100.1.1"
+        "type": "static",
+        "addresses": [
+          { "address": "100.100.1.1/24" }
+        ]
       },
       "mtu": 1420
     }

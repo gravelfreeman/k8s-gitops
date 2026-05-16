@@ -12,7 +12,9 @@ spec:
     namespace: flux-system
   values:
     controllers:
-      alfa:
+      ${VPN}-alfa:
+        replicas: 1
+        strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
@@ -35,7 +37,6 @@ spec:
               VPN_SERVICE_PROVIDER_SECRETFILE: /run/secrets/gluetun/vpn_service_provider
               WIREGUARD_PRIVATE_KEY_SECRETFILE: /run/secrets/gluetun/wireguard_private_key
               DNS_UPSTREAM_RESOLVER_TYPE: DoH
-              FIREWALL: off
               HTTPPROXY: on
               HTTPPROXY_LOG: on
               SHADOWSOCKS: on
@@ -51,7 +52,7 @@ spec:
               readiness: *gluetunProbe
             resources:
               requests:
-                cpu: 50mi
+                cpu: 50m
                 memory: 256Mi
               limits:
                 memory: 512Mi

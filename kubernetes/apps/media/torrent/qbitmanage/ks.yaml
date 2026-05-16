@@ -2,23 +2,21 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app grimmory
+  name: &app qbitmanage
   namespace: flux-system
 spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
   components:
-    - ../../../../components/common
-    - ../../../../components/volsync
+    - ../../../../../components/common/system
   dependsOn:
-    - name: envoy-gateway-config
-    - name: external-secrets-store
-    - name: openebs
-    - name: rook-ceph-cluster
-    - name: volsync
+    - name: qbittorrent-1
+    - name: qbittorrent-2
+    - name: qbittorrent-3
+    - name: qbittorrent-4
   interval: 1h
-  path: kubernetes/apps/media/grimmory/app
+  path: kubernetes/apps/media/torrent/qbitmanage/app
   postBuild:
     substitute:
       APP: *app
@@ -26,6 +24,6 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  targetNamespace: *app
+  targetNamespace: torrent
   timeout: 5m
   wait: true
