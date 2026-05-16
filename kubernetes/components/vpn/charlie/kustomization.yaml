@@ -1,0 +1,23 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+resources:
+  - networkpolicy.yaml
+patches:
+  - patch: |-
+      apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      metadata:
+        name: _
+      spec:
+        values:
+          defaultPodOptions:
+            annotations:
+              k8s.v1.cni.cncf.io/networks: "multus/${VPN}-charlie-client@vpn"
+            dnsConfig:
+              nameservers: ["100.100.3.1"]
+            dnsPolicy: None
+            labels:
+              network.k8s-gitops.io/vpn-egress: charlie
+    target:
+      group: helm.toolkit.fluxcd.io
+      kind: HelmRelease

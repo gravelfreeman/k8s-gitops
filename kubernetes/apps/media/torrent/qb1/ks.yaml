@@ -11,6 +11,7 @@ spec:
   components:
     - ../../../../../components/common/system
     - ../../../../../components/volsync
+    - ../../../../../components/vpn/alfa
   dependsOn:
     - name: envoy-gateway-config
     - name: external-secrets-store

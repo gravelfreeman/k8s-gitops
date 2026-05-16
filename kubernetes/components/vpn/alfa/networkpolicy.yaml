@@ -3,10 +3,11 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: qb1-vpn-egress
+  name: ${APP}-vpn-egress
 spec:
   endpointSelector:
     matchLabels:
+      app.kubernetes.io/instance: ${APP}
       network.k8s-gitops.io/vpn-egress: alfa
   egress:
     - toCIDRSet:

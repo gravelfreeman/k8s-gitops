@@ -20,15 +20,13 @@ spec:
             image:
               repository: ghcr.io/home-operations/qbittorrent
               tag: 5.1.4@sha256:bb82ad6668f8eda1d0fcce6c1341498bfa879155bb1295cd9d314a2c35c07a01
-            env:
-              QBT_WEBUI_PORT: &httpPort 10095
             probes:
               liveness: &probe
                 custom: true
                 spec:
                   httpGet:
                     path: /api/v2/app/version
-                    port: *httpPort
+                    port: http
               readiness: *probe
             resources:
               requests:
@@ -42,13 +40,6 @@ spec:
               capabilities:
                 drop: [ALL]
         pod:
-          annotations:
-            k8s.v1.cni.cncf.io/networks: multus/${VPN}-alfa-client@vpn
-          dnsConfig:
-            nameservers: [100.100.1.1]
-          dnsPolicy: None
-          labels:
-            network.k8s-gitops.io/vpn-egress: alfa
           securityContext:
             runAsNonRoot: true
             runAsUser: 568
@@ -91,4 +82,4 @@ spec:
         controller: *app
         ports:
           http:
-            port: *httpPort
+            port: 8080
