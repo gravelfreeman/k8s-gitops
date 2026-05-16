@@ -10,6 +10,7 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../../../components/common/system
+    - ../../../../../components/envoy-oidc
     - ../../../../../components/volsync
     - ../../../../../components/vpn/alfa
   dependsOn:
@@ -24,6 +25,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      ENVOY_OIDC_DOMAIN: ${DOMAIN_1}
   prune: true
   sourceRef:
     kind: GitRepository
