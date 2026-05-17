@@ -9,10 +9,22 @@ spec:
     kubernetes:
       envoyDeployment:
         name: envoy-external
-        replicas: 2
+        replicas: 3
+        pod:
+          labels:
+            network.k8s-gitops.io/gateway: envoy-external
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector:
+                matchLabels:
+                  network.k8s-gitops.io/gateway: envoy-external
+      envoyPDB:
+        minAvailable: 2
       envoyService:
         name: envoy-external
-        externalTrafficPolicy: Cluster
+        externalTrafficPolicy: Local
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: EnvoyProxy
@@ -24,7 +36,19 @@ spec:
     kubernetes:
       envoyDeployment:
         name: envoy-internal
-        replicas: 2
+        replicas: 3
+        pod:
+          labels:
+            network.k8s-gitops.io/gateway: envoy-internal
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector:
+                matchLabels:
+                  network.k8s-gitops.io/gateway: envoy-internal
+      envoyPDB:
+        minAvailable: 2
       envoyService:
         name: envoy-internal
-        externalTrafficPolicy: Cluster
+        externalTrafficPolicy: Local

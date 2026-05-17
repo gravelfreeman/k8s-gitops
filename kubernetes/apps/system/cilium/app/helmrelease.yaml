@@ -13,6 +13,8 @@ spec:
     bpf:
       hostLegacyRouting: true
       masquerade: true
+    bgpControlPlane:
+      enabled: true
     cgroup:
       autoMount:
         enabled: false
