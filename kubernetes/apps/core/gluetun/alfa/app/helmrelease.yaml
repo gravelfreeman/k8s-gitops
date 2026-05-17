@@ -151,7 +151,7 @@ spec:
         type: LoadBalancer
         annotations:
           external-dns.alpha.kubernetes.io/hostname: alfa.${DOMAIN_2}
-            lbipam.cilium.io/ips: 10.0.20.21
+          "lbipam.cilium.io/ips": 10.0.20.21
         labels:
           io.cilium/l2-announcer: "true"
           io.cilium/l2-network: services
