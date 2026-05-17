@@ -8,9 +8,9 @@ spec:
     {
       "cniVersion": "0.3.1",
       "name": "bravo",
-      "type": "macvlan",
+      "type": "ipvlan",
       "master": "enp87s0",
-      "mode": "bridge",
+      "mode": "l2",
       "ipam": {
         "type": "static",
         "addresses": [
@@ -29,9 +29,9 @@ spec:
     {
       "cniVersion": "0.3.1",
       "name": "bravo-client",
-      "type": "macvlan",
+      "type": "ipvlan",
       "master": "enp87s0",
-      "mode": "bridge",
+      "mode": "l2",
       "ipam": {
         "type": "whereabouts",
         "range": "100.100.2.0/24",

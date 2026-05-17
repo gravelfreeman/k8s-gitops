@@ -8,9 +8,9 @@ spec:
     {
       "cniVersion": "0.3.1",
       "name": "alfa",
-      "type": "macvlan",
+      "type": "ipvlan",
       "master": "enp87s0",
-      "mode": "bridge",
+      "mode": "l2",
       "ipam": {
         "type": "static",
         "addresses": [
@@ -29,9 +29,9 @@ spec:
     {
       "cniVersion": "0.3.1",
       "name": "alfa-client",
-      "type": "macvlan",
+      "type": "ipvlan",
       "master": "enp87s0",
-      "mode": "bridge",
+      "mode": "l2",
       "ipam": {
         "type": "whereabouts",
         "range": "100.100.1.0/24",
