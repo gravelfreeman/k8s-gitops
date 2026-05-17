@@ -8,9 +8,9 @@ spec:
     {
       "cniVersion": "0.3.1",
       "name": "alfa",
-      "type": "ipvlan",
-      "master": "enp87s0",
-      "mode": "l2",
+      "type": "bridge",
+      "bridge": "vpn-alfa",
+      "ipMasq": false,
       "ipam": {
         "type": "static",
         "addresses": [
@@ -29,9 +29,9 @@ spec:
     {
       "cniVersion": "0.3.1",
       "name": "alfa-client",
-      "type": "ipvlan",
-      "master": "enp87s0",
-      "mode": "l2",
+      "type": "bridge",
+      "bridge": "vpn-alfa",
+      "ipMasq": false,
       "ipam": {
         "type": "whereabouts",
         "range": "100.100.1.0/24",

@@ -106,6 +106,8 @@ spec:
         pod:
           annotations:
             k8s.v1.cni.cncf.io/networks: multus/gluetun-bravo-gateway@vpn
+          labels:
+            network.k8s-gitops.io/vpn-gateway: bravo
           dnsConfig:
             options:
               - name: ndots
