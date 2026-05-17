@@ -106,6 +106,10 @@ spec:
         pod:
           annotations:
             k8s.v1.cni.cncf.io/networks: multus/gluetun-bravo-gateway@vpn
+          dnsConfig:
+            options:
+              - name: ndots
+                value: "1"
           securityContext:
             seccompProfile:
               type: RuntimeDefault
