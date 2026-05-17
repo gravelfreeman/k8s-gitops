@@ -52,7 +52,7 @@ spec:
               readOnlyRootFilesystem: true
         pod:
           annotations:
-            k8s.v1.cni.cncf.io/networks: multus/${VPN}-beta-client@vpn
+            k8s.v1.cni.cncf.io/networks: multus/gluetun-beta-client@vpn
           dnsPolicy: None
           dnsConfig:
             nameservers: [100.100.2.1]

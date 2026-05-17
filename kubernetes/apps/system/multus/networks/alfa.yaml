@@ -2,7 +2,7 @@
 apiVersion: k8s.cni.cncf.io/v1
 kind: NetworkAttachmentDefinition
 metadata:
-  name: ${VPN}-alfa-gateway
+  name: gluetun-alfa-gateway
 spec:
   config: |
     {
@@ -23,7 +23,7 @@ spec:
 apiVersion: k8s.cni.cncf.io/v1
 kind: NetworkAttachmentDefinition
 metadata:
-  name: ${VPN}-alfa-client
+  name: gluetun-alfa-client
 spec:
   config: |
     {

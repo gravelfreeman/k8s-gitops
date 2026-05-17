@@ -1,18 +1,18 @@
 ---
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/cilium.io/ciliumnetworkpolicy_v2.json
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: ${APP}-vpn-egress
+  name: ${APP}-egress
 spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/instance: ${APP}
-      network.k8s-gitops.io/vpn-egress: alfa
+      network.k8s-gitops.io/vpn-egress: ${VPN_GATEWAY}
   egress:
     - toCIDRSet:
         - cidr: 10.0.0.0/8
-        - cidr: 100.100.1.1/32
+        - cidr: ${VPN_GATEWAY_IP}/32
         - cidr: 169.254.0.0/16
         - cidr: 172.16.0.0/12
         - cidr: 192.168.0.0/16

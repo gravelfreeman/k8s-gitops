@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app ${VPN}-alfa
+  name: &app gluetun-alfa
 spec:
   interval: 30m
   chartRef:
@@ -12,7 +12,7 @@ spec:
     namespace: flux-system
   values:
     controllers:
-      ${VPN}-alfa:
+      gluetun-alfa:
         replicas: 1
         strategy: Recreate
         annotations:
@@ -104,7 +104,7 @@ spec:
               runAsUser: 568
         pod:
           annotations:
-            k8s.v1.cni.cncf.io/networks: multus/${VPN}-alfa-gateway@vpn
+            k8s.v1.cni.cncf.io/networks: multus/gluetun-alfa-gateway@vpn
           securityContext:
             seccompProfile:
               type: RuntimeDefault
@@ -112,9 +112,9 @@ spec:
     persistence:
       gluetun-auth:
         type: secret
-        name: ${VPN}-alfa-secret
+        name: gluetun-alfa-secret
         advancedMounts:
-          ${VPN}-alfa:
+          gluetun-alfa:
             gluetun:
               - path: /gluetun/auth/config.toml
                 subPath: config.toml
@@ -129,7 +129,7 @@ spec:
             path: /dev/net/tun
             type: CharDevice
         advancedMounts:
-          ${VPN}-alfa:
+          gluetun-alfa:
             gluetun:
               - path: /dev/net/tun
     service:

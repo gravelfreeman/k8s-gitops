@@ -11,7 +11,7 @@ spec:
     - ../../../../../components/common/system
     - ../../../../../components/envoy-oidc
     - ../../../../../components/volsync
-    - ../../../../../components/vpn/alfa
+    - ../../../../../components/vpn
   dependsOn:
     - name: flux-shared
     - name: envoy-gateway-config
@@ -25,6 +25,8 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      VPN_GATEWAY: alfa
+      VPN_GATEWAY_IP: 100.100.1.1
   prune: true
   sourceRef:
     kind: GitRepository
