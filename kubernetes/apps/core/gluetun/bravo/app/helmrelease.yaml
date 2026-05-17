@@ -119,6 +119,9 @@ spec:
               - path: /gluetun/auth/config.toml
                 subPath: config.toml
                 readOnly: true
+              - path: /run/secrets/gluetun/vpn_service_provider
+                subPath: vpn_service_provider
+                readOnly: true
               - path: /run/secrets/gluetun/wireguard_private_key
                 subPath: wireguard_private_key
                 readOnly: true
