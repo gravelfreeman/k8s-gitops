@@ -103,7 +103,7 @@ spec:
         type: secret
         name: ${VPN}-bravo-secret
         advancedMounts:
-          bravo:
+          ${VPN}-bravo:
             gluetun:
               - path: /gluetun/auth/config.toml
                 subPath: config.toml
@@ -118,7 +118,7 @@ spec:
             path: /dev/net/tun
             type: CharDevice
         advancedMounts:
-          bravo:
+          ${VPN}-bravo:
             gluetun:
               - path: /dev/net/tun
     service:
