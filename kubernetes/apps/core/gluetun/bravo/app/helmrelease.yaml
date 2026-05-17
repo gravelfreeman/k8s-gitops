@@ -45,6 +45,7 @@ spec:
             env:
               VPN_TYPE: wireguard
               VPN_PORT_FORWARDING: on
+              FIREWALL_INPUT_PORTS: 8888,8388,1080
               VPN_SERVICE_PROVIDER_SECRETFILE: /run/secrets/gluetun/vpn_service_provider
               WIREGUARD_PRIVATE_KEY_SECRETFILE: /run/secrets/gluetun/wireguard_private_key
               DNS_UPSTREAM_RESOLVER_TYPE: DoH
@@ -149,7 +150,7 @@ spec:
         enabled: true
         type: LoadBalancer
         annotations:
-          external-dns.bravo.kubernetes.io/hostname: bravo.${DOMAIN_2}
+          external-dns.alpha.kubernetes.io/hostname: bravo.${DOMAIN_2}
         labels:
           io.cilium/l2-announcer: "true"
           io.cilium/l2-network: services
