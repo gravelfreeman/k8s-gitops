@@ -3,3 +3,17 @@ kind: Component
 resources:
   - externalsecret.yaml
   - securitypolicy.yaml
+replacements:
+  - source:
+      kind: HelmRelease
+      fieldPath: spec.values.route.app.hostnames.0
+    targets:
+      - select:
+          group: gateway.envoyproxy.io
+          kind: SecurityPolicy
+          labelSelector: app.kubernetes.io/component=envoy-oidc
+        fieldPaths:
+          - spec.oidc.redirectURL
+        options:
+          delimiter: /
+          index: 2

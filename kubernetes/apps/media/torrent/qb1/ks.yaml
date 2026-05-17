@@ -25,7 +25,6 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      ENVOY_OIDC_DOMAIN: ${DOMAIN_1}
   prune: true
   sourceRef:
     kind: GitRepository
