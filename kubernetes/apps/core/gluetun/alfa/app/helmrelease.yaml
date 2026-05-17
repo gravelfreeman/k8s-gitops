@@ -30,8 +30,6 @@ spec:
                 iptables -A FORWARD -i vpn -o tun0 -j ACCEPT
                 iptables -A FORWARD -i tun0 -o vpn -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
                 iptables -t nat -A POSTROUTING -s 100.100.1.0/24 -o tun0 -j MASQUERADE
-                mkdir -p /tmp/gluetun
-                chown 1000:1000 /tmp/gluetun
             securityContext:
               privileged: true
               allowPrivilegeEscalation: true
