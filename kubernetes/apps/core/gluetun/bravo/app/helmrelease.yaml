@@ -70,7 +70,7 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
-                add: [NET_ADMIN, NET_RAW]
+                add: [CHOWN, NET_ADMIN, NET_RAW]
                 drop: [ALL]
               readOnlyRootFilesystem: false
               runAsGroup: 568
