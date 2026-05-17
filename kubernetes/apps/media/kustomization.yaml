@@ -5,7 +5,6 @@ namespace: flux-system
 resources:
   - autobrr/ks.yaml
   - grimmory/ks.yaml
-  - torrent/namespace.yaml
   - torrent/qb1/ks.yaml
   # - torrent/qb2/ks.yaml
   # - torrent/qb3/ks.yaml

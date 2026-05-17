@@ -50,17 +50,16 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: flux-secrets
+  name: flux-shared
   namespace: flux-system
 spec:
   dependsOn:
     - name: external-secrets-store
   interval: 1h
-  path: ./kubernetes/flux/secrets
+  path: ./kubernetes/flux/shared
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
-  targetNamespace: flux-system
   timeout: 5m
   wait: true

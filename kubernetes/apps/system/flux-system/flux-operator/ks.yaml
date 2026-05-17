@@ -8,7 +8,7 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
-    - name: flux-secrets
+    - name: flux-shared
   interval: 1h
   path: kubernetes/apps/system/flux-system/flux-operator/app
   prune: false

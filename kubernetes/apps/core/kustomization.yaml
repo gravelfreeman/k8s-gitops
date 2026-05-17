@@ -10,7 +10,6 @@ resources:
   - external-secrets/ks.yaml
   - gluetun/alfa/ks.yaml
   - gluetun/bravo/ks.yaml
-  - gluetun/namespace.yaml
   - onepassword-connect/ks.yaml
   - pocket-id/ks.yaml
   - volsync/ks.yaml
