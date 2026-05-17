@@ -14,8 +14,7 @@ spec:
       lbipam.cilium.io/ips: 10.0.25.80
     labels:
       io.cilium/bgp-advertise: "true"
-      io.cilium/l2-announcer: "true"
-      io.cilium/l2-network: dmz
+      network.k8s-gitops.io/lb-pool: dmz
   listeners:
     - name: http
       port: 80

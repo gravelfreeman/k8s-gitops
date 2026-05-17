@@ -159,8 +159,8 @@ spec:
           external-dns.alpha.kubernetes.io/hostname: bravo.${DOMAIN_2}
           "lbipam.cilium.io/ips": 10.0.20.22
         labels:
-          io.cilium/l2-announcer: "true"
-          io.cilium/l2-network: services
+          io.cilium/bgp-advertise: "true"
+          network.k8s-gitops.io/lb-pool: services
         controller: *app
         ports:
           http:

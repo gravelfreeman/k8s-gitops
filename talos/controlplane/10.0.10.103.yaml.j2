@@ -14,18 +14,6 @@ machine:
         routes:
           - network: 0.0.0.0/0
             gateway: 10.0.10.1
-      - deviceSelector: # services
-          busPath: "0000:57:00.0"
-        dhcp: false
-        routes:
-          - network: 10.0.20.0/24
-            metric: 2048
-        vlans:
-          - vlanId: 25
-            dhcp: false
-            routes:
-              - network: 10.0.25.0/24
-                metric: 2048
       - deviceSelector: # ms01-1
           busPath: 0-1.0
         dhcp: false
