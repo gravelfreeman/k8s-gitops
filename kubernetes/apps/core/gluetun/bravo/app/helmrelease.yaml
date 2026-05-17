@@ -17,11 +17,12 @@ spec:
         strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
-        containers:
-          gluetun:
+        initContainers:
+          bootstrap:
             image:
-              repository: ghcr.io/qdm12/gluetun
-              tag: v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
+              repository: ghcr.io/nicolaka/netshoot
+              tag: v0.15@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61
+            command: ["/bin/sh", "-ec"]
             args:
               - |
                 sysctl -w net.ipv4.ip_forward=1
@@ -29,8 +30,18 @@ spec:
                 iptables -A FORWARD -i vpn -o tun0 -j ACCEPT
                 iptables -A FORWARD -i tun0 -o vpn -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
                 iptables -t nat -A POSTROUTING -s 100.100.2.0/24 -o tun0 -j MASQUERADE
-                exec /gluetun-entrypoint
-            command: ["/bin/sh", "-ec"]
+            securityContext:
+              privileged: true
+              allowPrivilegeEscalation: true
+              readOnlyRootFilesystem: false
+              runAsGroup: 0
+              runAsNonRoot: false
+              runAsUser: 0
+        containers:
+          gluetun:
+            image:
+              repository: ghcr.io/qdm12/gluetun
+              tag: v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
             env:
               VPN_TYPE: wireguard
               VPN_PORT_FORWARDING: on
