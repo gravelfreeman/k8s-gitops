@@ -30,6 +30,8 @@ spec:
                 iptables -A FORWARD -i vpn -o tun0 -j ACCEPT
                 iptables -A FORWARD -i tun0 -o vpn -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
                 iptables -t nat -A POSTROUTING -s 100.100.1.0/24 -o tun0 -j MASQUERADE
+                mkdir -p /tmp/gluetun
+                chown 1000:1000 /tmp/gluetun
             securityContext:
               privileged: true
               allowPrivilegeEscalation: true
@@ -110,7 +112,17 @@ spec:
               type: RuntimeDefault
           automountServiceAccountToken: false
     persistence:
-      gluetun-auth:
+      device:
+        type: custom
+        volumeSpec:
+          hostPath:
+            path: /dev/net/tun
+            type: CharDevice
+        advancedMounts:
+          gluetun-alfa:
+            gluetun:
+              - path: /dev/net/tun
+      secrets:
         type: secret
         name: gluetun-alfa-secret
         advancedMounts:
@@ -125,16 +137,10 @@ spec:
               - path: /run/secrets/gluetun/wireguard_private_key
                 subPath: wireguard_private_key
                 readOnly: true
-      gluetun-tun:
-        type: custom
-        volumeSpec:
-          hostPath:
-            path: /dev/net/tun
-            type: CharDevice
-        advancedMounts:
-          gluetun-alfa:
-            gluetun:
-              - path: /dev/net/tun
+      tmpfs:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp/gluetun
     service:
       app:
         controller: *app
