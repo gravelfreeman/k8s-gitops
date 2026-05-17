@@ -2,7 +2,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app bravo
+  name: &app ${VPN}-bravo
 spec:
   commonMetadata:
     labels:
