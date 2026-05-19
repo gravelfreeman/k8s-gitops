@@ -26,6 +26,7 @@ spec:
             args:
               - |
                 sysctl -w net.ipv4.ip_forward=1
+                chown -R 1000:1000 /tmp/gluetun
                 iptables -P FORWARD DROP
                 iptables -A FORWARD -i vpn -o tun0 -j ACCEPT
                 iptables -A FORWARD -i tun0 -o vpn -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
@@ -35,7 +36,6 @@ spec:
               allowPrivilegeEscalation: true
               readOnlyRootFilesystem: false
               runAsGroup: 0
-              runAsNonRoot: false
               runAsUser: 0
         containers:
           gluetun:
@@ -46,6 +46,7 @@ spec:
               VPN_TYPE: wireguard
               VPN_PORT_FORWARDING: on
               FIREWALL_INPUT_PORTS: 8888,8388,1080
+              VPN_PORT_FORWARDING_PORTS_COUNT: '4'
               VPN_SERVICE_PROVIDER_SECRETFILE: /run/secrets/gluetun/vpn_service_provider
               WIREGUARD_PRIVATE_KEY_SECRETFILE: /run/secrets/gluetun/wireguard_private_key
               DNS_UPSTREAM_RESOLVER_TYPE: DoH
@@ -55,6 +56,13 @@ spec:
               SHADOWSOCKS_LOG: on
               PUBLICIP_ENABLED: off
               VERSION_INFORMATION: off
+            lifecycle:
+              postStart:
+                exec:
+                  command:
+                    - /bin/sh
+                    - -c
+                    - ip rule del table 51820 || true; ip -6 rule del table 51820 || true
             probes:
               liveness: &gluetunProbe
                 custom: true
@@ -74,8 +82,7 @@ spec:
                 add: [CHOWN, NET_ADMIN, NET_RAW]
                 drop: [ALL]
               readOnlyRootFilesystem: false
-              runAsGroup: 568
-              runAsNonRoot: false
+              runAsGroup: 0
               runAsUser: 0
           socks5:
             enabled: true
@@ -100,9 +107,8 @@ spec:
               capabilities:
                 drop: [ALL]
               readOnlyRootFilesystem: true
-              runAsGroup: 568
-              runAsNonRoot: true
-              runAsUser: 568
+              runAsGroup: 1000
+              runAsUser: 1000
         pod:
           annotations:
             k8s.v1.cni.cncf.io/networks: multus/gluetun-bravo-gateway@vpn

@@ -1,0 +1,32 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/solidDoWant/node-network-operator/refs/tags/v0.0.8/schemas/link_v1alpha1.json
+apiVersion: nodenetworkoperator.soliddowant.dev/v1alpha1
+kind: Link
+metadata:
+  name: vpn-alfa-bridge
+spec:
+  interfaceName: vpn-alfa
+  nodeSelector:
+    matchLabels:
+      kubernetes.io/os: linux
+  bridge:
+    mtu: 1420
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/solidDoWant/node-network-operator/refs/tags/v0.0.8/schemas/link_v1alpha1.json
+apiVersion: nodenetworkoperator.soliddowant.dev/v1alpha1
+kind: Link
+metadata:
+  name: vpn-alfa-vxlan
+spec:
+  interfaceName: vxlan-alfa
+  nodeSelector:
+    matchLabels:
+      kubernetes.io/os: linux
+  vxlan:
+    vnid: 1101
+    remoteIPAddress: 224.0.0.88
+    device:
+      name: vpn-underlay
+    master:
+      name: vpn-alfa-bridge
+    mtu: 1420

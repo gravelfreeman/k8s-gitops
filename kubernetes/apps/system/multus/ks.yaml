@@ -38,6 +38,7 @@ spec:
     - ../../../../components/common
   dependsOn:
     - name: multus
+    - name: node-network-operator-config
     - name: whereabouts
   interval: 1h
   path: kubernetes/apps/system/multus/networks

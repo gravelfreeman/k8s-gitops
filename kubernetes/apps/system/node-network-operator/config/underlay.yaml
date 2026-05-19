@@ -1,0 +1,12 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/solidDoWant/node-network-operator/refs/tags/v0.0.8/schemas/link_v1alpha1.json
+apiVersion: nodenetworkoperator.soliddowant.dev/v1alpha1
+kind: Link
+metadata:
+  name: vpn-underlay
+spec:
+  interfaceName: enp89s0
+  nodeSelector:
+    matchLabels:
+      kubernetes.io/os: linux
+  unmanaged: {}
