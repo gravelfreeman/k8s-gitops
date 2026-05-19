@@ -41,15 +41,17 @@ spec:
           gluetun:
             image:
               repository: ghcr.io/qdm12/gluetun
-              tag: v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
+              tag: latest@sha256:25273bc5c8df54359bbf079c201d263ffb4140b793b1ba8c86907635ed636b13
             env:
               VPN_TYPE: wireguard
               VPN_PORT_FORWARDING: on
-              FIREWALL_INPUT_PORTS: 8888,8388,1080
               VPN_PORT_FORWARDING_PORTS_COUNT: '4'
               VPN_SERVICE_PROVIDER_SECRETFILE: /run/secrets/gluetun/vpn_service_provider
               WIREGUARD_PRIVATE_KEY_SECRETFILE: /run/secrets/gluetun/wireguard_private_key
+              SERVER_CITIES_SECRETFILE: /run/secrets/gluetun/server_cities
               DNS_UPSTREAM_RESOLVER_TYPE: DoH
+              PORT_FORWARD_ONLY: on
+              FIREWALL_INPUT_PORTS: 8888,8388,1080
               HTTPPROXY: on
               HTTPPROXY_LOG: on
               SHADOWSOCKS: on
