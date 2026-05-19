@@ -48,14 +48,15 @@ spec:
               VPN_PORT_FORWARDING_PORTS_COUNT: '4'
               VPN_SERVICE_PROVIDER_SECRETFILE: /run/secrets/gluetun/vpn_service_provider
               WIREGUARD_PRIVATE_KEY_SECRETFILE: /run/secrets/gluetun/wireguard_private_key
-              SERVER_CITIES_SECRETFILE: /run/secrets/gluetun/server_cities
+              SERVER_HOSTNAMES_SECRETFILE: /run/secrets/gluetun/server_hostnames
               DNS_UPSTREAM_RESOLVER_TYPE: DoH
-              PORT_FORWARD_ONLY: on
+              DNS_UPSTREAM_RESOLVERS: quad9
               FIREWALL_INPUT_PORTS: 8888,8388,1080
               HTTPPROXY: on
               HTTPPROXY_LOG: on
               SHADOWSOCKS: on
               SHADOWSOCKS_LOG: on
+              PORT_FORWARD_ONLY: on
               PUBLICIP_ENABLED: off
               VERSION_INFORMATION: off
             lifecycle:
