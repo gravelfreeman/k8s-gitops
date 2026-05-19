@@ -44,21 +44,22 @@ spec:
               tag: latest@sha256:25273bc5c8df54359bbf079c201d263ffb4140b793b1ba8c86907635ed636b13
             env:
               VPN_TYPE: wireguard
+              DNS_UPSTREAM_RESOLVERS: quad9
+              DNS_UPSTREAM_RESOLVER_TYPE: DoH
+              PORT_FORWARD_ONLY: on
               VPN_PORT_FORWARDING: on
               VPN_PORT_FORWARDING_PORTS_COUNT: '4'
-              VPN_SERVICE_PROVIDER_SECRETFILE: /run/secrets/gluetun/vpn_service_provider
-              WIREGUARD_PRIVATE_KEY_SECRETFILE: /run/secrets/gluetun/wireguard_private_key
-              SERVER_HOSTNAMES_SECRETFILE: /run/secrets/gluetun/server_hostnames
-              DNS_UPSTREAM_RESOLVER_TYPE: DoH
-              DNS_UPSTREAM_RESOLVERS: quad9
               FIREWALL_INPUT_PORTS: 8888,8388,1080
               HTTPPROXY: on
               HTTPPROXY_LOG: on
               SHADOWSOCKS: on
               SHADOWSOCKS_LOG: on
-              PORT_FORWARD_ONLY: on
               PUBLICIP_ENABLED: off
               VERSION_INFORMATION: off
+              HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: /run/secrets/gluetun/config.toml
+              SERVER_HOSTNAMES_SECRETFILE: /run/secrets/gluetun/server_hostnames
+              VPN_SERVICE_PROVIDER_SECRETFILE: /run/secrets/gluetun/vpn_service_provider
+              WIREGUARD_PRIVATE_KEY_SECRETFILE: /run/secrets/gluetun/wireguard_private_key
             lifecycle:
               postStart:
                 exec:
@@ -142,14 +143,7 @@ spec:
         advancedMounts:
           gluetun-alfa:
             gluetun:
-              - path: /gluetun/auth/config.toml
-                subPath: config.toml
-                readOnly: true
-              - path: /run/secrets/gluetun/vpn_service_provider
-                subPath: vpn_service_provider
-                readOnly: true
-              - path: /run/secrets/gluetun/wireguard_private_key
-                subPath: wireguard_private_key
+              - path: /run/secrets/gluetun
                 readOnly: true
       tmpfs:
         type: emptyDir
