@@ -19,11 +19,20 @@ spec:
           name: gluetun-router
         annotations:
           reloader.stakater.com/auto: "true"
-        containers:
-          gluetun:
-            image:
+        initContainers:
+          ip-forward:
+            image: &gluetunImage
               repository: ghcr.io/qdm12/gluetun
               tag: latest@sha256:25273bc5c8df54359bbf079c201d263ffb4140b793b1ba8c86907635ed636b13
+            command: ["/bin/sh", "-ec"]
+            args: ["sysctl -w net.ipv4.ip_forward=1"]
+            securityContext:
+              privileged: true
+              readOnlyRootFilesystem: true
+              runAsUser: 0
+        containers:
+          gluetun:
+            image: *gluetunImage
             command: ["/bin/sh", "-ec"]
             args:
               - |
@@ -64,7 +73,7 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
-                add: [NET_ADMIN, NET_RAW]
+                add: [CHOWN, NET_ADMIN, NET_RAW]
                 drop: [ALL]
               readOnlyRootFilesystem: false
               runAsGroup: 0

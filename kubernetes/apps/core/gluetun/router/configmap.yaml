@@ -12,6 +12,7 @@ data:
     
     STATE_FILE="${STATE_FILE:-/tmp/gluetun/router.state}"
     SERVICE_ACCOUNT="/var/run/secrets/kubernetes.io/serviceaccount"
+    KUBE_API_URL="${KUBE_API_URL:-https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS:-443}}"
     
     log() {
       printf '%s [gluetun-router] %s\n' "$(date -Iseconds)" "$*"
@@ -23,7 +24,7 @@ data:
       curl -fsS --max-time 10 \
         --cacert "${SERVICE_ACCOUNT}/ca.crt" \
         -H "Authorization: Bearer ${token}" \
-        "https://kubernetes.default.svc${1}"
+        "${KUBE_API_URL}${1}"
     }
     
     gateway_pods() {
@@ -34,7 +35,7 @@ data:
         -H "Authorization: Bearer ${token}" \
         --get \
         --data-urlencode "labelSelector=vpn.k8s-gitops.io/port-forward-gateway=${VPN_GATEWAY}" \
-        "https://kubernetes.default.svc/api/v1/pods"
+        "${KUBE_API_URL}/api/v1/pods"
     }
     
     forwarded_ports() {
@@ -43,8 +44,8 @@ data:
         "http://127.0.0.1:8000/v1/portforward")"
     
       printf '%s' "${json}" | jq -r '
-        (.ports // (if .port then [.port] else [] end))
-        | map(tostring)
+        (.ports // (if (.port // 0) > 0 then [.port] else [] end))
+        | map(select(. > 0) | tostring)
         | join(" ")
       '
     }
@@ -54,7 +55,6 @@ data:
     }
     
     ensure_base_networking() {
-      sysctl -w net.ipv4.ip_forward=1 >/dev/null
       iptables -P FORWARD DROP
     
       iptables -N "K8S_GTN_BASE_FWD" 2>/dev/null || true
@@ -89,8 +89,8 @@ data:
     
     desired_entries() {
       ports="${1}"
-      pods="$(gateway_pods)"
-      services="$(kube_api /api/v1/services)"
+      pods="$(gateway_pods)" || return 1
+      services="$(kube_api /api/v1/services)" || return 1
     
       printf '%s' "${pods}" | jq -r \
         --arg gateway "${VPN_GATEWAY}" \
