@@ -21,7 +21,7 @@ data:
     kube_api() {
       token="$(cat "${SERVICE_ACCOUNT}/token")"
     
-      curl -fsS --max-time 10 \
+      curl -fs --max-time 10 \
         --cacert "${SERVICE_ACCOUNT}/ca.crt" \
         -H "Authorization: Bearer ${token}" \
         "${KUBE_API_URL}${1}"
@@ -30,7 +30,7 @@ data:
     gateway_pods() {
       token="$(cat "${SERVICE_ACCOUNT}/token")"
     
-      curl -fsS --max-time 10 \
+      curl -fs --max-time 10 \
         --cacert "${SERVICE_ACCOUNT}/ca.crt" \
         -H "Authorization: Bearer ${token}" \
         --get \
@@ -39,7 +39,7 @@ data:
     }
     
     forwarded_ports() {
-      json="$(curl -fsS --max-time 10 \
+      json="$(curl -fs --max-time 10 \
         -H "X-API-Key: ${GLUETUN_API_KEY}" \
         "http://127.0.0.1:8000/v1/portforward")"
     

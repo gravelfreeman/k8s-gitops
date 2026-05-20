@@ -46,6 +46,7 @@ spec:
               VPN_PORT_FORWARDING: '{{ ternary "on" "off" (gt (int "${VPN_PORT_FORWARDING_PORTS_COUNT:=0}") 0) }}'
               VPN_PORT_FORWARDING_PORTS_COUNT: "${VPN_PORT_FORWARDING_PORTS_COUNT:=0}"
               FIREWALL_INPUT_PORTS: '{{- $ports := list -}}{{- if .Values.service.proxies.ports.http.enabled -}}{{- $ports = append $ports "8888" -}}{{- end -}}{{- if .Values.service.proxies.ports.shadowsocks.enabled -}}{{- $ports = append $ports "8388" -}}{{- end -}}{{- if .Values.service.proxies.ports.socks5.enabled -}}{{- $ports = append $ports "1080" -}}{{- end -}}{{ join "," $ports }}'
+              FIREWALL_OUTBOUND_SUBNETS: "100.100.${VPN_INSTANCE}.0/24,172.30.0.1/32,10.0.10.101/32,10.0.10.102/32,10.0.10.103/32"
               HTTPPROXY: '{{ ternary "on" "off" .Values.service.proxies.ports.http.enabled }}'
               HTTPPROXY_LOG: '{{ ternary "on" "off" .Values.service.proxies.ports.http.enabled }}'
               SHADOWSOCKS: '{{ ternary "on" "off" .Values.service.proxies.ports.shadowsocks.enabled }}'
