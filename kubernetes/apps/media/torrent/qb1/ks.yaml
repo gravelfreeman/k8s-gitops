@@ -13,10 +13,11 @@ spec:
     - ../../../../../components/volsync
     - ../../../../../components/vpn
   dependsOn:
+    - name: torrent
     - name: flux-shared
     - name: envoy-gateway-config
     - name: external-secrets-store
-    - name: multus-networks
+    - name: gluetun-alfa
     - name: openebs
     - name: rook-ceph-cluster
     - name: volsync
@@ -25,7 +26,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      VPN_GATEWAY: alfa
+      VPN_GATEWAY: gluetun-alfa
       VPN_GATEWAY_IP: 100.100.1.1
   prune: true
   sourceRef:

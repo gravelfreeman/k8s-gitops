@@ -2,19 +2,19 @@
 apiVersion: k8s.cni.cncf.io/v1
 kind: NetworkAttachmentDefinition
 metadata:
-  name: gluetun-bravo-gateway
+  name: ${APP}-gateway
 spec:
   config: |
     {
       "cniVersion": "0.3.1",
-      "name": "bravo",
+      "name": "${APP}",
       "type": "bridge",
-      "bridge": "vpn-bravo",
+      "bridge": "gtn110${VPN_INSTANCE}br",
       "ipMasq": false,
       "ipam": {
         "type": "static",
         "addresses": [
-          { "address": "100.100.2.1/24" }
+          { "address": "100.100.${VPN_INSTANCE}.1/24" }
         ]
       },
       "mtu": 1420
@@ -23,21 +23,21 @@ spec:
 apiVersion: k8s.cni.cncf.io/v1
 kind: NetworkAttachmentDefinition
 metadata:
-  name: gluetun-bravo-client
+  name: ${APP}-client
 spec:
   config: |
     {
       "cniVersion": "0.3.1",
-      "name": "bravo-client",
+      "name": "${APP}-client",
       "type": "bridge",
-      "bridge": "vpn-bravo",
+      "bridge": "gtn110${VPN_INSTANCE}br",
       "ipMasq": false,
       "ipam": {
         "type": "whereabouts",
-        "range": "100.100.2.0/24",
-        "range_start": "100.100.2.10",
-        "range_end": "100.100.2.99",
-        "gateway": "100.100.2.1",
+        "range": "100.100.${VPN_INSTANCE}.0/24",
+        "range_start": "100.100.${VPN_INSTANCE}.10",
+        "range_end": "100.100.${VPN_INSTANCE}.99",
+        "gateway": "100.100.${VPN_INSTANCE}.1",
         "routes": [
           { "dst": "0.0.0.0/5" },
           { "dst": "8.0.0.0/7" },

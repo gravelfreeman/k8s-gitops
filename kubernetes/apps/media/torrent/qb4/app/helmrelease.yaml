@@ -20,9 +20,6 @@ spec:
             image:
               repository: ghcr.io/home-operations/qbittorrent
               tag: 5.1.4@sha256:bb82ad6668f8eda1d0fcce6c1341498bfa879155bb1295cd9d314a2c35c07a01
-            env:
-              QBT_WEBUI_PORT: &httpPort 10095
-              QBT_TORRENTING_PORT: &torrentPort 6881
             probes:
               liveness: &probe
                 enabled: true
@@ -30,7 +27,7 @@ spec:
                 spec:
                   httpGet:
                     path: /api/v2/app/version
-                    port: *httpPort
+                    port: &httpPort 8080
                   periodSeconds: 30
                   timeoutSeconds: 5
                   failureThreshold: 5
@@ -100,7 +97,7 @@ spec:
           http:
             port: *httpPort
           bittorrent-tcp:
-            port: *torrentPort
+            port: &torrentPort 6881
             protocol: TCP
           bittorrent-udp:
             port: *torrentPort

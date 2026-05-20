@@ -1,0 +1,251 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gluetun-router
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled
+data:
+  router.sh: |
+    #!/bin/sh
+    set -eu
+    
+    STATE_FILE="${STATE_FILE:-/tmp/gluetun/router.state}"
+    SERVICE_ACCOUNT="/var/run/secrets/kubernetes.io/serviceaccount"
+    
+    log() {
+      printf '%s [gluetun-router] %s\n' "$(date -Iseconds)" "$*"
+    }
+    
+    kube_api() {
+      token="$(cat "${SERVICE_ACCOUNT}/token")"
+    
+      curl -fsS --max-time 10 \
+        --cacert "${SERVICE_ACCOUNT}/ca.crt" \
+        -H "Authorization: Bearer ${token}" \
+        "https://kubernetes.default.svc${1}"
+    }
+    
+    gateway_pods() {
+      token="$(cat "${SERVICE_ACCOUNT}/token")"
+    
+      curl -fsS --max-time 10 \
+        --cacert "${SERVICE_ACCOUNT}/ca.crt" \
+        -H "Authorization: Bearer ${token}" \
+        --get \
+        --data-urlencode "labelSelector=vpn.k8s-gitops.io/port-forward-gateway=${VPN_GATEWAY}" \
+        "https://kubernetes.default.svc/api/v1/pods"
+    }
+    
+    forwarded_ports() {
+      json="$(curl -fsS --max-time 10 \
+        -H "X-API-Key: ${GLUETUN_API_KEY}" \
+        "http://127.0.0.1:8000/v1/portforward")"
+    
+      printf '%s' "${json}" | jq -r '
+        (.ports // (if .port then [.port] else [] end))
+        | map(tostring)
+        | join(" ")
+      '
+    }
+    
+    client_cidr() {
+      ip -o -4 route show dev vpn scope link | awk '{ print $1; exit }'
+    }
+    
+    ensure_base_networking() {
+      sysctl -w net.ipv4.ip_forward=1 >/dev/null
+      iptables -P FORWARD DROP
+    
+      iptables -N "K8S_GTN_BASE_FWD" 2>/dev/null || true
+      iptables -t nat -N "K8S_GTN_BASE_NAT" 2>/dev/null || true
+    
+      iptables -C FORWARD -j "K8S_GTN_BASE_FWD" 2>/dev/null \
+        || iptables -I FORWARD 1 -j "K8S_GTN_BASE_FWD"
+      iptables -t nat -C POSTROUTING -j "K8S_GTN_BASE_NAT" 2>/dev/null \
+        || iptables -t nat -I POSTROUTING 1 -j "K8S_GTN_BASE_NAT"
+    
+      iptables -F "K8S_GTN_BASE_FWD"
+      iptables -t nat -F "K8S_GTN_BASE_NAT"
+    
+      iptables -A "K8S_GTN_BASE_FWD" -i "vpn" -o "tun0" -j ACCEPT
+      iptables -A "K8S_GTN_BASE_FWD" -i "tun0" -o "vpn" \
+        -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+      iptables -t nat -A "K8S_GTN_BASE_NAT" -s "$(client_cidr)" -o "tun0" -j MASQUERADE
+    }
+    
+    flush_chains() {
+      iptables -t nat -N "K8S_GTN_PF_NAT" 2>/dev/null || true
+      iptables -N "K8S_GTN_PF_FWD" 2>/dev/null || true
+    
+      iptables -t nat -C PREROUTING -i "tun0" -j "K8S_GTN_PF_NAT" 2>/dev/null \
+        || iptables -t nat -I PREROUTING 1 -i "tun0" -j "K8S_GTN_PF_NAT"
+      iptables -C FORWARD -i "tun0" -o "vpn" -j "K8S_GTN_PF_FWD" 2>/dev/null \
+        || iptables -I FORWARD 1 -i "tun0" -o "vpn" -j "K8S_GTN_PF_FWD"
+    
+      iptables -t nat -F "K8S_GTN_PF_NAT"
+      iptables -F "K8S_GTN_PF_FWD"
+    }
+    
+    desired_entries() {
+      ports="${1}"
+      pods="$(gateway_pods)"
+      services="$(kube_api /api/v1/services)"
+    
+      printf '%s' "${pods}" | jq -r \
+        --arg gateway "${VPN_GATEWAY}" \
+        --arg ports "${ports}" \
+        --argjson services "${services}" '
+          def ready:
+            .status.phase == "Running"
+            and any(.status.conditions[]?; .type == "Ready" and .status == "True");
+    
+          def client_ip($gateway):
+            (.metadata.annotations["k8s.v1.cni.cncf.io/network-status"] // "[]")
+            | fromjson? // []
+            | .[]
+            | select(
+                .name == ("gluetun/" + $gateway + "-client")
+                or .name == ("multus/" + $gateway + "-client")
+                or .name == ($gateway + "-client")
+                or .name == ("gluetun/gluetun-" + $gateway + "-client")
+                or .name == ("multus/gluetun-" + $gateway + "-client")
+                or .name == ("gluetun-" + $gateway + "-client")
+              )
+            | .ips[0] // .ip // empty;
+    
+          def handler:
+            ([.spec.containers[]? | select(.name == "app") | .image][0] // .spec.containers[0].image)
+            | split("@")[0]
+            | split(":")[0]
+            | split("/")[-1];
+    
+          def selects($pod):
+            (.spec.selector // {}) as $selector
+            | ($selector | length) > 0
+            and all($selector | to_entries[]; $pod.metadata.labels[.key] == .value);
+    
+          def forward_service($pod):
+            [
+              $services.items[]
+              | select(.metadata.namespace == $pod.metadata.namespace)
+              | select(selects($pod))
+              | select(any(.spec.ports[]?; .name == "forward-tcp" or .name == "forward-udp"))
+            ][0];
+    
+          ($ports | split(" ") | map(select(length > 0))) as $external_ports
+          | [
+              .items[]
+              | select(ready)
+              | . as $pod
+              | client_ip($gateway) as $ip
+              | select($ip != null and $ip != "")
+              | forward_service($pod) as $service
+              | select($service != null)
+              | {
+                  namespace: .metadata.namespace,
+                  name: $service.metadata.name,
+                  ip: $ip,
+                  handler: handler,
+                  tcp: ([$service.spec.ports[]? | select(.name == "forward-tcp") | .port][0] // ""),
+                  udp: ([$service.spec.ports[]? | select(.name == "forward-udp") | .port][0] // "")
+                }
+            ]
+          | sort_by(.namespace, .name)
+          | to_entries[]
+          | select(.key < ($external_ports | length))
+          | .value as $target
+          | $external_ports[.key] as $external_port
+          | [
+              (.key + 1),
+              $external_port,
+              $target.ip,
+              $target.handler,
+              $target.tcp,
+              $target.udp
+            ]
+          | @tsv
+        '
+    }
+    
+    run_handler() {
+      slot="${1}"
+      external_port="${2}"
+      target_ip="${3}"
+      handler="${4}"
+      tcp_port="${5}"
+      udp_port="${6}"
+      target_port="${tcp_port:-${udp_port}}"
+    
+      SLOT="${slot}" \
+      HANDLER="${handler}" \
+      EXTERNAL_PORT="${external_port}" \
+      TARGET_IP="${target_ip}" \
+      TARGET_PORT="${target_port}" \
+      VPN_GATEWAY="${VPN_GATEWAY}" \
+        /bin/sh "/router/${handler}.sh"
+    }
+    
+    apply_entries() {
+      entries="${1}"
+      handler_failed=0
+    
+      while IFS="$(printf '\t')" read -r slot external_port target_ip handler tcp_port udp_port; do
+        [ -n "${slot}" ] || continue
+    
+        if [ -n "${tcp_port}" ]; then
+          iptables -t nat -A "K8S_GTN_PF_NAT" -p tcp --dport "${external_port}" \
+            -j DNAT --to-destination "${target_ip}:${tcp_port}"
+          iptables -A "K8S_GTN_PF_FWD" -p tcp -d "${target_ip}" --dport "${tcp_port}" -j ACCEPT
+        fi
+    
+        if [ -n "${udp_port}" ]; then
+          iptables -t nat -A "K8S_GTN_PF_NAT" -p udp --dport "${external_port}" \
+            -j DNAT --to-destination "${target_ip}:${udp_port}"
+          iptables -A "K8S_GTN_PF_FWD" -p udp -d "${target_ip}" --dport "${udp_port}" -j ACCEPT
+        fi
+    
+        log "slot ${slot}: ${external_port} -> ${target_ip} (${handler})"
+        run_handler "${slot}" "${external_port}" "${target_ip}" "${handler}" "${tcp_port}" "${udp_port}" \
+          || handler_failed=1
+      done <<EOF
+    ${entries}
+    EOF
+    
+      return "${handler_failed}"
+    }
+    
+    reconcile() {
+      ensure_base_networking
+    
+      ports="$(forwarded_ports)"
+      if [ -z "${ports}" ]; then
+        flush_chains
+        rm -f "${STATE_FILE}"
+        return 0
+      fi
+    
+      entries="$(desired_entries "${ports}")"
+      if [ -z "${entries}" ]; then
+        flush_chains
+        rm -f "${STATE_FILE}"
+        return 0
+      fi
+    
+      desired_state="$(printf '%s\n%s' "${ports}" "${entries}")"
+      if [ -f "${STATE_FILE}" ] && [ "$(cat "${STATE_FILE}")" = "${desired_state}" ]; then
+        return 0
+      fi
+    
+      flush_chains
+      if apply_entries "${entries}"; then
+        printf '%s' "${desired_state}" > "${STATE_FILE}"
+      fi
+    }
+    
+    log "starting for gateway ${VPN_GATEWAY}"
+    
+    while true; do
+      reconcile || log "reconcile failed"
+      sleep 15
+    done

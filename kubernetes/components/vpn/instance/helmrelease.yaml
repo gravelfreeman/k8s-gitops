@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app gluetun-alfa
+  name: &app ${APP}
 spec:
   interval: 30m
   chartRef:
@@ -12,61 +12,40 @@ spec:
     namespace: flux-system
   values:
     controllers:
-      gluetun-alfa:
+      ${APP}:
         replicas: 1
         strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          bootstrap:
-            image:
-              repository: ghcr.io/nicolaka/netshoot
-              tag: v0.15@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61
-            command: ["/bin/sh", "-ec"]
-            args:
-              - |
-                sysctl -w net.ipv4.ip_forward=1
-                chown -R 1000:1000 /tmp/gluetun
-                iptables -P FORWARD DROP
-                iptables -A FORWARD -i vpn -o tun0 -j ACCEPT
-                iptables -A FORWARD -i tun0 -o vpn -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-                iptables -t nat -A POSTROUTING -s 100.100.1.0/24 -o tun0 -j MASQUERADE
-            securityContext:
-              privileged: true
-              allowPrivilegeEscalation: true
-              readOnlyRootFilesystem: false
-              runAsGroup: 0
-              runAsUser: 0
         containers:
           gluetun:
             image:
               repository: ghcr.io/qdm12/gluetun
               tag: latest@sha256:25273bc5c8df54359bbf079c201d263ffb4140b793b1ba8c86907635ed636b13
+            command: ["/bin/sh", "-ec"]
+            args:
+              - |
+                ip rule del table 51820 || true
+                ip -6 rule del table 51820 || true
+                exec /gluetun-entrypoint
             env:
               VPN_TYPE: wireguard
               DNS_UPSTREAM_RESOLVERS: quad9
-              DNS_UPSTREAM_RESOLVER_TYPE: DoH
-              PORT_FORWARD_ONLY: on
-              VPN_PORT_FORWARDING: on
-              VPN_PORT_FORWARDING_PORTS_COUNT: '4'
-              FIREWALL_INPUT_PORTS: 8888,8388,1080
-              HTTPPROXY: on
-              HTTPPROXY_LOG: on
-              SHADOWSOCKS: on
-              SHADOWSOCKS_LOG: on
-              PUBLICIP_ENABLED: off
-              VERSION_INFORMATION: off
+              PORT_FORWARD_ONLY: '{{ ternary "on" "off" (gt (int "${VPN_PORT_FORWARDING_PORTS_COUNT:=0}") 0) }}'
+              VPN_PORT_FORWARDING: '{{ ternary "on" "off" (gt (int "${VPN_PORT_FORWARDING_PORTS_COUNT:=0}") 0) }}'
+              VPN_PORT_FORWARDING_PORTS_COUNT: "${VPN_PORT_FORWARDING_PORTS_COUNT:=0}"
+              FIREWALL_INPUT_PORTS: '{{- $ports := list -}}{{- if .Values.service.proxies.ports.http.enabled -}}{{- $ports = append $ports "8888" -}}{{- end -}}{{- if .Values.service.proxies.ports.shadowsocks.enabled -}}{{- $ports = append $ports "8388" -}}{{- end -}}{{- if .Values.service.proxies.ports.socks5.enabled -}}{{- $ports = append $ports "1080" -}}{{- end -}}{{ join "," $ports }}'
+              HTTPPROXY: '{{ ternary "on" "off" .Values.service.proxies.ports.http.enabled }}'
+              HTTPPROXY_LOG: '{{ ternary "on" "off" .Values.service.proxies.ports.http.enabled }}'
+              SHADOWSOCKS: '{{ ternary "on" "off" .Values.service.proxies.ports.shadowsocks.enabled }}'
+              SHADOWSOCKS_LOG: '{{ ternary "on" "off" .Values.service.proxies.ports.shadowsocks.enabled }}'
               HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: /run/secrets/gluetun/config.toml
               SERVER_HOSTNAMES_SECRETFILE: /run/secrets/gluetun/server_hostnames
               VPN_SERVICE_PROVIDER_SECRETFILE: /run/secrets/gluetun/vpn_service_provider
               WIREGUARD_PRIVATE_KEY_SECRETFILE: /run/secrets/gluetun/wireguard_private_key
-            lifecycle:
-              postStart:
-                exec:
-                  command:
-                    - /bin/sh
-                    - -c
-                    - ip rule del table 51820 || true; ip -6 rule del table 51820 || true
+              STORAGE_FILEPATH: /tmp/gluetun/servers.json
+              VERSION_INFORMATION: off
+              PUBLICIP_ENABLED: off
             probes:
               liveness: &gluetunProbe
                 custom: true
@@ -83,13 +62,42 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
-                add: [CHOWN, NET_ADMIN, NET_RAW]
+                add: [NET_ADMIN, NET_RAW]
                 drop: [ALL]
               readOnlyRootFilesystem: false
               runAsGroup: 0
               runAsUser: 0
+          router:
+            image:
+              repository: ghcr.io/nicolaka/netshoot
+              tag: v0.15@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61
+            command: ["/bin/sh", "/router/router.sh"]
+            env:
+              VPN_GATEWAY:
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.labels['network.k8s-gitops.io/vpn-gateway']
+              GLUETUN_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}-secret
+                    key: GLUETUN_API_KEY
+            resources:
+              requests:
+                cpu: 5m
+                memory: 32Mi
+              limits:
+                memory: 64Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                add: [NET_ADMIN]
+                drop: [ALL]
+              readOnlyRootFilesystem: true
+              runAsGroup: 0
+              runAsUser: 0
           socks5:
-            enabled: true
+            enabled: ${VPN_SOCKS5_ENABLED:=${VPN_PROXIES_ENABLED:=false}}
             image:
               repository: ghcr.io/ariadata/go-socks5-proxy
               tag: main-4c0d6b6@sha256:5f7399545e7aba33908314413a4b45e28cdcd2a7826b520d317b4724c004d228
@@ -115,33 +123,42 @@ spec:
               runAsUser: 1000
         pod:
           annotations:
-            k8s.v1.cni.cncf.io/networks: multus/gluetun-alfa-gateway@vpn
+            k8s.v1.cni.cncf.io/networks: gluetun/${APP}-gateway@vpn
           labels:
-            network.k8s-gitops.io/vpn-gateway: alfa
+            network.k8s-gitops.io/vpn-gateway: ${APP}
           dnsConfig:
             options:
               - name: ndots
                 value: "1"
           securityContext:
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
             seccompProfile:
               type: RuntimeDefault
-          automountServiceAccountToken: false
+          automountServiceAccountToken: true
+          serviceAccountName: gluetun-router
     persistence:
       device:
-        type: custom
-        volumeSpec:
-          hostPath:
-            path: /dev/net/tun
-            type: CharDevice
+        type: hostPath
+        hostPath: /dev/net/tun
+        hostPathType: CharDevice
         advancedMounts:
-          gluetun-alfa:
+          ${APP}:
             gluetun:
               - path: /dev/net/tun
+      router:
+        type: configMap
+        name: gluetun-router
+        advancedMounts:
+          ${APP}:
+            router:
+              - path: /router
+                readOnly: true
       secrets:
         type: secret
-        name: gluetun-alfa-secret
+        name: ${APP}-secret
         advancedMounts:
-          gluetun-alfa:
+          ${APP}:
             gluetun:
               - path: /run/secrets/gluetun
                 readOnly: true
@@ -156,25 +173,28 @@ spec:
           http:
             port: 8000
       proxies:
-        enabled: true
+        enabled: ${VPN_PROXIES_ENABLED:=false}
         type: LoadBalancer
         annotations:
-          external-dns.alpha.kubernetes.io/hostname: alfa.${DOMAIN_2}
-          "lbipam.cilium.io/ips": 10.0.20.21
+          external-dns.alpha.kubernetes.io/hostname: ${APP}.${DOMAIN_2}
+          "lbipam.cilium.io/ips": "10.0.20.2${VPN_INSTANCE}"
         labels:
           io.cilium/bgp-advertise: "true"
           network.k8s-gitops.io/lb-pool: services
         controller: *app
         ports:
           http:
+            enabled: ${VPN_HTTPPROXY_ENABLED:=${VPN_PROXIES_ENABLED:=false}}
             port: 8888
             targetPort: 8888
             protocol: TCP
           shadowsocks:
+            enabled: ${VPN_SHADOWSOCKS_ENABLED:=${VPN_PROXIES_ENABLED:=false}}
             port: 8388
             targetPort: 8388
             protocol: TCP
           socks5:
+            enabled: ${VPN_SOCKS5_ENABLED:=${VPN_PROXIES_ENABLED:=false}}
             port: 1080
             targetPort: 1080
             protocol: TCP

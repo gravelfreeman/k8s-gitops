@@ -1,0 +1,32 @@
+---
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
+apiVersion: nodenetworkoperator.soliddowant.dev/v1alpha1
+kind: Link
+metadata:
+  name: ${APP}-bridge
+spec:
+  interfaceName: gtn110${VPN_INSTANCE}br
+  nodeSelector:
+    matchLabels:
+      kubernetes.io/os: linux
+  bridge:
+    mtu: 1420
+---
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
+apiVersion: nodenetworkoperator.soliddowant.dev/v1alpha1
+kind: Link
+metadata:
+  name: ${APP}-vxlan
+spec:
+  interfaceName: gtn110${VPN_INSTANCE}vx
+  nodeSelector:
+    matchLabels:
+      kubernetes.io/os: linux
+  vxlan:
+    vnid: 110${VPN_INSTANCE}
+    remoteIPAddress: 224.0.0.88
+    device:
+      name: vpn-underlay
+    master:
+      name: ${APP}-bridge
+    mtu: 1420

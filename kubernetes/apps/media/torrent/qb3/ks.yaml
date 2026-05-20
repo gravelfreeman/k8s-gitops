@@ -11,6 +11,7 @@ spec:
     - ../../../../../components/common/system
     - ../../../../../components/volsync
   dependsOn:
+    - name: torrent
     - name: envoy-gateway-config
     - name: external-secrets-store
     - name: multus-networks

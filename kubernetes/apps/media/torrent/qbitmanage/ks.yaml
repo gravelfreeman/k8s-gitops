@@ -10,6 +10,7 @@ spec:
   components:
     - ../../../../../components/common/system
   dependsOn:
+    - name: torrent
     - name: qbittorrent-1
     - name: qbittorrent-2
     - name: qbittorrent-3

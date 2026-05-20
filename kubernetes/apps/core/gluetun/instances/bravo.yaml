@@ -7,18 +7,16 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  components:
-    - ../../../../../components/common/system
   dependsOn:
-    - name: flux-shared
-    - name: envoy-gateway-config
-    - name: external-secrets-store
-    - name: multus-networks
+    - name: gluetun-router
   interval: 1h
-  path: kubernetes/apps/core/gluetun/bravo/app
+  path: kubernetes/components/vpn/instance
   postBuild:
     substitute:
       APP: *app
+      VPN_INSTANCE: "2"
+      VPN_PORT_FORWARDING_PORTS_COUNT: "1"
+      VPN_PROXIES_ENABLED: "true"
   prune: true
   sourceRef:
     kind: GitRepository

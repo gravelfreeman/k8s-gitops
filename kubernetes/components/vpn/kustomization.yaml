@@ -12,12 +12,13 @@ patches:
         values:
           defaultPodOptions:
             annotations:
-              k8s.v1.cni.cncf.io/networks: "multus/gluetun-${VPN_GATEWAY}-client@vpn"
+              k8s.v1.cni.cncf.io/networks: "gluetun/${VPN_GATEWAY}-client@vpn"
             dnsConfig:
               nameservers: ["${VPN_GATEWAY_IP}"]
             dnsPolicy: None
             labels:
               network.k8s-gitops.io/vpn-egress: ${VPN_GATEWAY}
+              vpn.k8s-gitops.io/port-forward-gateway: ${VPN_GATEWAY}
     target:
       group: helm.toolkit.fluxcd.io
       kind: HelmRelease
