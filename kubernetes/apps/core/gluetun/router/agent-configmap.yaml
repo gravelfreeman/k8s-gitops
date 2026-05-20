@@ -1,0 +1,171 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gluetun-agent
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled
+data:
+  agent.sh: |
+    #!/bin/sh
+    set -eu
+
+    AGENT_PORT="${AGENT_PORT:-9000}"
+
+    exec socat \
+      TCP-LISTEN:${AGENT_PORT},reuseaddr,fork \
+      EXEC:"/bin/sh /agent/apply.sh"
+
+  apply.sh: |
+    #!/bin/sh
+    set -eu
+
+    CLIENT_INTERFACE="${CLIENT_INTERFACE:-vpn}"
+    GLUETUN_CONTROL_URL="${GLUETUN_CONTROL_URL:-http://127.0.0.1:8000}"
+    PORTS_FILE="${PORTS_FILE:-/tmp/gluetun/agent.ports}"
+    STATE_FILE="${STATE_FILE:-/tmp/gluetun/agent.state}"
+    TARGETS_FILE="${TARGETS_FILE:-/tmp/gluetun/agent.targets}"
+    VPN_INTERFACE="${VPN_INTERFACE:-tun0}"
+
+    read -r keyword provided_key
+    if [ "${keyword}" != "token" ] || [ "${provided_key}" != "${AGENT_TOKEN}" ]; then
+      printf 'forbidden\n'
+      exit 1
+    fi
+
+    : > "${TARGETS_FILE}"
+    while read -r keyword handler namespace service target_ip http_port tcp_port udp_port; do
+      case "${keyword}" in
+        target)
+          printf '%s %s %s %s %s %s %s\n' \
+            "${handler}" \
+            "${namespace}" \
+            "${service}" \
+            "${target_ip}" \
+            "${http_port}" \
+            "${tcp_port}" \
+            "${udp_port}" \
+            >> "${TARGETS_FILE}"
+          ;;
+        end)
+          break
+          ;;
+      esac
+    done
+
+    client_cidr() {
+      ip -o -4 route show dev "${CLIENT_INTERFACE}" scope link | awk '{ print $1; exit }'
+    }
+
+    forwarded_ports() {
+      json="$(curl -fs --max-time 10 \
+        -H "X-API-Key: ${GLUETUN_API_KEY}" \
+        "${GLUETUN_CONTROL_URL}/v1/portforward")"
+
+      printf '%s' "${json}" | jq -r '
+        (.ports // (if (.port // 0) > 0 then [.port] else [] end))
+        | map(select(. > 0) | tostring)
+        | join(" ")
+      '
+    }
+
+    write_ports_file() {
+      : > "${PORTS_FILE}"
+      for port in ${ports}; do
+        printf '%s\n' "${port}" >> "${PORTS_FILE}"
+      done
+    }
+
+    ensure_base_networking() {
+      iptables -P FORWARD DROP
+
+      iptables -N "K8S_GTN_BASE_FWD" 2>/dev/null || true
+      iptables -t nat -N "K8S_GTN_BASE_NAT" 2>/dev/null || true
+
+      iptables -C FORWARD -j "K8S_GTN_BASE_FWD" 2>/dev/null \
+        || iptables -I FORWARD 1 -j "K8S_GTN_BASE_FWD"
+      iptables -t nat -C POSTROUTING -j "K8S_GTN_BASE_NAT" 2>/dev/null \
+        || iptables -t nat -I POSTROUTING 1 -j "K8S_GTN_BASE_NAT"
+
+      iptables -F "K8S_GTN_BASE_FWD"
+      iptables -t nat -F "K8S_GTN_BASE_NAT"
+
+      iptables -A "K8S_GTN_BASE_FWD" -i "${CLIENT_INTERFACE}" -o "${VPN_INTERFACE}" -j ACCEPT
+      iptables -A "K8S_GTN_BASE_FWD" -i "${VPN_INTERFACE}" -o "${CLIENT_INTERFACE}" \
+        -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+      iptables -t nat -A "K8S_GTN_BASE_NAT" -s "$(client_cidr)" -o "${VPN_INTERFACE}" -j MASQUERADE
+    }
+
+    flush_forwarding() {
+      iptables -t nat -N "K8S_GTN_PF_NAT" 2>/dev/null || true
+      iptables -N "K8S_GTN_PF_FWD" 2>/dev/null || true
+
+      iptables -t nat -C PREROUTING -i "${VPN_INTERFACE}" -j "K8S_GTN_PF_NAT" 2>/dev/null \
+        || iptables -t nat -I PREROUTING 1 -i "${VPN_INTERFACE}" -j "K8S_GTN_PF_NAT"
+      iptables -C FORWARD -i "${VPN_INTERFACE}" -o "${CLIENT_INTERFACE}" -j "K8S_GTN_PF_FWD" 2>/dev/null \
+        || iptables -I FORWARD 1 -i "${VPN_INTERFACE}" -o "${CLIENT_INTERFACE}" -j "K8S_GTN_PF_FWD"
+
+      iptables -t nat -F "K8S_GTN_PF_NAT"
+      iptables -F "K8S_GTN_PF_FWD"
+    }
+
+    apply_targets() {
+      slot=0
+      while read -r handler namespace service target_ip http_port tcp_port udp_port; do
+        slot=$((slot + 1))
+        external_port="$(sed -n "${slot}p" "${PORTS_FILE}")"
+        [ -n "${external_port}" ] || break
+
+        if [ "${tcp_port}" != "-" ]; then
+          iptables -t nat -A "K8S_GTN_PF_NAT" -p tcp --dport "${external_port}" \
+            -j DNAT --to-destination "${target_ip}:${tcp_port}"
+          iptables -A "K8S_GTN_PF_FWD" -p tcp -d "${target_ip}" --dport "${tcp_port}" -j ACCEPT
+        fi
+
+        if [ "${udp_port}" != "-" ]; then
+          iptables -t nat -A "K8S_GTN_PF_NAT" -p udp --dport "${external_port}" \
+            -j DNAT --to-destination "${target_ip}:${udp_port}"
+          iptables -A "K8S_GTN_PF_FWD" -p udp -d "${target_ip}" --dport "${udp_port}" -j ACCEPT
+        fi
+      done < "${TARGETS_FILE}"
+    }
+
+    results() {
+      slot=0
+      while read -r handler namespace service target_ip http_port tcp_port udp_port; do
+        slot=$((slot + 1))
+        external_port="$(sed -n "${slot}p" "${PORTS_FILE}")"
+        [ -n "${external_port}" ] || break
+
+        printf 'result %s %s %s %s %s %s %s %s %s\n' \
+          "${slot}" \
+          "${external_port}" \
+          "${handler}" \
+          "${namespace}" \
+          "${service}" \
+          "${target_ip}" \
+          "${http_port}" \
+          "${tcp_port}" \
+          "${udp_port}"
+      done < "${TARGETS_FILE}"
+    }
+
+    ensure_base_networking
+    ports="$(forwarded_ports)"
+    write_ports_file
+
+    desired_state="$(printf '%s\n' "${ports}" && cat "${TARGETS_FILE}")"
+    if [ -f "${STATE_FILE}" ] && [ "$(cat "${STATE_FILE}")" = "${desired_state}" ]; then
+      results
+      printf 'ok unchanged\n'
+      exit 0
+    fi
+
+    flush_forwarding
+    if [ -n "${ports}" ]; then
+      apply_targets
+    fi
+
+    printf '%s' "${desired_state}" > "${STATE_FILE}"
+    results
+    printf 'ok\n'

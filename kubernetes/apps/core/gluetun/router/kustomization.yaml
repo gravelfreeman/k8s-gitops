@@ -3,7 +3,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+  - agent-configmap.yaml
+  - agent-token-generator.yaml
   - configmap.yaml
+  - helmrelease.yaml
   - rbac.yaml
 configMapGenerator:
   - name: gluetun-router

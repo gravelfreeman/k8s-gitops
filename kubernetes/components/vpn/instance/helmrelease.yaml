@@ -15,8 +15,6 @@ spec:
       ${APP}:
         replicas: 1
         strategy: Recreate
-        serviceAccount:
-          name: gluetun-router
         annotations:
           reloader.stakater.com/auto: "true"
         initContainers:
@@ -45,8 +43,7 @@ spec:
               PORT_FORWARD_ONLY: '{{ ternary "on" "off" (gt (int "${VPN_PORT_FORWARDING_PORTS_COUNT:=0}") 0) }}'
               VPN_PORT_FORWARDING: '{{ ternary "on" "off" (gt (int "${VPN_PORT_FORWARDING_PORTS_COUNT:=0}") 0) }}'
               VPN_PORT_FORWARDING_PORTS_COUNT: "${VPN_PORT_FORWARDING_PORTS_COUNT:=0}"
-              FIREWALL_INPUT_PORTS: '{{- $ports := list -}}{{- if .Values.service.proxies.ports.http.enabled -}}{{- $ports = append $ports "8888" -}}{{- end -}}{{- if .Values.service.proxies.ports.shadowsocks.enabled -}}{{- $ports = append $ports "8388" -}}{{- end -}}{{- if .Values.service.proxies.ports.socks5.enabled -}}{{- $ports = append $ports "1080" -}}{{- end -}}{{ join "," $ports }}'
-              FIREWALL_OUTBOUND_SUBNETS: "100.100.${VPN_INSTANCE}.0/24,172.30.0.1/32,10.0.10.101/32,10.0.10.102/32,10.0.10.103/32"
+              FIREWALL_INPUT_PORTS: '{{- $ports := list "9000" -}}{{- if .Values.service.proxies.ports.http.enabled -}}{{- $ports = append $ports "8888" -}}{{- end -}}{{- if .Values.service.proxies.ports.shadowsocks.enabled -}}{{- $ports = append $ports "8388" -}}{{- end -}}{{- if .Values.service.proxies.ports.socks5.enabled -}}{{- $ports = append $ports "1080" -}}{{- end -}}{{ join "," $ports }}'
               HTTPPROXY: '{{ ternary "on" "off" .Values.service.proxies.ports.http.enabled }}'
               HTTPPROXY_LOG: '{{ ternary "on" "off" .Values.service.proxies.ports.http.enabled }}'
               SHADOWSOCKS: '{{ ternary "on" "off" .Values.service.proxies.ports.shadowsocks.enabled }}'
@@ -79,16 +76,21 @@ spec:
               readOnlyRootFilesystem: false
               runAsGroup: 0
               runAsUser: 0
-          router:
+          agent:
             image:
               repository: ghcr.io/nicolaka/netshoot
               tag: v0.15@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61
-            command: ["/bin/sh", "/router/router.sh"]
+            command: ["/bin/sh", "/agent/agent.sh"]
             env:
               VPN_GATEWAY:
                 valueFrom:
                   fieldRef:
                     fieldPath: metadata.labels['network.k8s-gitops.io/vpn-gateway']
+              AGENT_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}-agent-secret
+                    key: AGENT_TOKEN
               GLUETUN_API_KEY:
                 valueFrom:
                   secretKeyRef:
@@ -149,6 +151,14 @@ spec:
               type: RuntimeDefault
           automountServiceAccountToken: false
     persistence:
+      agent:
+        type: configMap
+        name: gluetun-agent
+        advancedMounts:
+          ${APP}:
+            agent:
+              - path: /agent
+                readOnly: true
       device:
         type: hostPath
         hostPath: /dev/net/tun
@@ -157,28 +167,6 @@ spec:
           ${APP}:
             gluetun:
               - path: /dev/net/tun
-      router:
-        type: configMap
-        name: gluetun-router
-        advancedMounts:
-          ${APP}:
-            router:
-              - path: /router
-                readOnly: true
-      service-account:
-        type: custom
-        volumeSpec:
-          projected:
-            sources:
-              - serviceAccountToken:
-                  path: token
-              - configMap:
-                  name: kube-root-ca.crt
-        advancedMounts:
-          ${APP}:
-            router:
-              - path: /var/run/secrets/kubernetes.io/serviceaccount
-                readOnly: true
       secrets:
         type: secret
         name: ${APP}-secret
@@ -197,6 +185,10 @@ spec:
         ports:
           http:
             port: 8000
+          agent:
+            port: 9000
+            targetPort: 9000
+            protocol: TCP
       proxies:
         enabled: ${VPN_PROXIES_ENABLED:=false}
         type: LoadBalancer

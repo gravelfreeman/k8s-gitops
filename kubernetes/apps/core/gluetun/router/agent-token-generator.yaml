@@ -1,0 +1,15 @@
+---
+apiVersion: generators.external-secrets.io/v1alpha1
+kind: ClusterGenerator
+metadata:
+  name: gluetun-agent-token
+spec:
+  kind: Password
+  generator:
+    passwordSpec:
+      length: 48
+      digits: 8
+      symbols: 0
+      noUpper: false
+      allowRepeat: true
+      secretKeys: [AGENT_TOKEN]

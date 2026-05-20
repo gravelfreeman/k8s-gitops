@@ -34,6 +34,7 @@ spec:
   dependsOn:
     - name: gluetun
     - name: flux-shared
+    - name: external-secrets-store
   interval: 1h
   path: kubernetes/apps/core/gluetun/router
   prune: true

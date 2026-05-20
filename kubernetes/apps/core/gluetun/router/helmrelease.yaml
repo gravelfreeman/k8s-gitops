@@ -1,0 +1,59 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app gluetun-router
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    controllers:
+      gluetun-router:
+        serviceAccount:
+          name: *app
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/nicolaka/netshoot
+              tag: v0.15@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61
+            command: ["/bin/sh", "/router/router.sh"]
+            env:
+              GLUETUN_NAMESPACE: gluetun
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 128Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
+              readOnlyRootFilesystem: true
+              runAsGroup: 1000
+              runAsUser: 1000
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+          automountServiceAccountToken: true
+    persistence:
+      config:
+        type: configMap
+        name: *app
+        globalMounts:
+          - path: /router
+            readOnly: true
+      state:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp/gluetun-router
