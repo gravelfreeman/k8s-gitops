@@ -11,13 +11,13 @@ curl -fs --max-time 10 \
   "${TARGET_URL}/api/v2/app/setPreferences" \
   >/dev/null
 
-curl -fs --max-time 10 \
-  --data "hashes=all" \
-  "${TARGET_URL}/api/v2/torrents/reannounce" \
-  >/dev/null || true
-
-printf '%s [handler:qbittorrent] slot %s: synced announce_port=%s at %s\n' \
+printf '%s [handler:qbittorrent] slot %s: synced announce_port=%s at %s; restart requested\n' \
   "$(date -Iseconds)" \
   "${SLOT}" \
   "${EXTERNAL_PORT}" \
   "${TARGET_URL}"
+
+curl -fs --max-time 10 \
+  --data "" \
+  "${TARGET_URL}/api/v2/app/shutdown" \
+  >/dev/null
