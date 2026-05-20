@@ -8,6 +8,8 @@ spec:
   matchConditions:
     - name: has-namespace-domain
       expression: namespaceObject != null && has(namespaceObject.metadata.labels) && "domain" in namespaceObject.metadata.labels && namespaceObject.metadata.labels["domain"] != ""
+    - name: not-flux-kustomization
+      expression: request.resource.group != "kustomize.toolkit.fluxcd.io" || request.resource.resource != "kustomizations"
   matchConstraints:
     resourceRules:
       - apiGroups: ["*"]

@@ -3,6 +3,6 @@ kind: Namespace
 metadata:
   name: _
   labels:
-    domain: ${DOMAIN}
+    domain: ${domain}
     envoy-gateway-access: ${ENVOY_GATEWAY_ACCESS:=internal}
     pod-security.kubernetes.io/enforce: ${POD_SECURITY_ENFORCE:=restricted}

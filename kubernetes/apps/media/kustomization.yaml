@@ -1,18 +1,18 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-components:
-  - ../../components/common/domain
-configMapGenerator:
-  - name: domain
-    literals: [DOMAIN=media]
-generatorOptions:
-  annotations:
-    config.kubernetes.io/local-config: "true"
-labels:
-  - pairs:
-      domain: media
 namespace: flux-system
+labels:
+  - fields:
+      - path: metadata/labels
+        create: true
+      - group: kustomize.toolkit.fluxcd.io
+        version: v1
+        kind: Kustomization
+        path: spec/postBuild/substitute
+        create: true
+    pairs:
+      domain: media
 resources:
   - autobrr/ks.yaml
   - grimmory/ks.yaml
