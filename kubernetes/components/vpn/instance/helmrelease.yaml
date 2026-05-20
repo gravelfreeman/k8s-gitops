@@ -34,8 +34,8 @@ spec:
             command: ["/bin/sh", "-ec"]
             args:
               - |
-                ip rule del table 51820 || true
-                ip -6 rule del table 51820 || true
+                ip rule del table 51820 2>/dev/null || true
+                ip -6 rule del table 51820 2>/dev/null || true
                 exec /gluetun-entrypoint
             env:
               VPN_TYPE: wireguard
@@ -53,7 +53,7 @@ spec:
               SERVER_HOSTNAMES_SECRETFILE: /run/secrets/gluetun/server_hostnames
               VPN_SERVICE_PROVIDER_SECRETFILE: /run/secrets/gluetun/vpn_service_provider
               WIREGUARD_PRIVATE_KEY_SECRETFILE: /run/secrets/gluetun/wireguard_private_key
-              STORAGE_FILEPATH: /tmp/gluetun/servers.json
+              STORAGE_SERVERS_DIRECTORY_PATH: /tmp/gluetun/servers/
               VERSION_INFORMATION: off
               PUBLICIP_ENABLED: off
             probes:
