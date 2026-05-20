@@ -15,6 +15,8 @@ spec:
       ${APP}:
         replicas: 1
         strategy: Recreate
+        serviceAccount:
+          name: gluetun-router
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
@@ -135,8 +137,7 @@ spec:
             fsGroupChangePolicy: OnRootMismatch
             seccompProfile:
               type: RuntimeDefault
-          automountServiceAccountToken: true
-          serviceAccountName: gluetun-router
+          automountServiceAccountToken: false
     persistence:
       device:
         type: hostPath
@@ -153,6 +154,20 @@ spec:
           ${APP}:
             router:
               - path: /router
+                readOnly: true
+      service-account:
+        type: custom
+        volumeSpec:
+          projected:
+            sources:
+              - serviceAccountToken:
+                  path: token
+              - configMap:
+                  name: kube-root-ca.crt
+        advancedMounts:
+          ${APP}:
+            router:
+              - path: /var/run/secrets/kubernetes.io/serviceaccount
                 readOnly: true
       secrets:
         type: secret
