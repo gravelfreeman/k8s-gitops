@@ -12,6 +12,12 @@ data:
 
     AGENT_PORT="${AGENT_PORT:-9000}"
 
+    log() {
+      printf '%s [gluetun-agent] %s\n' "$(date -Iseconds)" "$*"
+    }
+
+    log "${VPN_GATEWAY}: starting on :${AGENT_PORT}"
+
     exec socat \
       TCP-LISTEN:${AGENT_PORT},reuseaddr,fork \
       EXEC:"/bin/sh /agent/apply.sh"
@@ -27,8 +33,13 @@ data:
     TARGETS_FILE="${TARGETS_FILE:-/tmp/gluetun/agent.targets}"
     VPN_INTERFACE="${VPN_INTERFACE:-tun0}"
 
+    log() {
+      printf '%s [gluetun-agent] %s\n' "$(date -Iseconds)" "$*" >&2
+    }
+
     read -r keyword provided_key
     if [ "${keyword}" != "token" ] || [ "${provided_key}" != "${AGENT_TOKEN}" ]; then
+      log "${VPN_GATEWAY}: forbidden request"
       printf 'forbidden\n'
       exit 1
     fi
@@ -74,6 +85,11 @@ data:
       for port in ${ports}; do
         printf '%s\n' "${port}" >> "${PORTS_FILE}"
       done
+    }
+
+    port_count() {
+      set -- ${ports}
+      printf '%s' "$#"
     }
 
     ensure_base_networking() {
@@ -154,8 +170,12 @@ data:
     ports="$(forwarded_ports)"
     write_ports_file
 
+    target_count="$(wc -l < "${TARGETS_FILE}" | tr -d ' ')"
+    port_count="$(port_count)"
     desired_state="$(printf '%s\n' "${ports}" && cat "${TARGETS_FILE}")"
+
     if [ -f "${STATE_FILE}" ] && [ "$(cat "${STATE_FILE}")" = "${desired_state}" ]; then
+      log "${VPN_GATEWAY}: unchanged targets=${target_count} ports=${port_count}"
       results
       printf 'ok unchanged\n'
       exit 0
@@ -167,5 +187,6 @@ data:
     fi
 
     printf '%s' "${desired_state}" > "${STATE_FILE}"
+    log "${VPN_GATEWAY}: applied targets=${target_count} ports=${port_count}"
     results
     printf 'ok\n'
