@@ -10,16 +10,14 @@ data:
     #!/bin/sh
     set -eu
 
-    AGENT_PORT="${AGENT_PORT:-9000}"
-
     log() {
       printf '%s [gluetun-agent] %s\n' "$(date -Iseconds)" "$*"
     }
 
-    log "${VPN_GATEWAY}: starting on :${AGENT_PORT}"
+    log "${VPN_GATEWAY}: starting on :9000"
 
     exec socat \
-      TCP-LISTEN:${AGENT_PORT},reuseaddr,fork \
+      TCP-LISTEN:9000,reuseaddr,fork \
       EXEC:"/bin/sh /agent/apply.sh"
 
   apply.sh: |
@@ -27,7 +25,6 @@ data:
     set -eu
 
     CLIENT_INTERFACE="${CLIENT_INTERFACE:-vpn}"
-    GLUETUN_CONTROL_URL="${GLUETUN_CONTROL_URL:-http://127.0.0.1:8000}"
     PORTS_FILE="${PORTS_FILE:-/tmp/gluetun/agent.ports}"
     STATE_FILE="${STATE_FILE:-/tmp/gluetun/agent.state}"
     TARGETS_FILE="${TARGETS_FILE:-/tmp/gluetun/agent.targets}"
@@ -71,7 +68,7 @@ data:
     forwarded_ports() {
       json="$(curl -fs --max-time 10 \
         -H "X-API-Key: ${GLUETUN_API_KEY}" \
-        "${GLUETUN_CONTROL_URL}/v1/portforward")"
+        "http://127.0.0.1:8000/v1/portforward")"
 
       printf '%s' "${json}" | jq -r '
         (.ports // (if (.port // 0) > 0 then [.port] else [] end))
@@ -193,7 +190,6 @@ data:
     desired_state="$(printf '%s\n' "${ports}" && cat "${TARGETS_FILE}")"
 
     if [ -f "${STATE_FILE}" ] && [ "$(cat "${STATE_FILE}")" = "${desired_state}" ]; then
-      log "${VPN_GATEWAY}: unchanged targets=${target_count} ports=${port_count}"
       results
       printf 'ok unchanged\n'
       exit 0
@@ -206,5 +202,6 @@ data:
 
     printf '%s' "${desired_state}" > "${STATE_FILE}"
     log "${VPN_GATEWAY}: applied targets=${target_count} ports=${port_count}"
+    log "${VPN_GATEWAY}: monitoring"
     results
     printf 'ok\n'

@@ -10,24 +10,21 @@ data:
     #!/bin/sh
     set -eu
 
-    AGENT_PORT="${AGENT_PORT:-9000}"
     GLUETUN_NAMESPACE="${GLUETUN_NAMESPACE:-gluetun}"
     HANDLER_STATE_DIR="${HANDLER_STATE_DIR:-/tmp/gluetun-router}"
-    KUBE_API_URL="${KUBE_API_URL:-https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS:-443}}"
     RECONCILE_INTERVAL="${RECONCILE_INTERVAL:-15}"
-    SERVICE_ACCOUNT="/var/run/secrets/kubernetes.io/serviceaccount"
 
     log() {
       printf '%s [gluetun-router] %s\n' "$(date -Iseconds)" "$*"
     }
 
     kube_api() {
-      token="$(cat "${SERVICE_ACCOUNT}/token")"
+      token="$(cat "/var/run/secrets/kubernetes.io/serviceaccount/token")"
 
       curl -fs --max-time 10 \
-        --cacert "${SERVICE_ACCOUNT}/ca.crt" \
+        --cacert "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt" \
         -H "Authorization: Bearer ${token}" \
-        "${KUBE_API_URL}${1}"
+        "https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS:-443}${1}"
     }
 
     agent_key() {
@@ -124,7 +121,7 @@ data:
     agent_service() {
       gateway="${1}"
 
-      kube_api "/api/v1/namespaces/${GLUETUN_NAMESPACE}/services" | jq -r --arg gateway "${gateway}" --argjson port "${AGENT_PORT}" '
+      kube_api "/api/v1/namespaces/${GLUETUN_NAMESPACE}/services" | jq -r --arg gateway "${gateway}" --argjson port 9000 '
         [
           .items[]
           | select((.spec.selector // {})["app.kubernetes.io/instance"] == $gateway)
@@ -151,10 +148,14 @@ data:
         printf 'token %s\n' "${key}"
         printf '%s\n' "${targets}"
         printf 'end\n'
-      } | nc -w 10 "${host}" "${AGENT_PORT}")"
+      } | nc -w 10 "${host}" 9000)"
 
       status="$(printf '%s\n' "${AGENT_REPLY}" | awk '$1 != "result" { line=$0 } END { print line }')"
-      log "${gateway}: ${status:-no response}"
+      case "${status}" in
+        "ok unchanged") ;;
+        "") log "${gateway}: no response" ;;
+        *) log "${gateway}: ${status}" ;;
+      esac
     }
 
     run_handlers() {
@@ -211,13 +212,13 @@ data:
       fi
 
       targets="$(desired_targets "${gateway}")" || return 1
-      log "${gateway}: reconciling"
       send_targets "${gateway}" "${key}" "${targets}"
       run_handlers "${gateway}"
     }
 
     mkdir -p "${HANDLER_STATE_DIR}"
     log "starting"
+    log "monitoring interval=${RECONCILE_INTERVAL}s"
 
     while true; do
       gateways | while read -r gateway; do

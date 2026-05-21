@@ -38,25 +38,26 @@ spec:
                 ip -6 rule del table 51820 2>/dev/null || true
                 exec /gluetun-entrypoint
             env:
-              VPN_TYPE: wireguard
+              DNS_UPSTREAM_IPV6: off
               DNS_UPSTREAM_RESOLVERS: quad9
               DNS_UPSTREAM_RESOLVER_TYPE: doh
+              FIREWALL_INPUT_PORTS: '{{- $ports := list "9000" -}}{{- if .Values.service.proxies.ports.http.enabled -}}{{- $ports = append $ports "8888" -}}{{- end -}}{{- if .Values.service.proxies.ports.shadowsocks.enabled -}}{{- $ports = append $ports "8388" -}}{{- end -}}{{- if .Values.service.proxies.ports.socks5.enabled -}}{{- $ports = append $ports "1080" -}}{{- end -}}{{ join "," $ports }}'
+              HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: /run/secrets/gluetun/config.toml
+              HTTP_CONTROL_SERVER_LOG: off
+              HTTPPROXY: '{{ ternary "on" "off" .Values.service.proxies.ports.http.enabled }}'
+              IPV6: off
               PORT_FORWARD_ONLY: '{{ ternary "on" "off" (gt (int "${VPN_PORT_FORWARDING_PORTS_COUNT:=0}") 0) }}'
+              PUBLICIP_ENABLED: off
+              SHADOWSOCKS: '{{ ternary "on" "off" .Values.service.proxies.ports.shadowsocks.enabled }}'
+              STORAGE_SERVERS_DIRECTORY_PATH: /tmp/gluetun/servers/
+              VERSION_INFORMATION: off
               VPN_PORT_FORWARDING: '{{ ternary "on" "off" (gt (int "${VPN_PORT_FORWARDING_PORTS_COUNT:=0}") 0) }}'
               VPN_PORT_FORWARDING_PORTS_COUNT: "${VPN_PORT_FORWARDING_PORTS_COUNT:=0}"
-              FIREWALL_INPUT_PORTS: '{{- $ports := list "9000" -}}{{- if .Values.service.proxies.ports.http.enabled -}}{{- $ports = append $ports "8888" -}}{{- end -}}{{- if .Values.service.proxies.ports.shadowsocks.enabled -}}{{- $ports = append $ports "8388" -}}{{- end -}}{{- if .Values.service.proxies.ports.socks5.enabled -}}{{- $ports = append $ports "1080" -}}{{- end -}}{{ join "," $ports }}'
-              HTTPPROXY: '{{ ternary "on" "off" .Values.service.proxies.ports.http.enabled }}'
-              SHADOWSOCKS: '{{ ternary "on" "off" .Values.service.proxies.ports.shadowsocks.enabled }}'
-              HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: /run/secrets/gluetun/config.toml
-              SERVER_HOSTNAMES_SECRETFILE: /run/secrets/gluetun/server_hostnames
               VPN_SERVICE_PROVIDER_SECRETFILE: /run/secrets/gluetun/vpn_service_provider
+              VPN_TYPE: wireguard
+              WIREGUARD_ENDPOINT_IP_SECRETFILE: /run/secrets/gluetun/wireguard_endpoint_ip
+              WIREGUARD_ENDPOINT_PORT_SECRETFILE: /run/secrets/gluetun/wireguard_endpoint_port
               WIREGUARD_PRIVATE_KEY_SECRETFILE: /run/secrets/gluetun/wireguard_private_key
-              STORAGE_SERVERS_DIRECTORY_PATH: /tmp/gluetun/servers/
-              HTTP_CONTROL_SERVER_LOG: off
-              VERSION_INFORMATION: off
-              PUBLICIP_ENABLED: off
-              DNS_UPSTREAM_IPV6: off
-              IPV6: off
             probes:
               liveness: &gluetunProbe
                 custom: true
