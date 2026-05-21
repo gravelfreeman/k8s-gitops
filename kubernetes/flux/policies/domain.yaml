@@ -5,13 +5,23 @@ metadata:
   name: domain-labeler.k8s-gitops.io
 spec:
   failurePolicy: Ignore
-  matchConditions:
-    - name: has-namespace-domain
-      expression: namespaceObject != null && has(namespaceObject.metadata.labels) && "domain" in namespaceObject.metadata.labels && namespaceObject.metadata.labels["domain"] != ""
-    - name: not-flux-kustomization
-      expression: request.resource.group != "kustomize.toolkit.fluxcd.io" || request.resource.resource != "kustomizations"
   matchConstraints:
+    excludeResourceRules:
+      - apiGroups: ["kustomize.toolkit.fluxcd.io"]
+        apiVersions: ["v1"]
+        operations: ["CREATE"]
+        resources: ["kustomizations"]
+        scope: Namespaced
+    namespaceSelector:
+      matchExpressions:
+        - key: domain
+          operator: Exists
     resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["*"]
+        operations: ["CREATE"]
+        resources: ["*"]
+        scope: Namespaced
       - apiGroups: ["*"]
         apiVersions: ["*"]
         operations: ["CREATE"]
