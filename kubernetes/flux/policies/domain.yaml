@@ -18,14 +18,12 @@ spec:
         resources: ["*"]
         scope: Namespaced
   mutations:
-    - patchType: ApplyConfiguration
-      applyConfiguration:
+    - patchType: JSONPatch
+      jsonPatch:
         expression: >
-          Object{
-            metadata: Object.metadata{
-              labels: {"domain": namespaceObject.metadata.labels["domain"]}
-            }
-          }
+          has(object.metadata.labels)
+            ? [JSONPatch{op: "add", path: "/metadata/labels/domain", value: namespaceObject.metadata.labels["domain"]}]
+            : [JSONPatch{op: "add", path: "/metadata/labels", value: {"domain": namespaceObject.metadata.labels["domain"]}}]
   reinvocationPolicy: IfNeeded
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.36.0-standalone-strict/mutatingadmissionpolicybinding-admissionregistration-v1.json
