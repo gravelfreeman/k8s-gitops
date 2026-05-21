@@ -1,8 +1,8 @@
 # VPN Component
 
-Reusable VPN egress and port-forward component for `app-template` workloads, with a zero-config router that links apps, VPN gateways, forwarded ports, and handlers.
+Reusable Flux component for shared VPN and automatic port forwarding in `app-template` workloads.
 
-What it provides
+What it provides:
 
 - Automatic port forwarding rotation for VPN services without fixed forwarded ports.
 - Multiple port-forwarded apps on the same VPN instance.
@@ -11,20 +11,32 @@ What it provides
 - Client apps can run on any node and reschedule with a new VPN-network IP.
 - LAN reuse through Gluetun HTTP/SOCKS proxies when exposed by LoadBalancer Services.
 
+### Design rationale
+
+This component was designed with privacy, security, and GitOps in mind. The goal was to build a zero-config automated shared VPN setup, with minimal moving parts, least-privilege client workloads, and no per-app sidecars.
+
+<details>
+<summary>Read more ...</summary>
+The core idea is that one VPN instance becomes one reusable network identity. Any `app-template` workload in the cluster can opt into that identity, and the same VPN instance can also be reused from the LAN through Gluetun proxies when exposed. This makes it easy to use a specific VPN identity from anywhere on the LAN, from any Kubernetes app, or from any device that can point to the exposed proxy. It also helps maximize limited VPN provider connection slots by reusing a single VPN session across many clients instead of starting a separate VPN tunnel per app.
+<br><br>
+Existing approaches did not fully match that model. Sidecar-based Gluetun is simple for one app, but it does not scale well, weakens pod security, duplicates VPN configuration everywhere, and makes VPN reuse awkward. solidDoWant’s design is much closer architecturally and also documents a simpler non-HA alternative, but I did not find a complete implemented version of that simpler path. I also wanted this to be packaged as a reusable component to reduce the GitOps surface and make the setup easier to adopt. Starting from that shared VPN gateway model, I kept the useful parts while cutting the operational weight and adapting the design to my existing GitOps infrastructure.
+<br><br>
+The router/agent split became the smallest clean design that still preserves least privilege: the router handles cluster discovery and app-specific handlers outside the VPN pods, while each Gluetun instance only runs a small local agent responsible for applying its own network rules. The component integrates with the existing stack instead of adding a separate VPN platform, using Flux components and the cluster’s networking pieces such as Multus, Cilium, and Envoy where appropriate. It avoids hacky workarounds, supports dynamic port-forward automation, and keeps client apps clean, non-root, and sidecar-less. The result is a practical balance between features, security, and operational simplicity for this cluster.
+</details>
+
 ## Method Comparison
 
-| Method | This | solidDoWant | angelnu | Sidecar |
+| Method | This | [solidDoWant](https://github.com/angelnu/pod-gateway) | [angelnu](https://github.com/angelnu/pod-gateway) | Sidecar |
 | :----- | :--: | :---------: | :----: | :-----: |
-| Complexity | Moderate | Advanced | Intermediate | Beginner |
-| Privacy | Strong | **Best** | Strong | Strong |
-| Security | Strong | Strong | Basic | Basic |
-| Minimal stack | ✅ | ❌ | ❌ | ✅ |
-| Moving parts for 5 clients**¹** | ~6 | ~20+ | ~15+ | ~5 |
-| Moving parts for 100 clients**²** | ~24 | ~80+ | ~300+ | ~100 |
+| Reusable GitOps component | ✅ | ❌ | ❌ | ❌ |
 | Dynamic port-forward automation | ✅ | ❌ | ❌ | ❌ |
 | Multiple forwarded apps per VPN | ✅ | ❌ | ❌ | ❌ |
+| Minimal stack | ✅ | ❌ | ❌ | ⚠️ |
+| Complexity | Low | High | High | Low |
+| Privacy | Strong | Superior | Strong | Strong |
+| Security | Strong | Strong | Basic | Basic |
+| Client traffic through VPN | ✅ | ✅ | ✅ | ✅  |
 | Inbound port forwarding | ✅ | ✅ | ✅ | ✅  |
-| VPN egress | ✅ | ✅ | ✅ | ✅  |
 | Shared VPN gateway | ✅ | ✅ | ✅ | ❌ |
 | Node-independent clients | ✅ | ✅ | ✅ | ❌ |
 | Gateway health routing | ⚠️ | ✅ | ⚠️ | ❌ |
@@ -38,31 +50,92 @@ What it provides
 
 ✅ supported · ⚠️ partial · ❌ not supported
 
-**¹** Scenario A: 5 VPN client apps, 1 port-forwarded app, and 1 shared Gluetun instance.
-
-**²** Scenario B: 100 VPN client apps, 10 port-forwarded apps, and 10 shared Gluetun instances.
-
 ## Requirements
 
-- At least one `Gluetun` instance configured with the `gluetun-router` sidecar.
-- The shared `gluetun-router` resources installed in the *Gluetun* namespace.
-- *Whereabouts* installed for dynamic IP allocation on client networks.
+- `cilium`: handles the main network, policies, and optional Gluetun proxy LoadBalancers.
+- `external-secrets`: syncs external secrets and generates runtime tokens for the component.
+- `multus`: creates the internal VPN network and connects Gluetun and client pods to it.
+- `node-network-operator`: creates per-node bridge/VXLAN links for the VPN network.
+- `whereabouts`: assigns dynamic IPs to client pods on each VPN client network.
+
+Required *Multus* CNI paths in `HelmRelease`:
+
+```yaml
+values:
+  cni:
+    binPath: /opt/cni/bin
+    netPath: /etc/cni/net.d
+```
+
+Required *node-network-operator* `Link` to be created:
+
+```yaml
+apiVersion: nodenetworkoperator.soliddowant.dev/v1alpha1
+kind: Link
+metadata:
+  name: vpn-underlay
+spec:
+  interfaceName: <node-underlay-interface>
+  nodeSelector:
+    matchLabels:
+      kubernetes.io/os: linux
+  unmanaged: {}
+```
+
+## Installation
+
+Once you've met all requirements, copy or adapt these repo paths into your cluster GitOps tree:
+
+- `kubernetes/apps/core/gluetun/router`: shared router, agent scripts, handlers, and token generator.
+- `kubernetes/components/vpn`: reusable client and Gluetun instance components.
+
+The Usage flow below creates the per-instance and per-app resources automatically.
 
 ## Usage
 
-```yaml
-components:
-  - ../../../../../components/vpn
-dependsOn:
-  - name: gluetun-<instance-name>
-postBuild:
-  substitute:
-    APP: *app
-    VPN_GATEWAY: <instance-name>
-    VPN_GATEWAY_IP: 100.100.1.1
+Create VPN instances under the Gluetun application tree:
+
+```text
+kubernetes/apps/core/gluetun
+├── instances
+│   ├── <instance-1>.yaml
+│   └── <instance-2>.yaml
+├── router
+└── ks.yaml
 ```
 
-Applications that need an inbound forwarded port expose their app-template Service port as `forward-tcp` and/or `forward-udp`:
+Use a Flux `Kustomization` to create each VPN instance:
+
+```yaml
+spec:
+  dependsOn:
+    - name: gluetun-router
+  path: kubernetes/components/vpn/instance
+  postBuild:
+    substitute:
+      APP: <instance>
+      VPN_INSTANCE: "1"
+      VPN_PORT_FORWARDS: "1"
+      VPN_PROXIES_ENABLED: "true"
+  targetNamespace: gluetun
+```
+
+To attach an application to a VPN instance, edit the application's `ks.yaml`:
+
+```yaml
+spec:
+  components:
+    - ../../../../../components/vpn
+  dependsOn:
+    - name: gluetun-<vpn-instance>
+  postBuild:
+    substitute:
+      APP: *app
+      VPN_GATEWAY: gluetun-<vpn-instance>
+      VPN_INSTANCE: "1"
+```
+
+Applications that requires port forwarding must expose their service port as `forward-tcp/udp`:
 
 ```yaml
 service:
@@ -78,146 +151,86 @@ service:
 
 ## Variables
 
+### Client component
+
 | Name | Default | Description |
 | ---- | ------- | ----------- |
-| `APP` *(required)* | none | App name and resource prefix. |
-| `VPN_GATEWAY` *(required)* | none | Gluetun gateway name, `<instance-name>`. |
-| `VPN_GATEWAY_IP` *(required)* | none | Gateway IP on the client VPN network, for example `100.100.1.1`. |
+| `APP` *(required)* | none | Client app name and resource prefix. |
+| `VPN_GATEWAY` *(required)* | none | VPN instance name, for example `gluetun-<instance>`. |
+| `VPN_INSTANCE` *(required)* | none | Numeric instance ID matching the selected `VPN_GATEWAY`. |
 
-## Traffic Flow
+### Instance component
 
-#### Outbound traffic from a VPN client app:
+| Name | Default | Description |
+| ---- | ------- | ----------- |
+| `APP` *(required)* | none | Gluetun instance name and resource prefix. |
+| `VPN_INSTANCE` *(required)* | none | Unique numeric instance ID per VPN instance. |
+| `VPN_PORT_FORWARDS` | `0` | Number of dynamic forwarded ports requested from Gluetun. |
+| `VPN_PROXIES_ENABLED` | `false` | Enables all proxy listeners and LoadBalancer ports. |
+| `VPN_HTTPPROXY_ENABLED` | `false` | Enables only the HTTP proxy listener and LoadBalancer port. |
+| `VPN_SHADOWSOCKS_ENABLED` | `false` | Enables only the Shadowsocks listener and LoadBalancer port. |
+| `VPN_SOCKS5_ENABLED` | `false` | Enables only the SOCKS5 sidecar and LoadBalancer port. |
 
-1. The app pod gets a secondary `vpn` interface from `gluetun/gluetun-<gateway>-client`.
-2. Whereabouts assigns the app a dynamic IP from the gateway client subnet.
-3. The app routes internet-bound traffic through `VPN_GATEWAY_IP`.
-4. The Gluetun pod receives that traffic on its own `vpn` interface from `gluetun/gluetun-<gateway>-gateway`.
-5. `gluetun-router` allows forwarding from `vpn` to the VPN tunnel interface and masquerades the client subnet.
-6. Gluetun sends the traffic through the VPN tunnel to the internet.
+### Instance secrets
 
-#### Inbound traffic from an internet peer:
-
-1. Gluetun receives the current forwarded VPN port from its VPN connection.
-2. `gluetun-router` reads that port from the local Gluetun control API.
-3. `gluetun-router` discovers opted-in apps with `vpn.k8s-gitops.io/port-forward-gateway: <gateway>`.
-4. It reads the app IP from the `gluetun-<gateway>-client` network-status annotation.
-5. It reads the app Service ports named `forward-tcp` and/or `forward-udp`.
-6. It creates DNAT/FORWARD rules from the forwarded VPN port to the app IP and Service port.
-7. It runs the matching handler so the app can learn the current external forwarded port when needed.
-
-## Gluetun Router
-
-`gluetun-router` is a sidecar that runs beside each Gluetun container. It reads the forwarded VPN ports from the local Gluetun control API, discovers opted-in app pods from Kubernetes, programs the DNAT/FORWARD rules, and calls an app-specific handler when a forwarded port is assigned.
-
-Discovery is convention-based:
-
-- The Gluetun pod has `network.k8s-gitops.io/vpn-gateway: <gateway>`.
-- This component adds `vpn.k8s-gitops.io/port-forward-gateway: <gateway>` to app pods.
-- This component attaches app pods to `gluetun/gluetun-<gateway>-client@vpn`.
-- The app Service exposes `forward-tcp` and/or `forward-udp` when inbound forwarding is needed.
-- The handler name is derived from the app container image basename.
-
-For example, an app container image ending in `qbittorrent` uses `/router/qbittorrent.sh`.
-
-Handlers are stored in `path/to/gluetun/router/handlers` and merged into the `gluetun-router` ConfigMap.
-
-To add a handler:
-
-1. Create `handlers/<image-basename>.sh`.
-2. Add it to the `configMapGenerator.files` list.
-3. Use the environment variables provided by the router.
-
-Handler environment:
+The instance component reads these fields from the `gluetun` 1Password item.
 
 | Name | Description |
 | ---- | ----------- |
-| `SLOT` | Stable assignment index for the gateway. |
-| `HANDLER` | Handler name. |
-| `EXTERNAL_PORT` | Current forwarded VPN port. |
-| `TARGET_IP` | App IP on `gluetun-<gateway>-client`. |
-| `TARGET_PORT` | First configured `forward-tcp` or `forward-udp` Service port. |
-| `VPN_GATEWAY` | Gluetun gateway name. |
+| `<INSTANCE>_VPN_SERVICE_PROVIDER` | Provider name used by Gluetun for port forwarding. |
+| `<INSTANCE>_WIREGUARD_ADDRESSES` | WireGuard interface address. |
+| `<INSTANCE>_WIREGUARD_ENDPOINT_IP` | WireGuard peer endpoint IP. |
+| `<INSTANCE>_WIREGUARD_ENDPOINT_PORT` | WireGuard peer endpoint port. |
+| `<INSTANCE>_WIREGUARD_PRIVATE_KEY` | WireGuard private key. |
+| `<INSTANCE>_WIREGUARD_PUBLIC_KEY` | WireGuard peer public key. |
 
-Apps without `forward-tcp` or `forward-udp` are still routed through the VPN for egress, but are ignored by the port-forward logic.
+## Traffic Flow
 
-## Gluetun
+### Outbound traffic from a VPN client app:
 
-In this setup, Gluetun is the VPN gateway pod. It receives the static `gluetun-<gateway>-gateway` Multus address, exposes the local control API to the router sidecar, and shares the pod network namespace with the router so the router can manage forwarding rules.
+1. The app opts in from its `ks.yaml` with `VPN_GATEWAY` and `VPN_INSTANCE`.
+2. The VPN component attaches the app to `gluetun/<gateway>-client@vpn`.
+3. Whereabouts gives the app a dynamic `100.100.<instance>.x` address.
+4. Internet-bound traffic is routed to the Gluetun gateway at `100.100.<instance>.1`.
+5. The Gluetun agent keeps the forwarding and masquerade rules active from `vpn` to `tun0`.
+6. Gluetun sends the traffic through the VPN tunnel.
 
-Only the Gluetun-specific additions needed for this routing model are shown here:
+### Inbound traffic from an internet peer:
 
-```yaml
-      gluetun:
-        env:
-          VPN_PORT_FORWARDING: on
-          VPN_PORT_FORWARDING_PORTS_COUNT: "4"
-          HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: /run/secrets/gluetun/config.toml
-```
-```yaml
-      router:
-        image:
-          repository: ghcr.io/nicolaka/netshoot
-          tag: v0.15
-        command: ["/bin/sh", "/router/router.sh"]
-        env:
-          GLUETUN_API_KEY:
-            valueFrom:
-              secretKeyRef:
-                name: gluetun-<instance-name>-secret
-                key: GLUETUN_API_KEY
-          VPN_GATEWAY:
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.labels['network.k8s-gitops.io/vpn-gateway']
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            add: [NET_ADMIN]
-            drop: [ALL]
-          readOnlyRootFilesystem: true
-          runAsGroup: 0
-          runAsUser: 0
-```
-```yaml
-    pod:
-      annotations:
-        k8s.v1.cni.cncf.io/networks: gluetun/<gluetun-instance>-gateway@vpn
-      labels:
-        network.k8s-gitops.io/vpn-gateway: <instance-name>
-      automountServiceAccountToken: true
-      serviceAccountName: gluetun-router
-```
-```yaml
-persistence:
-  router:
-    type: configMap
-    name: gluetun-router
-    advancedMounts:
-      gluetun-<instance-name>:
-        router:
-          - path: /router
-            readOnly: true
-```
-
-The Gluetun control API role only needs access to the port-forward endpoint:
-
-```toml
-[[roles]]
-name = "port-forward"
-routes = ["GET /v1/portforward"]
-auth = "apikey"
-apikey = "<from-secret>"
-```
+1. Gluetun receives the current forwarded ports from the VPN connection.
+2. The central `gluetun-router` discovers running gateways and opted-in apps.
+3. Apps with `forward-tcp` and/or `forward-udp` Service ports become port-forward targets.
+4. The router sends those targets to the matching Gluetun agent.
+5. The agent reads the current forwarded ports from the local Gluetun API.
+6. The agent applies DNAT/FORWARD rules inside the Gluetun pod network namespace.
+7. The agent returns the active port assignments to the router.
+8. The router runs the matching app handler when the app needs to learn the public port.
 
 ## Resources
 
-- `CiliumNetworkPolicy` named `${APP}-egress`
-- Attaches app pods to `gluetun/gluetun-${VPN_GATEWAY}-client@vpn`
-- Sets app DNS to `${VPN_GATEWAY_IP}`
-- Adds `network.k8s-gitops.io/vpn-egress: ${VPN_GATEWAY}` for egress policy selection
-- Adds `vpn.k8s-gitops.io/port-forward-gateway: ${VPN_GATEWAY}` for Gluetun router discovery
-- Patches app-template `defaultPodOptions`
+### Gluetun instance resources:
+
+- `HelmRelease` named `${APP}` with `gluetun`, `agent`, and optional `socks5` containers.
+- `ExternalSecret` named `${APP}-secret` for Gluetun runtime files and API key.
+- `ExternalSecret` named `${APP}-agent` for the agent token.
+- `Role` and `RoleBinding` named `${APP}-agent-reader` so the router can read the agent token.
+- `NetworkAttachmentDefinition` named `${APP}-gateway` for the Gluetun gateway interface.
+- `NetworkAttachmentDefinition` named `${APP}-client` for VPN client pods.
+- `Link` named `${APP}-bridge` for the per-node bridge.
+- `Link` named `${APP}-vxlan` for the per-node VXLAN interface.
+
+### Client app resources:
+
+- `CiliumNetworkPolicy` named `${APP}-egress`.
+
+### Client app patches:
+
+- Adds the Multus network annotation for `gluetun/${VPN_GATEWAY}-client@vpn`.
+- Sets `dnsPolicy: None`.
+- Sets the DNS nameserver to `100.100.${VPN_INSTANCE}.1`.
+- Adds `network.k8s-gitops.io/vpn-egress: ${VPN_GATEWAY}`.
+- Adds `vpn.k8s-gitops.io/port-forward-gateway: ${VPN_GATEWAY}`.
 
 ## Notes
 
-- `<instance-name>` refers to the Gluetun instance's name.
+- Adapt it as needed for clusters using different networking or secret-management stacks.

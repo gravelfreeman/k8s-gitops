@@ -15,7 +15,7 @@ spec:
     substitute:
       APP: *app
       VPN_INSTANCE: "2"
-      VPN_PORT_FORWARDING_PORTS_COUNT: "1"
+      VPN_PORT_FORWARDS: "1"
       VPN_PROXIES_ENABLED: "true"
   prune: true
   sourceRef:

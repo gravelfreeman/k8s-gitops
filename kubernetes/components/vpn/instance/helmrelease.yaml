@@ -46,8 +46,8 @@ spec:
               SHADOWSOCKS: '{{ ternary "on" "off" .Values.service.proxies.ports.shadowsocks.enabled }}'
               STORAGE_SERVERS_DIRECTORY_PATH: /tmp/gluetun/servers/
               VERSION_INFORMATION: off
-              VPN_PORT_FORWARDING: '{{ ternary "on" "off" (gt (int "${VPN_PORT_FORWARDING_PORTS_COUNT:=0}") 0) }}'
-              VPN_PORT_FORWARDING_PORTS_COUNT: "${VPN_PORT_FORWARDING_PORTS_COUNT:=0}"
+              VPN_PORT_FORWARDING: '{{ ternary "on" "off" (gt (int "${VPN_PORT_FORWARDS:=0}") 0) }}'
+              VPN_PORT_FORWARDING_PORTS_COUNT: "${VPN_PORT_FORWARDS:=0}"
               VPN_PORT_FORWARDING_PROVIDER_SECRETFILE: /run/secrets/gluetun/VPN_PORT_FORWARDING_PROVIDER
               VPN_SERVICE_PROVIDER: custom
               VPN_TYPE: wireguard

@@ -27,7 +27,7 @@ spec:
     substitute:
       APP: *app
       VPN_GATEWAY: gluetun-alfa
-      VPN_GATEWAY_IP: 100.100.1.1
+      VPN_INSTANCE: "1"
   prune: true
   sourceRef:
     kind: GitRepository
