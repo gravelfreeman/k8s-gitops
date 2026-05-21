@@ -28,7 +28,7 @@ data:
     }
 
     agent_key() {
-      secret="${1}-agent-secret"
+      secret="${1}-agent"
       json="$(kube_api "/api/v1/namespaces/${GLUETUN_NAMESPACE}/secrets/${secret}" 2>/dev/null || printf '{}')"
 
       printf '%s' "${json}" | jq -r '.data.AGENT_TOKEN // empty | @base64d'

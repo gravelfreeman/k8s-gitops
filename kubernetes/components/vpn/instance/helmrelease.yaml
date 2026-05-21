@@ -49,11 +49,11 @@ spec:
               VERSION_INFORMATION: off
               VPN_PORT_FORWARDING: '{{ ternary "on" "off" (gt (int "${VPN_PORT_FORWARDING_PORTS_COUNT:=0}") 0) }}'
               VPN_PORT_FORWARDING_PORTS_COUNT: "${VPN_PORT_FORWARDING_PORTS_COUNT:=0}"
-              VPN_SERVICE_PROVIDER_SECRETFILE: /run/secrets/gluetun/vpn_service_provider
               VPN_TYPE: wireguard
-              WIREGUARD_ENDPOINT_IP_SECRETFILE: /run/secrets/gluetun/wireguard_endpoint_ip
-              WIREGUARD_ENDPOINT_PORT_SECRETFILE: /run/secrets/gluetun/wireguard_endpoint_port
-              WIREGUARD_PRIVATE_KEY_SECRETFILE: /run/secrets/gluetun/wireguard_private_key
+              WIREGUARD_PRIVATE_KEY_SECRETFILE: /run/secrets/gluetun/WIREGUARD_PRIVATE_KEY
+            envFrom:
+              - secretRef:
+                  name: ${APP}-env-secret
             probes:
               liveness: &gluetunProbe
                 custom: true
@@ -88,7 +88,7 @@ spec:
               AGENT_TOKEN:
                 valueFrom:
                   secretKeyRef:
-                    name: ${APP}-agent-secret
+                    name: ${APP}-agent
                     key: AGENT_TOKEN
               GLUETUN_API_KEY:
                 valueFrom:
@@ -168,7 +168,7 @@ spec:
               - path: /dev/net/tun
       secrets:
         type: secret
-        name: ${APP}-secret
+        name: ${APP}-file-secret
         advancedMounts:
           ${APP}:
             gluetun:
