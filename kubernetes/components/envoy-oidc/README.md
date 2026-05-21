@@ -20,15 +20,6 @@ postBuild:
     ENVOY_OIDC_GROUP: user
 ```
 
-For an app whose subdomain differs from `APP`, for example `custom.domain.tld`:
-
-```yaml
-postBuild:
-  substitute:
-    APP: *app
-    ENVOY_OIDC_SUBDOMAIN: custom
-```
-
 ## Split Routes
 
 This component creates the `SecurityPolicy` for you and targets only the `HTTPRoute` named `${APP}`, unless *overridden*. If an app also needs an **API**, **webhook**, **callback**, or **health** endpoint that must not go through browser OIDC, create a second route with a different name such as `${APP}-api`.
@@ -63,7 +54,6 @@ route:
 | ---- | ------- | ----------- |
 | `APP` *(required)* | none | Application name. |
 | `ENVOY_OIDC_GROUP` | `admin` | Primary Pocket ID group allowed to access the app. |
-| `ENVOY_OIDC_SUBDOMAIN` | `${APP}` | Subdomain used by the protected app callback URL. |
 
 ## Resources
 

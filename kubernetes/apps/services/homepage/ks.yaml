@@ -18,7 +18,6 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      ENVOY_OIDC_SUBDOMAIN: root
   prune: true
   sourceRef:
     kind: GitRepository

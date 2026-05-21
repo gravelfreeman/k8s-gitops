@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app qb1
+  name: &app qbittorrent-1
 spec:
   interval: 30m
   chartRef:
@@ -12,7 +12,7 @@ spec:
     namespace: flux-system
   values:
     controllers:
-      qb1:
+      qbittorrent-1:
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
@@ -28,10 +28,10 @@ spec:
               readiness: *probe
             resources:
               requests:
-                cpu: 150m
-                memory: 3Gi
-              limits:
+                cpu: '1'
                 memory: 4Gi
+              limits:
+                memory: 6Gi
             securityContext:
               readOnlyRootFilesystem: true
               allowPrivilegeEscalation: false
@@ -50,7 +50,7 @@ spec:
     persistence:
       config:
         type: persistentVolumeClaim
-        existingClaim: qb1-data
+        existingClaim: qbittorrent-1-data
         globalMounts:
           - path: /config
       media:
@@ -69,8 +69,7 @@ spec:
           - path: /tmp
     route:
       app:
-        hostnames:
-          - qb1.${DOMAIN_1}
+        hostnames: ['qb1.${DOMAIN_1}']
         parentRefs:
           - name: envoy-internal
             namespace: envoy-gateway
