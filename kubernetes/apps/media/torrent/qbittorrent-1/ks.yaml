@@ -16,7 +16,7 @@ spec:
     - name: gluetun-alfa
     - name: torrent
   interval: 1h
-  path: kubernetes/apps/media/torrent/qb1/app
+  path: kubernetes/apps/media/torrent/qbittorrent-1/app
   postBuild:
     substitute:
       APP: *app
