@@ -125,6 +125,20 @@ data:
       iptables -F "K8S_GTN_PF_FWD"
     }
 
+    input_ports_for() {
+      external_port="${1}"
+      {
+        printf '%s\n' "${external_port}"
+        iptables -t nat -S PREROUTING | awk -v external_port="${external_port}" '
+          $0 ~ ("--to-ports " external_port) {
+            for (i = 1; i <= NF; i++) {
+              if ($i == "--dport") print $(i + 1)
+            }
+          }
+        '
+      } | awk '!seen[$0]++'
+    }
+
     apply_targets() {
       slot=0
       while read -r handler namespace service target_ip http_port tcp_port udp_port; do
@@ -133,14 +147,18 @@ data:
         [ -n "${external_port}" ] || break
 
         if [ "${tcp_port}" != "-" ]; then
-          iptables -t nat -A "K8S_GTN_PF_NAT" -p tcp --dport "${external_port}" \
-            -j DNAT --to-destination "${target_ip}:${tcp_port}"
+          for input_port in $(input_ports_for "${external_port}"); do
+            iptables -t nat -A "K8S_GTN_PF_NAT" -p tcp --dport "${input_port}" \
+              -j DNAT --to-destination "${target_ip}:${tcp_port}"
+          done
           iptables -A "K8S_GTN_PF_FWD" -p tcp -d "${target_ip}" --dport "${tcp_port}" -j ACCEPT
         fi
 
         if [ "${udp_port}" != "-" ]; then
-          iptables -t nat -A "K8S_GTN_PF_NAT" -p udp --dport "${external_port}" \
-            -j DNAT --to-destination "${target_ip}:${udp_port}"
+          for input_port in $(input_ports_for "${external_port}"); do
+            iptables -t nat -A "K8S_GTN_PF_NAT" -p udp --dport "${input_port}" \
+              -j DNAT --to-destination "${target_ip}:${udp_port}"
+          done
           iptables -A "K8S_GTN_PF_FWD" -p udp -d "${target_ip}" --dport "${udp_port}" -j ACCEPT
         fi
       done < "${TARGETS_FILE}"

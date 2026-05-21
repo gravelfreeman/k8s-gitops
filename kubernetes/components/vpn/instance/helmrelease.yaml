@@ -41,8 +41,6 @@ spec:
               VPN_TYPE: wireguard
               DNS_UPSTREAM_RESOLVERS: quad9
               DNS_UPSTREAM_RESOLVER_TYPE: doh
-              DNS_UPSTREAM_IPV6: off
-              IPV6: off
               PORT_FORWARD_ONLY: '{{ ternary "on" "off" (gt (int "${VPN_PORT_FORWARDING_PORTS_COUNT:=0}") 0) }}'
               VPN_PORT_FORWARDING: '{{ ternary "on" "off" (gt (int "${VPN_PORT_FORWARDING_PORTS_COUNT:=0}") 0) }}'
               VPN_PORT_FORWARDING_PORTS_COUNT: "${VPN_PORT_FORWARDING_PORTS_COUNT:=0}"
@@ -54,8 +52,11 @@ spec:
               VPN_SERVICE_PROVIDER_SECRETFILE: /run/secrets/gluetun/vpn_service_provider
               WIREGUARD_PRIVATE_KEY_SECRETFILE: /run/secrets/gluetun/wireguard_private_key
               STORAGE_SERVERS_DIRECTORY_PATH: /tmp/gluetun/servers/
+              HTTP_CONTROL_SERVER_LOG: off
               VERSION_INFORMATION: off
               PUBLICIP_ENABLED: off
+              DNS_UPSTREAM_IPV6: off
+              IPV6: off
             probes:
               liveness: &gluetunProbe
                 custom: true
