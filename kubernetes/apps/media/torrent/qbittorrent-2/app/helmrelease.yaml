@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app qb2
+  name: &app qbittorrent-2
 spec:
   interval: 30m
   chartRef:
@@ -12,7 +12,7 @@ spec:
     namespace: flux-system
   values:
     controllers:
-      qb2:
+      qbittorrent-2:
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
@@ -23,30 +23,20 @@ spec:
             probes:
               liveness: &probe
                 enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /api/v2/app/version
-                    port: &httpPort 8080
-                  periodSeconds: 30
-                  timeoutSeconds: 5
-                  failureThreshold: 5
+                path: /api/v2/app/version
+                type: HTTP
               readiness: *probe
-              startup:
-                enabled: true
-                spec:
-                  failureThreshold: 30
-                  periodSeconds: 10
             resources:
               requests:
-                cpu: 50m
-                memory: 3Gi
-              limits:
+                cpu: '1'
                 memory: 4Gi
+              limits:
+                memory: 6Gi
             securityContext:
-              allowPrivilegeEscalation: false
-              capabilities: {drop: [ALL]}
               readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
         pod:
           securityContext:
             runAsNonRoot: true
@@ -60,27 +50,26 @@ spec:
     persistence:
       config:
         type: persistentVolumeClaim
-        existingClaim: qb2-data
+        existingClaim: qbittorrent-2-data
         globalMounts:
           - path: /config
-      overseerr:
+      media:
         type: custom
         volumeSpec:
           csi:
             driver: nfs.csi.k8s.io
             volumeAttributes:
               server: 10.0.10.15
-              share: /mnt/ungava/overseerr
+              share: /mnt/eden/media
         globalMounts:
-          - path: /overseerr
-      tmp:
+          - path: /media
+      tmpfs:
         type: emptyDir
         globalMounts:
           - path: /tmp
     route:
       app:
-        hostnames:
-          - qb2.${DOMAIN_0}
+        hostnames: ['qb2.${DOMAIN_1}']
         parentRefs:
           - name: envoy-internal
             namespace: envoy-gateway
@@ -90,10 +79,11 @@ spec:
         controller: *app
         ports:
           http:
-            port: *httpPort
+            primary: true
+            port: 8080
           forward-tcp:
-            port: &torrentPort 6881
+            port: 6881
             protocol: TCP
           forward-udp:
-            port: *torrentPort
+            port: 6881
             protocol: UDP

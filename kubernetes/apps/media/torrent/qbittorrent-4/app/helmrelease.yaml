@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app qb3
+  name: &app qbittorrent-4
 spec:
   interval: 30m
   chartRef:
@@ -12,7 +12,7 @@ spec:
     namespace: flux-system
   values:
     controllers:
-      qb3:
+      qbittorrent-4:
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
@@ -23,36 +23,21 @@ spec:
             probes:
               liveness: &probe
                 enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /api/v2/app/version
-                    port: &httpPort 8080
-                  periodSeconds: 30
-                  timeoutSeconds: 5
-                  failureThreshold: 5
+                path: /api/v2/app/version
+                type: HTTP
               readiness: *probe
-              startup:
-                enabled: true
-                spec:
-                  failureThreshold: 30
-                  periodSeconds: 10
             resources:
               requests:
-                cpu: 100m
-                memory: 3Gi
-              limits:
+                cpu: '1'
                 memory: 4Gi
+              limits:
+                memory: 6Gi
             securityContext:
-              allowPrivilegeEscalation: false
-              capabilities: {drop: [ALL]}
               readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
         pod:
-          annotations:
-            k8s.v1.cni.cncf.io/networks: multus/gluetun-beta-client@vpn
-          dnsPolicy: None
-          dnsConfig:
-            nameservers: [100.100.2.1]
           securityContext:
             runAsNonRoot: true
             runAsUser: 568
@@ -65,7 +50,7 @@ spec:
     persistence:
       config:
         type: persistentVolumeClaim
-        existingClaim: qb3-data
+        existingClaim: qbittorrent-4-data
         globalMounts:
           - path: /config
       media:
@@ -78,14 +63,13 @@ spec:
               share: /mnt/eden/media
         globalMounts:
           - path: /media
-      tmp:
+      tmpfs:
         type: emptyDir
         globalMounts:
           - path: /tmp
     route:
       app:
-        hostnames:
-          - qb3.${DOMAIN_0}
+        hostnames: ['qb4.${DOMAIN_1}']
         parentRefs:
           - name: envoy-internal
             namespace: envoy-gateway
@@ -95,10 +79,11 @@ spec:
         controller: *app
         ports:
           http:
-            port: *httpPort
-          bittorrent-tcp:
-            port: &torrentPort 6881
+            primary: true
+            port: 8080
+          forward-tcp:
+            port: 6881
             protocol: TCP
-          bittorrent-udp:
-            port: *torrentPort
+          forward-udp:
+            port: 6881
             protocol: UDP
