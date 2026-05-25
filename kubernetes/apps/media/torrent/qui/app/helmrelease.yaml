@@ -1,0 +1,95 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app qui
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    controllers:
+      qui:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/autobrr/qui
+              tag: v1.19.0@sha256:baa07db5326f75f8c2246703603cbe2132476c8ad0ab31c976a960cb4c4731f5
+            env:
+              QUI__OIDC_ENABLED: true
+              QUI__OIDC_ISSUER: https://id.${DOMAIN_0}
+              QUI__OIDC_CLIENT_ID: 5d055eb0-cb02-45e2-8b76-65e72a74e0e7
+              QUI__OIDC_CLIENT_SECRET_FILE: /secrets/OIDC_CLIENT_SECRET
+              QUI__OIDC_REDIRECT_URL: https://qui.${DOMAIN_1}/api/auth/oidc/callback
+              QUI__OIDC_DISABLE_BUILT_IN_LOGIN: true
+            probes:
+              liveness: &probes
+                enabled: true
+                path: /api/v2/app/version
+                type: HTTP
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 25m
+                memory: 128Mi
+              limits:
+                memory: 1Gi
+            securityContext:
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+          automountServiceAccountToken: false
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        existingClaim: qui-data
+        globalMounts:
+          - path: /config
+      media:
+        type: custom
+        volumeSpec:
+          csi:
+            driver: nfs.csi.k8s.io
+            volumeAttributes:
+              server: 10.0.10.15
+              share: /mnt/eden/media
+        globalMounts:
+          - path: /media
+      secrets:
+        type: secret
+        name: qui-app-secret
+        globalMounts:
+          - path: /secrets
+            readOnly: true
+      tmpfs:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
+    route:
+      app:
+        hostnames: ['qui.${DOMAIN_1}']
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy-gateway
+            sectionName: https
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: 7476

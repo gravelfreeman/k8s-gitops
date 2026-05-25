@@ -26,14 +26,14 @@ spec:
               TUNNEL_METRICS: 0.0.0.0:8080
               TUNNEL_TRANSPORT_PROTOCOL: quic
             probes:
-              liveness: &probe
+              liveness: &probes
                 enabled: true
                 custom: true
                 spec:
                   httpGet:
                     path: /ready
                     port: &metricsPort 8080
-              readiness: *probe
+              readiness: *probes
             resources:
               requests: { cpu: 10m }
               limits: { memory: 256Mi }

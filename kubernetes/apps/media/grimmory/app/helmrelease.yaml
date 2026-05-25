@@ -31,13 +31,13 @@ spec:
               - secretRef:
                   name: grimmory-app-secret
             probes:
-              liveness: &probe
+              liveness: &probes
                 custom: true
                 spec:
                   httpGet:
                     path: /api/v1/healthcheck
                     port: &httpPort 6060
-              readiness: *probe
+              readiness: *probes
             resources:
               requests: { cpu: 50m, memory: 2Gi }
               limits: { memory: 6Gi }

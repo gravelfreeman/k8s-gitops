@@ -48,7 +48,7 @@ spec:
               - secretRef:
                   name: homepage-env-secret
             probes:
-              liveness: &probe
+              liveness: &probes
                 custom: true
                 spec:
                   httpGet:
@@ -57,7 +57,7 @@ spec:
                     httpHeaders:
                       - name: Host
                         value: root.${DOMAIN_0}
-              readiness: *probe
+              readiness: *probes
             resources:
               requests: { cpu: 200m, memory: 256Mi }
               limits: { memory: 384Mi }

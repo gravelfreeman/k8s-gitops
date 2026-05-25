@@ -63,12 +63,12 @@ spec:
                     name: pocket-id-cnpg-app
                     key: fqdn-uri
             probes:
-              liveness: &probe
+              liveness: &probes
                 custom: true
                 spec:
                   exec:
                     command: ["/app/pocket-id", "healthcheck"]
-              readiness: *probe
+              readiness: *probes
             resources:
               requests: { cpu: 25m, memory: 128Mi }
               limits: { memory: 512Mi }

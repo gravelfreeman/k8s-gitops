@@ -43,13 +43,13 @@ spec:
               OIDC_REDIRECT_URI: https://romm.${DOMAIN_1}/api/oauth/openid
               RETROACHIEVEMENTS_API_KEY_FILE: /secrets/RETROACHIEVEMENTS_API_KEY
             probes:
-              liveness: &probe
+              liveness: &probes
                 custom: true
                 spec:
                   httpGet:
                     path: /api/heartbeat
                     port: &httpPort 8080
-              readiness: *probe
+              readiness: *probes
             resources:
               requests: { cpu: 25m, memory: 512Mi }
               limits: { cpu: '18', memory: 64Gi }

@@ -52,12 +52,12 @@ spec:
               OIDC_WELL_KNOWN_URL: https://id.${DOMAIN_0}/.well-known/openid-configuration
               OIDC_ALLOW_DANGEROUS_EMAIL_LINKING: true
             probes:
-              liveness: &probe
+              liveness: &probes
                 custom: true
                 spec:
                   tcpSocket:
                     port: *httpPort
-              readiness: *probe
+              readiness: *probes
             resources:
               requests: { cpu: 25m, memory: 256Mi }
               limits: { memory: 512Mi }

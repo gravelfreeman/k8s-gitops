@@ -24,12 +24,12 @@ spec:
             env:
               FAN_SPEED: "100"
             probes:
-              liveness: &probe
+              liveness: &probes
                 custom: true
                 spec:
                   exec:
                     command: [ /app/healthcheck.sh ]
-              readiness: *probe
+              readiness: *probes
             resources:
               requests: { cpu: 10m, memory: 32Mi }
             securityContext:

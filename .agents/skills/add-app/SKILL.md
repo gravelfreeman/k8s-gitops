@@ -123,13 +123,13 @@ spec:
               repository: <image-repository>
               tag: <vX.X.X>@sha256:<digest>
             probes:
-              liveness: &probe
+              liveness: &probes
                 custom: true
                 spec:
                   httpGet:
                     path: /health
                     port: &httpPort <port>
-              readiness: *probe
+              readiness: *probes
             resources:
               requests: { cpu: 25m, memory: 128Mi }
             securityContext:
