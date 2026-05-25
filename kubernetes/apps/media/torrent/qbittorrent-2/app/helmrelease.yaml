@@ -63,7 +63,7 @@ spec:
             driver: nfs.csi.k8s.io
             volumeAttributes:
               server: 10.0.10.15
-              share: /mnt/eden/media
+              share: /mnt/ungava/media
         globalMounts:
           - path: /media
       tmpfs:
