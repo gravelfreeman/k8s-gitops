@@ -10,13 +10,14 @@ cleanup() {
   stty "${stty_state:-sane}" < /dev/tty 2>/dev/null || true
   tput smam 2>/dev/null || true
   tput cnorm 2>/dev/null || true
-  tput rmcup 2>/dev/null || true
+}
+
+clear_terminal() {
+  printf '\033[H\033[2J\033[3J'
 }
 
 line() {
-  tput el
   printf "$@"
-  tput el
   printf '\n'
 }
 
@@ -31,7 +32,6 @@ lines() {
 }
 
 blank_line() {
-  tput el
   printf '\n'
 }
 
@@ -143,8 +143,6 @@ draw_app() {
   )"
   names="$(printf '%s\n%s\n' "$1" "$deps" | awk 'NF && !seen[$0]++')"
 
-  tput cup 0 0
-
   line '%s[%s]%s\t(q) Exit' "$ansi_pink" "$1" "$ansi_reset"
   blank_line
   flux tree kustomization "$1" -n flux-system 2>/dev/null \
@@ -163,35 +161,49 @@ draw_app() {
   line '%s[HelmReleases]%s' "$ansi_green" "$ansi_reset"
   blank_line
   table hr "$names" | lines
-  tput ed
 }
 
 draw_global() {
   [ "${mode:-ks}" = ks ] && title='[Kustomizations]' || title='[HelmReleases]'
 
-  tput cup 0 0
-
-  line '%s%-22s%s%-28s%s' "$ansi_green" "$title" "$ansi_reset" "(PgUp/PgDn) Toggle" "(q) Exit"
+  line '%s%-22s%s%-18s%s' "$ansi_green" "$title" "$ansi_reset" "(t) Toggle" "(q) Exit"
   blank_line
   table "${mode:-ks}" | lines
-  tput ed
+}
+
+render_frame() {
+  [ -n "${1:-}" ] && draw_app "${1:-}" || draw_global
+}
+
+draw() {
+  local frame_line frame_text
+  local -a frame_lines
+
+  frame_lines=()
+  while IFS= read -r frame_line; do
+    frame_lines+=("$frame_line")
+  done < <(render_frame "${1:-}")
+  printf -v frame_text '%s\n' "${frame_lines[@]}"
+
+  if [ "$frame_text" = "${last_frame_text:-}" ]; then
+    return
+  fi
+
+  clear_terminal
+  printf '%s' "$frame_text"
+  last_frame_text="$frame_text"
 }
 
 read_keys() {
-  local key seq next
+  local key
 
   while IFS= read -rsn1 -t 0.02 -u 3 key; do
     case "$key" in
       q|Q) exit 0 ;;
-      $'\e')
-        seq=""
-        while IFS= read -rsn1 -t 0.05 -u 3 next; do seq="${seq}${next}"; [ "$next" = "~" ] && break; done
-        case "$seq" in
-          "[5~"|"[6~")
-            [ "${mode:-ks}" = ks ] && mode=hr || mode=ks
-            last_draw=-1
-            ;;
-        esac
+      t|T|$'	')
+        [ "${mode:-ks}" = ks ] && mode=hr || mode=ks
+        last_frame_text=""
+        last_draw=-1
         ;;
     esac
   done
@@ -200,16 +212,15 @@ read_keys() {
 exec 3< /dev/tty
 stty_state="$(stty -g < /dev/tty 2>/dev/null || true)"
 stty -echo -icanon time 0 min 0 < /dev/tty 2>/dev/null || true
-tput smcup 2>/dev/null || true
 tput rmam 2>/dev/null || true
-tput civis 2>/dev/null || true
 trap cleanup EXIT
 trap 'exit 130' INT TERM
 
 last_draw=-1
+clear_terminal
 while true; do
   if [ "$SECONDS" != "$last_draw" ]; then
-    [ -n "${1:-}" ] && draw_app "${1:-}" || draw_global
+    draw "${1:-}"
     last_draw="$SECONDS"
   fi
 
