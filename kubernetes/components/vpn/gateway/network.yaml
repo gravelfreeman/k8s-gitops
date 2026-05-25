@@ -9,12 +9,12 @@ spec:
       "cniVersion": "0.3.1",
       "name": "${APP}",
       "type": "bridge",
-      "bridge": "gtn110${VPN_INSTANCE}br",
+      "bridge": "gtn110${VPN_GATEWAY_ID}br",
       "ipMasq": false,
       "ipam": {
         "type": "static",
         "addresses": [
-          { "address": "100.100.${VPN_INSTANCE}.1/24" }
+          { "address": "100.100.${VPN_GATEWAY_ID}.1/24" }
         ]
       },
       "mtu": 1420
@@ -30,14 +30,14 @@ spec:
       "cniVersion": "0.3.1",
       "name": "${APP}-client",
       "type": "bridge",
-      "bridge": "gtn110${VPN_INSTANCE}br",
+      "bridge": "gtn110${VPN_GATEWAY_ID}br",
       "ipMasq": false,
       "ipam": {
         "type": "whereabouts",
-        "range": "100.100.${VPN_INSTANCE}.0/24",
-        "range_start": "100.100.${VPN_INSTANCE}.10",
-        "range_end": "100.100.${VPN_INSTANCE}.99",
-        "gateway": "100.100.${VPN_INSTANCE}.1",
+        "range": "100.100.${VPN_GATEWAY_ID}.0/24",
+        "range_start": "100.100.${VPN_GATEWAY_ID}.10",
+        "range_end": "100.100.${VPN_GATEWAY_ID}.99",
+        "gateway": "100.100.${VPN_GATEWAY_ID}.1",
         "routes": [
           { "dst": "0.0.0.0/5" },
           { "dst": "8.0.0.0/7" },

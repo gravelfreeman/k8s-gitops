@@ -8,7 +8,7 @@ spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/instance: ${APP}
-      network.k8s-gitops.io/vpn-egress: ${VPN_GATEWAY}
+      gluetun.k8s-gitops.io/client-gateway: ${VPN_GATEWAY_NAME}
   egress:
     - toCIDRSet:
-        - cidr: 100.100.${VPN_INSTANCE}.1/32
+        - cidr: 100.100.${VPN_GATEWAY_ID}.1/32

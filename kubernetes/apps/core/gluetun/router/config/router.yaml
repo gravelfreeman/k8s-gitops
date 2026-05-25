@@ -1,0 +1,496 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gluetun-router
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled
+data:
+  router.sh: |
+    set -eu
+
+    GLUETUN_NAMESPACE="${GLUETUN_NAMESPACE:-gluetun}"
+    HANDLER_STATE_DIR="${HANDLER_STATE_DIR:-/tmp/gluetun-router}"
+    KUBE_API_TIMEOUT="${KUBE_API_TIMEOUT:-30}"
+    MISPLACED_EVICTION_GRACE_PERIOD_SECONDS="${MISPLACED_EVICTION_GRACE_PERIOD_SECONDS:-60}"
+    MISPLACED_EVICTIONS_PER_GATEWAY="${MISPLACED_EVICTIONS_PER_GATEWAY:-1}"
+    RECONCILE_INTERVAL="${RECONCILE_INTERVAL:-15}"
+    log() {
+      printf '%s [gluetun-router] %s\n' "$(date -Iseconds)" "$*"
+    }
+    kube_url() {
+      printf 'https://%s:%s%s' "${KUBERNETES_SERVICE_HOST}" "${KUBERNETES_SERVICE_PORT_HTTPS:-443}" "${1}"
+    }
+    kube_token() {
+      cat "/var/run/secrets/kubernetes.io/serviceaccount/token"
+    }
+    kube_api() {
+      token="$(kube_token)"
+
+      curl -fs \
+        --connect-timeout 5 \
+        --max-time "${KUBE_API_TIMEOUT}" \
+        --cacert "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt" \
+        -H "Authorization: Bearer ${token}" \
+        "$(kube_url "${1}")"
+    }
+    kube_post_json() {
+      path="${1}"
+      body="${2}"
+      token="$(kube_token)"
+
+      printf '%s' "${body}" | curl -fs \
+        --connect-timeout 5 \
+        --max-time "${KUBE_API_TIMEOUT}" \
+        --cacert "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt" \
+        -H "Authorization: Bearer ${token}" \
+        -H "Content-Type: application/json" \
+        -X POST \
+        --data-binary @- \
+        "$(kube_url "${path}")"
+    }
+    agent_key() {
+      secret="${1}-agent"
+      attempt=1
+
+      while [ "${attempt}" -le 3 ]; do
+        json="$(kube_api "/api/v1/namespaces/${GLUETUN_NAMESPACE}/secrets/${secret}" 2>/dev/null || true)"
+        if printf '%s' "${json}" | jq -e 'type == "object"' >/dev/null 2>/dev/null; then
+          key="$(printf '%s' "${json}" | jq -r '.data.AGENT_TOKEN // empty | @base64d')"
+          if [ -n "${key}" ]; then
+            printf '%s' "${key}"
+            return 0
+          fi
+        fi
+
+        attempt=$((attempt + 1))
+        sleep 1
+      done
+
+      return 0
+    }
+    gateway_records() {
+      gateways_file="${HANDLER_STATE_DIR}/gluetungateways.json"
+      endpointslices_file="${HANDLER_STATE_DIR}/endpointslices.json"
+
+      fetch_json "/apis/gluetun.k8s-gitops.io/v1alpha1/namespaces/${GLUETUN_NAMESPACE}/gluetungateways" "${gateways_file}" || return 1
+      fetch_json "/apis/discovery.k8s.io/v1/namespaces/${GLUETUN_NAMESPACE}/endpointslices" "${endpointslices_file}" || return 1
+
+      jq -r \
+        --slurpfile endpointslices "${endpointslices_file}" '
+          ($endpointslices[0].items // []) as $endpoint_slice_items |
+
+          def ready_endpoint($endpoint):
+            ($endpoint.conditions.ready != false)
+            and ($endpoint.conditions.terminating != true)
+            and (($endpoint.nodeName // "") != "");
+
+          def nodes_for($service):
+            [
+              $endpoint_slice_items[]
+              | select(.metadata.deletionTimestamp == null)
+              | select(.metadata.labels["kubernetes.io/service-name"] == $service)
+              | .endpoints[]?
+              | select(ready_endpoint(.))
+              | .nodeName
+            ]
+            | unique;
+
+          .items[]?
+          | select(.metadata.deletionTimestamp == null)
+          | . as $gateway
+          | ($gateway.spec.service) as $service
+          | (nodes_for($service)) as $nodes
+          | select(($service // "") != "")
+          | [
+              $gateway.metadata.name,
+              $service,
+              (($gateway.spec.agentPort // 9000) | tostring),
+              ($nodes[0] // "-"),
+              (($nodes | length) | tostring)
+            ]
+          | @tsv
+        ' "${gateways_file}"
+    }
+    fetch_json() {
+      path="${1}"
+      destination="${2}"
+      tmp="${destination}.tmp"
+
+      attempt=1
+      while [ "${attempt}" -le 3 ]; do
+        rm -f "${tmp}"
+        if kube_api "${path}" > "${tmp}" \
+          && jq -e 'type == "object" and (.items | type == "array")' "${tmp}" >/dev/null 2>/dev/null; then
+          mv "${tmp}" "${destination}"
+          return 0
+        fi
+
+        rm -f "${tmp}"
+        attempt=$((attempt + 1))
+        sleep 1
+      done
+
+      return 1
+    }
+    fetch_object() {
+      path="${1}"
+      destination="${2}"
+      tmp="${destination}.tmp"
+
+      attempt=1
+      while [ "${attempt}" -le 3 ]; do
+        rm -f "${tmp}"
+        if kube_api "${path}" > "${tmp}" \
+          && jq -e 'type == "object" and (.kind // "") != "Status"' "${tmp}" >/dev/null 2>/dev/null; then
+          mv "${tmp}" "${destination}"
+          return 0
+        fi
+
+        rm -f "${tmp}"
+        attempt=$((attempt + 1))
+        sleep 1
+      done
+
+      return 1
+    }
+    target_clients() {
+      gateway="${1}"
+      clients_file="${HANDLER_STATE_DIR}/gluetunclients.json"
+      target_clients_file="${HANDLER_STATE_DIR}/${gateway}.gluetunclients.json"
+
+      fetch_json "/apis/gluetun.k8s-gitops.io/v1alpha1/gluetunclients" "${clients_file}" || return 1
+      jq --arg gateway "${gateway}" '
+        {
+          items: [
+            .items[]?
+            | select(.metadata.deletionTimestamp == null)
+            | select(.spec.gateway == $gateway)
+          ]
+        }
+      ' "${clients_file}" > "${target_clients_file}"
+    }
+    collect_target_pods() {
+      clients_file="${1}"
+      pods_file="${2}"
+      items_file="${pods_file}.items"
+
+      : > "${items_file}"
+      for namespace in $(jq -r '.items[].metadata.namespace' "${clients_file}" | sort -u); do
+        namespace_pods_file="${HANDLER_STATE_DIR}/pods.${namespace}.json"
+        if fetch_json "/api/v1/namespaces/${namespace}/pods" "${namespace_pods_file}"; then
+          jq -c '.items[]' "${namespace_pods_file}" >> "${items_file}"
+        else
+          log "${namespace}: pods missing or unreadable"
+        fi
+      done
+
+      jq -s '{items: .}' "${items_file}" > "${pods_file}"
+      rm -f "${items_file}"
+    }
+    collect_target_services() {
+      clients_file="${1}"
+      services_file="${2}"
+      items_file="${services_file}.items"
+      client_services="$(jq -r '.items[]? | [.metadata.namespace, .spec.service] | @tsv' "${clients_file}" | sort -u)"
+
+      : > "${items_file}"
+      while read -r namespace service; do
+        [ -n "${namespace}" ] || continue
+        service_file="${HANDLER_STATE_DIR}/service.${namespace}.${service}.json"
+        if fetch_object "/api/v1/namespaces/${namespace}/services/${service}" "${service_file}"; then
+          jq -c '.' "${service_file}" >> "${items_file}"
+        else
+          log "${namespace}/${service}: service missing or unreadable"
+        fi
+      done <<EOF_SERVICES
+    ${client_services}
+    EOF_SERVICES
+
+      jq -s '{items: .}' "${items_file}" > "${services_file}"
+      rm -f "${items_file}"
+    }
+    desired_targets() {
+      gateway="${1}"
+      target_clients_file="${HANDLER_STATE_DIR}/${gateway}.gluetunclients.json"
+      pods_file="${HANDLER_STATE_DIR}/pods.json"
+      services_file="${HANDLER_STATE_DIR}/services.json"
+
+      target_clients "${gateway}" || return 1
+      collect_target_pods "${target_clients_file}" "${pods_file}" || return 1
+      collect_target_services "${target_clients_file}" "${services_file}" || return 1
+
+      jq -r \
+        --arg gateway "${gateway}" \
+        --slurpfile clients "${target_clients_file}" \
+        --slurpfile services "${services_file}" '
+          (.items // []) as $pod_items |
+          ($clients[0].items // []) as $client_items |
+          ($services[0].items // []) as $service_items |
+          def ready($pod):
+            $pod.metadata.deletionTimestamp == null
+            and $pod.status.phase == "Running"
+            and any($pod.status.conditions[]?; .type == "Ready" and .status == "True");
+
+          def client_ip($pod; $gateway):
+            ($pod.metadata.annotations["k8s.v1.cni.cncf.io/network-status"] // "[]")
+            | fromjson? // []
+            | .[]
+            | select(
+                .name == ("gluetun/" + $gateway + "-client")
+                or .name == ("multus/" + $gateway + "-client")
+                or .name == ($gateway + "-client")
+              )
+            | .ips[0] // .ip // empty;
+
+          def image_handler($pod):
+            ([$pod.spec.containers[]? | select(.name == "app") | .image][0] // $pod.spec.containers[0].image)
+            | split("@")[0]
+            | split(":")[0]
+            | split("/")[-1];
+
+          def handler($client; $pod):
+            ($client.spec.handler // "") as $handler
+            | if $handler == "" then image_handler($pod) else $handler end;
+
+          def selects($service; $pod):
+            ($service.spec.selector // {}) as $selector
+            | ($selector | length) > 0
+            and all($selector | to_entries[]; $pod.metadata.labels[.key] == .value);
+
+          [
+            $client_items[]
+            | . as $client
+            | ($client.metadata.namespace) as $namespace
+            | ($client.spec.service) as $service_name
+            | ([
+                $service_items[]
+                | select(.metadata.namespace == $namespace)
+                | select(.metadata.name == $service_name)
+              ][0]) as $service
+            | select($service != null)
+            | $pod_items[]
+            | select(.metadata.namespace == $namespace)
+            | select(ready(.))
+            | select(selects($service; .))
+            | . as $pod
+            | client_ip($pod; $gateway) as $ip
+            | select($ip != null and $ip != "")
+            | {
+                namespace: $namespace,
+                service: $service.metadata.name,
+                ip: $ip,
+                handler: handler($client; $pod),
+                http: ([$service.spec.ports[]? | select(.name == "http") | .port][0] // "-"),
+                tcp: ([$service.spec.ports[]? | select(.name == "forward-tcp") | .port][0] // "-"),
+                udp: ([$service.spec.ports[]? | select(.name == "forward-udp") | .port][0] // "-")
+              }
+          ]
+          | map(select(.tcp != "-" or .udp != "-"))
+          | sort_by(.namespace, .service, .ip)
+          | .[]
+          | ["target", .handler, .namespace, .service, .ip, (.http | tostring), (.tcp | tostring), (.udp | tostring)]
+          | @tsv
+        ' "${pods_file}"
+    }
+    evict_pod() {
+      namespace="${1}"
+      name="${2}"
+      body="$(printf '{"apiVersion":"policy/v1","kind":"Eviction","metadata":{"name":"%s","namespace":"%s"},"deleteOptions":{"gracePeriodSeconds":%s}}' "${name}" "${namespace}" "${MISPLACED_EVICTION_GRACE_PERIOD_SECONDS}")"
+
+      kube_post_json "/api/v1/namespaces/${namespace}/pods/${name}/eviction" "${body}" >/dev/null
+    }
+    evict_misplaced_targets() {
+      gateway="${1}"
+      gateway_node="${2}"
+      target_clients_file="${HANDLER_STATE_DIR}/${gateway}.gluetunclients.json"
+      pods_file="${HANDLER_STATE_DIR}/pods.json"
+      services_file="${HANDLER_STATE_DIR}/services.json"
+      EVICTED_TARGETS=0
+
+      if [ -z "${gateway_node}" ]; then
+        log "${gateway}: missing gateway node"
+        return 1
+      fi
+
+      misplaced="$(jq -r \
+        --arg gateway_node "${gateway_node}" \
+        --slurpfile clients "${target_clients_file}" \
+        --slurpfile services "${services_file}" '
+          (.items // []) as $pod_items |
+          ($clients[0].items // []) as $client_items |
+          ($services[0].items // []) as $service_items |
+
+          def selects($service; $pod):
+            ($service.spec.selector // {}) as $selector
+            | ($selector | length) > 0
+            and all($selector | to_entries[]; $pod.metadata.labels[.key] == .value);
+
+          [
+            $client_items[]
+            | . as $client
+            | ($client.metadata.namespace) as $namespace
+            | ($client.spec.service) as $service_name
+            | ([
+                $service_items[]
+                | select(.metadata.namespace == $namespace)
+                | select(.metadata.name == $service_name)
+              ][0]) as $service
+            | select($service != null)
+            | $pod_items[]
+            | select(.metadata.namespace == $namespace)
+            | select(.metadata.deletionTimestamp == null)
+            | select(.status.phase == "Running")
+            | select(selects($service; .))
+            | select((.spec.nodeName // "") != "" and .spec.nodeName != $gateway_node)
+            | [.metadata.namespace, .metadata.name, .spec.nodeName]
+          ]
+          | unique_by(.[0], .[1])
+          | .[]
+          | @tsv
+        ' "${pods_file}")"
+
+      [ -n "${misplaced}" ] || return 0
+
+      failed=0
+      while read -r namespace name node; do
+        [ -n "${namespace}" ] || continue
+        if [ "${EVICTED_TARGETS}" -ge "${MISPLACED_EVICTIONS_PER_GATEWAY}" ]; then
+          break
+        fi
+
+        log "${gateway}: evicting misplaced client ${namespace}/${name} from ${node}; gateway node=${gateway_node}"
+        if evict_pod "${namespace}" "${name}"; then
+          EVICTED_TARGETS=$((EVICTED_TARGETS + 1))
+        else
+          log "${gateway}: failed to evict misplaced client ${namespace}/${name}"
+          failed=1
+        fi
+      done <<EOF_MISPLACED
+    ${misplaced}
+    EOF_MISPLACED
+
+      return "${failed}"
+    }
+    send_targets() {
+      gateway="${1}"
+      service="${2}"
+      port="${3}"
+      key="${4}"
+      targets="${5}"
+
+      if [ -z "${service}" ]; then
+        log "${gateway}: missing gateway service"
+        return 1
+      fi
+
+      if [ -z "${port}" ]; then
+        port=9000
+      fi
+
+      host="${service}.${GLUETUN_NAMESPACE}.svc.cluster.local"
+
+      AGENT_REPLY="$({
+        printf 'token %s\n' "${key}"
+        printf '%s\n' "${targets}"
+        printf 'end\n'
+      } | nc -w 10 "${host}" "${port}")" || {
+        log "${gateway}: no response"
+        return 1
+      }
+
+      status="$(printf '%s\n' "${AGENT_REPLY}" | awk '$1 != "result" { line=$0 } END { print line }')"
+      case "${status}" in
+        "ok"|"ok unchanged") ;;
+        "") log "${gateway}: no response"; return 1 ;;
+        *) log "${gateway}: ${status}"; return 1 ;;
+      esac
+    }
+    run_handlers() {
+      gateway="${1}"
+      state_file="${HANDLER_STATE_DIR}/${gateway}.handlers"
+      new_state="$(printf '%s\n' "${AGENT_REPLY}" | awk '$1 == "result" { print }')"
+
+      [ -n "${new_state}" ] || return 0
+      if [ -f "${state_file}" ] && [ "$(cat "${state_file}")" = "${new_state}" ]; then
+        return 0
+      fi
+
+      failed=0
+      while read -r keyword slot external_port handler namespace service target_ip http_port tcp_port udp_port; do
+        [ "${keyword}" = "result" ] || continue
+
+        target_url=""
+        if [ "${http_port}" != "-" ]; then
+          target_url="http://${service}.${namespace}.svc.cluster.local:${http_port}"
+        fi
+
+        log "${gateway}: handler ${handler} slot ${slot}"
+        SLOT="${slot}" \
+        HANDLER="${handler}" \
+        EXTERNAL_PORT="${external_port}" \
+        TARGET_HTTP_PORT="${http_port}" \
+        TARGET_IP="${target_ip}" \
+        TARGET_NAMESPACE="${namespace}" \
+        TARGET_SERVICE="${service}" \
+        TARGET_TCP_PORT="${tcp_port}" \
+        TARGET_UDP_PORT="${udp_port}" \
+        TARGET_URL="${target_url}" \
+        GLUETUN_GATEWAY_NAME="${gateway}" \
+          /bin/sh "/router/${handler}.sh" || failed=1
+      done <<EOF_RESULTS
+    ${new_state}
+    EOF_RESULTS
+
+      if [ "${failed}" -eq 0 ]; then
+        printf '%s' "${new_state}" > "${state_file}"
+        return 0
+      fi
+
+      return 1
+    }
+    reconcile_gateway() {
+      gateway="${1}"
+      service="${2}"
+      port="${3}"
+      gateway_node="${4}"
+      key="$(agent_key "${gateway}")"
+
+      if [ -z "${key}" ]; then
+        log "${gateway}: missing agent key"
+        return 0
+      fi
+
+      targets="$(desired_targets "${gateway}")" || return 1
+      evict_misplaced_targets "${gateway}" "${gateway_node}" || return 1
+      if [ "${EVICTED_TARGETS}" -gt 0 ]; then
+        return 0
+      fi
+
+      send_targets "${gateway}" "${service}" "${port}" "${key}" "${targets}" || return 1
+      run_handlers "${gateway}" || return 1
+    }
+
+    mkdir -p "${HANDLER_STATE_DIR}"
+    log "starting"
+    log "monitoring interval=${RECONCILE_INTERVAL}s"
+
+    while true; do
+      gateway_records="$(gateway_records)" || {
+        log "gateway discovery failed"
+        sleep "${RECONCILE_INTERVAL}"
+        continue
+      }
+
+      printf '%s\n' "${gateway_records}" | while read -r gateway service port gateway_node node_count; do
+        [ -n "${gateway}" ] || continue
+        if [ "${node_count}" != "1" ]; then
+          log "${gateway}: expected 1 ready EndpointSlice node, got ${node_count}; skipping"
+          continue
+        fi
+
+        reconcile_gateway "${gateway}" "${service}" "${port}" "${gateway_node}" || log "${gateway}: reconcile failed"
+      done
+
+      sleep "${RECONCILE_INTERVAL}"
+    done

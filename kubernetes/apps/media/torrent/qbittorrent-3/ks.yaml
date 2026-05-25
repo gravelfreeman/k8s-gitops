@@ -20,8 +20,8 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      VPN_GATEWAY: gluetun-bravo
-      VPN_INSTANCE: "2"
+      VPN_GATEWAY_NAME: gluetun-bravo
+      VPN_GATEWAY_ID: "2"
   prune: true
   sourceRef:
     kind: GitRepository

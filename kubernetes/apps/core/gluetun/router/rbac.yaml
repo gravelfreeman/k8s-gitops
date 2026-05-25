@@ -5,22 +5,47 @@ metadata:
   name: gluetun-router
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
   name: gluetun-router
 rules:
-  - apiGroups: [""]
-    resources: ["pods", "services"]
-    verbs: ["get", "list"]
+  - apiGroups: ["gluetun.k8s-gitops.io"]
+    resources: ["gluetungateways"]
+    verbs: ["list"]
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
+    verbs: ["list"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata:
   name: gluetun-router
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
+  kind: Role
   name: gluetun-router
+subjects:
+  - kind: ServiceAccount
+    name: gluetun-router
+    namespace: gluetun
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: gluetun-router-clients
+rules:
+  - apiGroups: ["gluetun.k8s-gitops.io"]
+    resources: ["gluetunclients"]
+    verbs: ["list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: gluetun-router-clients
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: gluetun-router-clients
 subjects:
   - kind: ServiceAccount
     name: gluetun-router

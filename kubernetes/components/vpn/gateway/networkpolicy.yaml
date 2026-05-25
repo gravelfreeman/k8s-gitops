@@ -1,0 +1,29 @@
+---
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: ${APP}-ingress
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: ${APP}
+      gluetun.k8s-gitops.io/gateway: ${APP}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/instance: gluetun-router
+            app.kubernetes.io/name: gluetun-router
+      toPorts:
+        - ports:
+            - port: "9000"
+              protocol: TCP
+    - fromEntities: [all]
+      toPorts:
+        - ports:
+            - port: "8888"
+              protocol: TCP
+            - port: "8388"
+              protocol: TCP
+            - port: "1080"
+              protocol: TCP

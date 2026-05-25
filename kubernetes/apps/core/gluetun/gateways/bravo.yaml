@@ -2,7 +2,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app gluetun-alfa
+  name: &app gluetun-bravo
 spec:
   commonMetadata:
     labels:
@@ -10,12 +10,12 @@ spec:
   dependsOn:
     - name: gluetun-router
   interval: 1h
-  path: kubernetes/components/vpn/instance
+  path: kubernetes/components/vpn/gateway
   postBuild:
     substitute:
       APP: *app
-      VPN_INSTANCE: "1"
-      VPN_PORT_FORWARDS: "2"
+      VPN_GATEWAY_ID: "2"
+      VPN_PORT_FORWARDS: "1"
       VPN_PROXIES_ENABLED: "true"
   prune: true
   sourceRef:

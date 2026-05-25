@@ -222,9 +222,11 @@ The instance component reads these fields from the `gluetun` 1Password item.
 ### Client app resources:
 
 - `CiliumNetworkPolicy` named `${APP}-egress`.
+- `Role` and `RoleBinding` named `${APP}-vpn-evictor`.
 
 ### Client app patches:
 
+- Adds required pod affinity to schedule on the VPN node.
 - Adds the Multus network annotation for `gluetun/${VPN_GATEWAY}-client@vpn`.
 - Sets `dnsPolicy: None`.
 - Sets the DNS nameserver to `100.100.${VPN_INSTANCE}.1`.

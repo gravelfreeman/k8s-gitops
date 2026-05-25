@@ -11,10 +11,23 @@ spec:
     name: app-template
     namespace: flux-system
   values:
+    defaultPodOptions:
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    gluetun.k8s-gitops.io/client-gateway: ${APP}
+                namespaceSelector: {}
+                topologyKey: kubernetes.io/hostname
     controllers:
       ${APP}:
         replicas: 1
         strategy: Recreate
+        serviceAccount:
+          name: *app
         annotations:
           reloader.stakater.com/auto: "true"
         initContainers:
@@ -25,7 +38,10 @@ spec:
             command: ["/bin/sh", "-ec"]
             args: ["sysctl -w net.ipv4.ip_forward=1"]
             securityContext:
-              privileged: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                add: ["NET_ADMIN"]
+                drop: ["ALL"]
               readOnlyRootFilesystem: true
               runAsUser: 0
         containers:
@@ -39,6 +55,7 @@ spec:
                 exec /gluetun-entrypoint
             env:
               FIREWALL_INPUT_PORTS: '{{- $ports := list "9000" -}}{{- if .Values.service.proxies.ports.http.enabled -}}{{- $ports = append $ports "8888" -}}{{- end -}}{{- if .Values.service.proxies.ports.shadowsocks.enabled -}}{{- $ports = append $ports "8388" -}}{{- end -}}{{- if .Values.service.proxies.ports.socks5.enabled -}}{{- $ports = append $ports "1080" -}}{{- end -}}{{ join "," $ports }}'
+              HTTP_CONTROL_SERVER_ADDRESS: 127.0.0.1:8000
               HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: /run/secrets/gluetun/config.toml
               HTTP_CONTROL_SERVER_LOG: off
               HTTPPROXY: '{{ ternary "on" "off" .Values.service.proxies.ports.http.enabled }}'
@@ -79,10 +96,7 @@ spec:
               tag: v0.15@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61
             command: ["/bin/sh", "/agent/agent.sh"]
             env:
-              VPN_GATEWAY:
-                valueFrom:
-                  fieldRef:
-                    fieldPath: metadata.labels['network.k8s-gitops.io/vpn-gateway']
+              GLUETUN_GATEWAY_NAME: ${APP}
               AGENT_TOKEN:
                 valueFrom:
                   secretKeyRef:
@@ -136,7 +150,7 @@ spec:
           annotations:
             k8s.v1.cni.cncf.io/networks: gluetun/${APP}-gateway@vpn
           labels:
-            network.k8s-gitops.io/vpn-gateway: ${APP}
+            gluetun.k8s-gitops.io/gateway: ${APP}
           dnsConfig:
             options:
               - name: ndots
@@ -180,8 +194,6 @@ spec:
       app:
         controller: *app
         ports:
-          http:
-            port: 8000
           agent:
             port: 9000
             targetPort: 9000
@@ -191,7 +203,7 @@ spec:
         type: LoadBalancer
         annotations:
           external-dns.alpha.kubernetes.io/hostname: ${APP}.${DOMAIN_2}
-          "lbipam.cilium.io/ips": "10.0.20.2${VPN_INSTANCE}"
+          "lbipam.cilium.io/ips": "10.0.20.2${VPN_GATEWAY_ID}"
         labels:
           io.cilium/bgp-advertise: "true"
           network.k8s-gitops.io/lb-pool: services

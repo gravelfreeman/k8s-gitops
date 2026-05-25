@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
+---
+apiVersion: gluetun.k8s-gitops.io/v1alpha1
+kind: GluetunGateway
+metadata:
+  name: ${APP}
+spec:
+  agentPort: 9000
+  service: ${APP}

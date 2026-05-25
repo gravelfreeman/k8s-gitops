@@ -4,7 +4,8 @@ components:
   - ../../common/system
 resources:
   - externalsecret.yaml
+  - gluetungateway.yaml
   - helmrelease.yaml
-  - link.yaml
   - network.yaml
+  - networkpolicy.yaml
   - rbac.yaml

@@ -20,11 +20,11 @@ resources:
   - external-dns/ks.yaml
   - external-secrets/ks.yaml
   - gluetun/ks.yaml
-  - gluetun/instances/alfa.yaml
-  - gluetun/instances/bravo.yaml
-  - gluetun/instances/charlie.yaml
-  - gluetun/instances/delta.yaml
-  - gluetun/instances/echo.yaml
+  - gluetun/gateways/alfa.yaml
+  - gluetun/gateways/bravo.yaml
+  - gluetun/gateways/charlie.yaml
+  - gluetun/gateways/delta.yaml
+  - gluetun/gateways/echo.yaml
   - onepassword-connect/ks.yaml
   - pocket-id/ks.yaml
   - volsync/ks.yaml
