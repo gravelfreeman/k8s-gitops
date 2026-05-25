@@ -30,7 +30,7 @@ spec:
             probes:
               liveness: &probes
                 enabled: true
-                path: /api/v2/app/version
+                path: /health
                 type: HTTP
               readiness: *probes
             resources:
