@@ -23,9 +23,12 @@ spec:
             probes:
               liveness: &probe
                 enabled: true
-                path: /api/v2/app/version
-                type: HTTP
               readiness: *probe
+              startup:
+                enabled: true
+                failureThreshold: 60
+                periodSeconds: 10
+                timeoutSeconds: 5
             resources:
               requests:
                 cpu: '1'

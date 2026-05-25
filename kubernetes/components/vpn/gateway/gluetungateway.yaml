@@ -6,4 +6,4 @@ metadata:
   name: ${APP}
 spec:
   agentPort: 9000
-  service: ${APP}
+  service: ${APP}-app
