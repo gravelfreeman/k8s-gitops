@@ -18,10 +18,7 @@ patches:
           cleanupOnFail: true
           crds: CreateReplace
           strategy:
-            name: RemediateOnFailure
-          remediation:
-            remediateLastFailure: true
-            retries: 2
+            name: RetryOnFailure
     target:
       group: helm.toolkit.fluxcd.io
       kind: HelmRelease
