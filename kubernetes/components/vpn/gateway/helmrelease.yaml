@@ -38,10 +38,7 @@ spec:
             command: ["/bin/sh", "-ec"]
             args: ["sysctl -w net.ipv4.ip_forward=1"]
             securityContext:
-              allowPrivilegeEscalation: false
-              capabilities:
-                add: ["NET_ADMIN"]
-                drop: ["ALL"]
+              privileged: true
               readOnlyRootFilesystem: true
               runAsUser: 0
         containers:
