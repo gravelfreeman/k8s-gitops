@@ -23,13 +23,10 @@ spec:
             probes:
               liveness: &probes
                 enabled: true
-                path: /health
+                path: /docs
                 type: HTTP
               readiness: *probes
-              startup:
-                enabled: true
-                path: /health
-                type: HTTP
+              startup: *probes
             resources:
               requests:
                 cpu: 50m

@@ -16,6 +16,7 @@ import json
 import os
 import re
 import threading
+import traceback
 import time
 import urllib.error
 import urllib.parse
@@ -29,7 +30,7 @@ BASE_URL = os.environ.get("QCM_BASE_URL", "").rstrip("/") + "/"
 GATE_SECRET = os.environ.get("QCM_GATE_SECRET", "")
 USERNAME = os.environ.get("QCM_USERNAME", "")
 PASSWORD = os.environ.get("QCM_PASSWORD", "")
-API_KEY = os.environ.get("QCM_API_KEY", "")
+PROXY_URL = "http://gluetun-alfa-proxies.gluetun.svc.cluster.local:8888"
 PORT = 9697
 RESULT_LIMIT = 100
 TIMEOUT = 20
@@ -160,7 +161,7 @@ def parse_releases(markup, page_path):
 class QcmClient:
     def __init__(self):
         self.cookiejar = http.cookiejar.CookieJar()
-        self.opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(self.cookiejar))
+        self.opener = urllib.request.build_opener(urllib.request.ProxyHandler({"http": PROXY_URL, "https": PROXY_URL}), urllib.request.HTTPCookieProcessor(self.cookiejar))
         self.lock = threading.Lock()
         self.last_login = 0.0
 
@@ -271,11 +272,11 @@ def error_xml(code, description):
 """
 
 
-def releases_xml(releases, self_base, api_key):
+def releases_xml(releases, self_base):
     now = email.utils.format_datetime(datetime.now(timezone.utc), usegmt=True)
     items = []
     for release in releases:
-        query = urllib.parse.urlencode({"t": "get", "id": release["id"], "apikey": api_key})
+        query = urllib.parse.urlencode({"t": "get", "id": release["id"]})
         get_url = f"{self_base}/api?{query}"
         pub_date = email.utils.format_datetime(release["pub_date"], usegmt=True)
         items.append(f"""    <item>
@@ -329,20 +330,27 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
-        params = urllib.parse.parse_qs(parsed.query)
+        params = urllib.parse.parse_qs(parsed.query, keep_blank_values=True)
         if parsed.path in {"/healthz", "/ping"}:
             self.send_body("ok\n")
+            return
+        if parsed.path == "/debug":
+            self.send_body(json.dumps({
+                "base_url_configured": bool(BASE_URL.strip("/")),
+                "gate_secret_configured": bool(GATE_SECRET),
+                "username_configured": bool(USERNAME),
+                "password_configured": bool(PASSWORD),
+                "proxy_configured": bool(PROXY_URL),
+                "port": PORT,
+                "result_limit": RESULT_LIMIT,
+                "timeout": TIMEOUT,
+            }) + "\n", "application/json; charset=utf-8")
             return
         if parsed.path != "/api":
             self.send_body("not found\n", status=HTTPStatus.NOT_FOUND)
             return
 
         action = params.get("t", ["caps"])[0].lower()
-        if action != "caps" and API_KEY and params.get("apikey", [""])[0] != API_KEY:
-            body, content_type, status = xml_response(error_xml(100, "Incorrect API key"))
-            self.send_body(body, content_type, status)
-            return
-
         try:
             if action == "caps":
                 body, content_type, status = xml_response(caps_xml())
@@ -352,7 +360,7 @@ class Handler(BaseHTTPRequestHandler):
                 releases = self.server.client.search(effective_query(params), requested_categories(params))
                 scheme = self.headers.get("X-Forwarded-Proto", "http")
                 host = self.headers.get("Host", f"localhost:{PORT}")
-                body, content_type, status = xml_response(releases_xml(releases, f"{scheme}://{host}", params.get("apikey", [""])[0]))
+                body, content_type, status = xml_response(releases_xml(releases, f"{scheme}://{host}"))
                 self.send_body(body, content_type, status)
                 return
             if action == "get":
@@ -365,12 +373,11 @@ class Handler(BaseHTTPRequestHandler):
         except urllib.error.HTTPError as exc:
             self.send_body(f"upstream http error: {exc.code}\n", status=HTTPStatus.BAD_GATEWAY)
         except Exception as exc:
+            traceback.print_exc(file=sys.stderr)
             self.send_body(f"error: {exc}\n", status=HTTPStatus.INTERNAL_SERVER_ERROR)
 
 
 def main():
-    if not API_KEY:
-        print("warning: QCM_API_KEY is empty; /api accepts unauthenticated requests", file=sys.stderr)
     server = ThreadingHTTPServer(("0.0.0.0", PORT), Handler)
     server.client = QcmClient()
     print(f"qcm-newznab listening on :{PORT}", file=sys.stderr)
