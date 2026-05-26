@@ -1,0 +1,115 @@
+---
+id: newasgard
+name: New-Asgard
+description: "New-Asgard is a FRENCH private torrent tracker."
+language: fr-FR
+type: private
+encoding: UTF-8
+links:
+  - https://new-asgard.xyz/
+
+caps:
+  categorymappings:
+    - {id: 1, cat: TV, desc: "Series"}
+    - {id: 2, cat: Movies, desc: "Films"}
+    - {id: 3, cat: Console, desc: "Jeux"}
+    - {id: 4, cat: Books, desc: "Livres"}
+    - {id: 7, cat: Other, desc: "Autres"}
+    - {id: 8, cat: Audio, desc: "Musiques"}
+    - {id: 9, cat: TV/Documentary, desc: "Documentaires"}
+    - {id: 10, cat: PC, desc: "Logiciels"}
+    - {id: 11, cat: TV/Anime, desc: "Animations"}
+    - {id: 12, cat: TV/Sport, desc: "Sports"}
+    - {id: 13, cat: TV/Other, desc: "Spectacles"}
+
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q]
+    music-search: [q]
+    book-search: [q]
+
+settings:
+  - name: username
+    type: text
+    label: Username
+  - name: password
+    type: password
+    label: Password
+  - name: freeleech
+    type: checkbox
+    label: Search freeleech only
+    default: false
+  - name: include_dead
+    type: checkbox
+    label: Include dead torrents
+    default: false
+
+login:
+  path: login
+  method: form
+  form: form[action$="login"]
+  inputs:
+    username: "{{ .Config.username }}"
+    password: "{{ .Config.password }}"
+    remember: on
+  selectorinputs:
+    _token:
+      selector: input[name="_token"]
+      attribute: value
+  error:
+    - selector: .alert-danger
+    - selector: .invalid-feedback
+  test:
+    path: /
+    selector: a[href*="/logout"]
+
+search:
+  paths:
+    - path: torrents
+
+  inputs:
+    $raw: "{{ range .Categories }}categories[]={{.}}&{{end}}"
+    search_box: "{{ .Keywords }}"
+    freeleech: "{{ if .Config.freeleech }}on{{ else }}{{ end }}"
+    with_dead: "{{ if .Config.include_dead }}on{{ else }}{{ end }}"
+
+  rows:
+    selector: table > tbody > tr:has(a[href*="/torrents/download/"])
+
+  fields:
+    category:
+      selector: td:nth-child(1) a
+      attribute: href
+      filters:
+        - name: regexp
+          args: 'categories(?:%5B%5D|\[\])=(\d+)'
+    title:
+      selector: td:nth-child(2) a
+    details:
+      selector: td:nth-child(2) a
+      attribute: href
+    download:
+      selector: td:nth-child(3) a
+      attribute: href
+    files:
+      selector: td:nth-child(7)
+    date:
+      selector: td:nth-child(8)
+      filters:
+        - name: append
+          args: " +00:00"
+        - name: dateparse
+          args: "yyyy-MM-dd HH:mm:ss zzz"
+    size:
+      selector: td:nth-child(9)
+    grabs:
+      selector: td:nth-child(11)
+    seeders:
+      selector: td:nth-child(12)
+    leechers:
+      selector: td:nth-child(13)
+    downloadvolumefactor:
+      text: 1
+    uploadvolumefactor:
+      text: 1

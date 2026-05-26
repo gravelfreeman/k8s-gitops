@@ -19,26 +19,49 @@ spec:
           app:
             image:
               repository: ghcr.io/home-operations/prowlarr
-              tag: 2.3.1.5238@sha256:4394dff2311238bf5c31e006872122ed4e5f6bf042d33528d80acd44a09c57f7
+              tag: 2.3.5.5327@sha256:fc87e9af2f175ef19610fdcf1fcdcc84d5099127211cc6733f826409b2733237
             env:
               PROWLARR__AUTH__METHOD: External
             probes:
-              liveness: &probes
+              liveness: &prowlarrProbes
                 enabled: true
                 path: /ping
                 type: HTTP
-              readiness: *probes
+              readiness: *prowlarrProbes
             resources:
               requests:
                 cpu: 25m
                 memory: 512Mi
               limits:
                 memory: 512Mi
-            securityContext:
+            securityContext: &securityContext
               readOnlyRootFilesystem: true
               allowPrivilegeEscalation: false
               capabilities:
                 drop: ["ALL"]
+          qcm-newznab:
+            image:
+              repository: docker.io/library/python
+              tag: 3.12-alpine@sha256:236173eb74001afe2f60862de935b74fcbd00adfca247b2c27051a70a6a39a2d
+            command: ["python", "-u", "/app/qcm-newznab/qcm-newznab.py"]
+            envFrom:
+              - secretRef:
+                  name: prowlarr-app-secret
+            probes:
+              liveness: &qcmProbes
+                custom: true
+                spec:
+                  httpGet:
+                    path: /ping
+                    port: 9697
+              readiness: *qcmProbes
+            resources:
+              requests:
+                cpu: 25m
+                memory: 64Mi
+              limits:
+                memory: 128Mi
+            securityContext: *securityContext
         pod:
           securityContext:
             runAsNonRoot: true
@@ -55,6 +78,18 @@ spec:
         existingClaim: prowlarr-data
         globalMounts:
           - path: /config
+      custom-definitions:
+        type: configMap
+        name: custom-definitions
+        globalMounts:
+          - path: /config/Definitions/Custom
+            readOnly: true
+      qcm-newznab-scripts:
+        type: configMap
+        name: qcm-newznab-scripts
+        globalMounts:
+          - path: /app/qcm-newznab
+            readOnly: true
       tmpfs:
         type: emptyDir
         globalMounts:

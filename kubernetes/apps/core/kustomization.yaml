@@ -19,6 +19,7 @@ resources:
   - envoy-gateway/ks.yaml
   - external-dns/ks.yaml
   - external-secrets/ks.yaml
+  - flaresolverr/ks.yaml
   - gluetun/ks.yaml
   - gluetun/gateways/alfa.yaml
   - gluetun/gateways/bravo.yaml
