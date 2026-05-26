@@ -1,0 +1,119 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app mealie
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    controllers:
+      mealie:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/mealie-recipes/mealie
+              tag: v3.19.0@sha256:116555e24d66c5026db1d7b96a942222e7bd400db5c57a0896d3deb17540a815
+            env:
+              PUID: 568
+              PGID: 568
+              BASE_URL: https://mealie.${DOMAIN_0}
+              DB_ENGINE: postgres
+              POSTGRES_SERVER: mealie-cnpg-rw
+              POSTGRES_PASSWORD_FILE: /secrets/cnpg/password
+              ALLOW_PASSWORD_LOGIN: false
+              OIDC_AUTH_ENABLED: true
+              OIDC_AUTO_REDIRECT: true
+              OIDC_CLIENT_ID: ac74a56e-8c76-411e-90fa-47fd13113d45
+              OIDC_CLIENT_SECRET_FILE: /secrets/app/OIDC_CLIENT_SECRET
+              OIDC_CONFIGURATION_URL: https://id.${DOMAIN_0}/.well-known/openid-configuration
+              OIDC_PROVIDER_NAME: Freeman ID
+              OIDC_REMEMBER_ME: true
+              SMTP_AUTH_STRATEGY: TLS
+              SMTP_FROM_EMAIL: id@${DOMAIN_0}
+              SMTP_HOST: ${SMTP_HOST_0}
+              SMTP_USER: ${SMTP_USERNAME_0}
+              SMTP_PASSWORD_FILE: /secrets/app/SMTP_PASSWORD
+              SMTP_PORT: 587
+              THEME_LIGHT_PRIMARY: "#fe640b"
+              THEME_LIGHT_ACCENT: "#209fb5"
+              THEME_LIGHT_SECONDARY: "#e64553"
+              THEME_LIGHT_SUCCESS: "#40a02b"
+              THEME_LIGHT_INFO: "#1e66f5"
+              THEME_LIGHT_WARNING: "#df8e1d"
+              THEME_LIGHT_ERROR: "#d20f39"
+              THEME_DARK_PRIMARY: "#ef9f76"
+              THEME_DARK_ACCENT: "#85c1dc"
+              THEME_DARK_SECONDARY: "#ea999c"
+              THEME_DARK_SUCCESS: "#a6d189"
+              THEME_DARK_INFO: "#8caaee"
+              THEME_DARK_WARNING: "#e5c890"
+              THEME_DARK_ERROR: "#e78284"
+            probes:
+              liveness: &probes
+                enabled: true
+                path: /api/app/about
+                type: HTTP
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 25m
+                memory: 512Mi
+              limits:
+                memory: 1Gi
+            securityContext:
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+          automountServiceAccountToken: false
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        existingClaim: mealie-data
+        globalMounts:
+          - path: /app/data
+      secrets:
+        type: secret
+        name: mealie-app-secret
+        globalMounts:
+          - path: /secrets/app
+            readOnly: true
+      cnpg-secret:
+        type: secret
+        name: mealie-cnpg-app
+        globalMounts:
+          - path: /secrets/cnpg
+            readOnly: true
+      tmpfs:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
+    route:
+      app:
+        hostnames: ['mealie.${DOMAIN_0}']
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy-gateway
+            sectionName: https
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: 9000
