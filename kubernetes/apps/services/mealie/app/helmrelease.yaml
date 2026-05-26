@@ -41,6 +41,20 @@ spec:
               SMTP_USER: ${SMTP_USERNAME_0}
               SMTP_PASSWORD_FILE: /secrets/app/SMTP_PASSWORD
               SMTP_PORT: 587
+              THEME_LIGHT_PRIMARY: '#75A86C'
+              THEME_LIGHT_ACCENT: '#A8D0A6'
+              THEME_LIGHT_SECONDARY: '#638E5E'
+              THEME_LIGHT_SUCCESS: '#4CAF50'
+              THEME_LIGHT_INFO: '#4A9ED8'
+              THEME_LIGHT_WARNING: '#EAC46B'
+              THEME_LIGHT_ERROR: '#E57373'
+              THEME_DARK_PRIMARY: '#739B7A'
+              THEME_DARK_ACCENT: '#9FBE9D'
+              THEME_DARK_SECONDARY: '#56775E'
+              THEME_DARK_SUCCESS: '#81C784'
+              THEME_DARK_INFO: '#78B2C0'
+              THEME_DARK_WARNING: '#EBC86E'
+              THEME_DARK_ERROR: '#E57373'
             probes:
               liveness: &probes
                 enabled: true
