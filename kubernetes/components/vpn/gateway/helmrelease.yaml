@@ -52,6 +52,7 @@ spec:
                 exec /gluetun-entrypoint
             env:
               FIREWALL_INPUT_PORTS: '{{- $ports := list "9000" -}}{{- if eq "${VPN_HTTPPROXY_ENABLED:=${VPN_PROXIES_ENABLED:=false}}" "true" -}}{{- $ports = append $ports "8888" -}}{{- end -}}{{- if eq "${VPN_SHADOWSOCKS_ENABLED:=${VPN_PROXIES_ENABLED:=false}}" "true" -}}{{- $ports = append $ports "8388" -}}{{- end -}}{{- if eq "${VPN_SOCKS5_ENABLED:=${VPN_PROXIES_ENABLED:=false}}" "true" -}}{{- $ports = append $ports "1080" -}}{{- end -}}{{ join "," $ports }}'
+              FIREWALL_OUTBOUND_SUBNETS: "${VPN_FIREWALL_OUTBOUND_SUBNETS:=10.0.0.0/16}"
               HTTP_CONTROL_SERVER_ADDRESS: 127.0.0.1:8000
               HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: /run/secrets/gluetun/config.toml
               HTTP_CONTROL_SERVER_LOG: off
