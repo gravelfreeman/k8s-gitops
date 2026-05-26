@@ -50,6 +50,25 @@ tasks:
       - test -f .taskfiles/cnpg/scripts/list.sh
       - which aws barman-cloud-backup-delete jq task
 
+  move:
+    desc: Copy CloudNativePG Barman backup objects on Backblaze B2 [SOURCE=required TARGET=required]
+    prompt: Copy CNPG Barman backup objects from {{.SOURCE}} to {{.TARGET}}?
+    cmds:
+      - |-
+        source="{{.SOURCE}}"; source="${source#/}"; source="${source%/}"
+        target="{{.TARGET}}"; target="${target#/}"; target="${target%/}"
+        source_uri="s3://${S3_BUCKET}/${source}/"
+        target_uri="s3://${S3_BUCKET}/${target}/"
+        aws --endpoint-url "https://${S3_ENDPOINT}" s3 sync "$source_uri" "$target_uri" --only-show-errors
+        aws --endpoint-url "https://${S3_ENDPOINT}" s3 ls "${target_uri}base/"
+    requires:
+      vars: [SOURCE, TARGET]
+    preconditions:
+      - |-
+        source="{{.SOURCE}}"; source="${source#/}"; source="${source%/}"
+        aws --endpoint-url "https://${S3_ENDPOINT}" s3 ls "s3://${S3_BUCKET}/${source}/base/" >/dev/null
+      - which aws
+
   restore:
     desc: Restore a CloudNativePG backup over the live cluster [APP=required BACKUP=required]
     prompt: This deletes {{.APP}}-cnpg and restores backup {{.BACKUP}} in place. Continue?
