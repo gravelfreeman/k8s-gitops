@@ -51,13 +51,13 @@ spec:
                 ip -6 rule del table 51820 2>/dev/null || true
                 exec /gluetun-entrypoint
             env:
-              FIREWALL_INPUT_PORTS: '{{- $ports := list "9000" -}}{{- if .Values.service.proxies.ports.http.enabled -}}{{- $ports = append $ports "8888" -}}{{- end -}}{{- if .Values.service.proxies.ports.shadowsocks.enabled -}}{{- $ports = append $ports "8388" -}}{{- end -}}{{- if .Values.service.proxies.ports.socks5.enabled -}}{{- $ports = append $ports "1080" -}}{{- end -}}{{ join "," $ports }}'
+              FIREWALL_INPUT_PORTS: '{{- $ports := list "9000" -}}{{- if eq "${VPN_HTTPPROXY_ENABLED:=${VPN_PROXIES_ENABLED:=false}}" "true" -}}{{- $ports = append $ports "8888" -}}{{- end -}}{{- if eq "${VPN_SHADOWSOCKS_ENABLED:=${VPN_PROXIES_ENABLED:=false}}" "true" -}}{{- $ports = append $ports "8388" -}}{{- end -}}{{- if eq "${VPN_SOCKS5_ENABLED:=${VPN_PROXIES_ENABLED:=false}}" "true" -}}{{- $ports = append $ports "1080" -}}{{- end -}}{{ join "," $ports }}'
               HTTP_CONTROL_SERVER_ADDRESS: 127.0.0.1:8000
               HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: /run/secrets/gluetun/config.toml
               HTTP_CONTROL_SERVER_LOG: off
-              HTTPPROXY: '{{ ternary "on" "off" .Values.service.proxies.ports.http.enabled }}'
+              HTTPPROXY: '{{ ternary "on" "off" (eq "${VPN_HTTPPROXY_ENABLED:=${VPN_PROXIES_ENABLED:=false}}" "true") }}'
               PUBLICIP_ENABLED: off
-              SHADOWSOCKS: '{{ ternary "on" "off" .Values.service.proxies.ports.shadowsocks.enabled }}'
+              SHADOWSOCKS: '{{ ternary "on" "off" (eq "${VPN_SHADOWSOCKS_ENABLED:=${VPN_PROXIES_ENABLED:=false}}" "true") }}'
               STORAGE_SERVERS_DIRECTORY_PATH: /tmp/gluetun/servers/
               VERSION_INFORMATION: off
               VPN_PORT_FORWARDING: '{{ ternary "on" "off" (gt (int "${VPN_PORT_FORWARDS:=0}") 0) }}'
@@ -104,6 +104,7 @@ spec:
                   secretKeyRef:
                     name: ${APP}-secret
                     key: GLUETUN_API_KEY
+              VPN_PORT_FORWARDS: "${VPN_PORT_FORWARDS:=0}"
             resources:
               requests:
                 cpu: 5m
