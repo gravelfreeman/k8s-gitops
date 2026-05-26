@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app flaresolverr
+  name: &app byparr
 spec:
   interval: 30m
   chartRef:
@@ -12,20 +12,24 @@ spec:
     namespace: flux-system
   values:
     controllers:
-      flaresolverr:
+      byparr:
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
-              repository: ghcr.io/flaresolverr/flaresolverr
-              tag: v3.4.6@sha256:7962759d99d7e125e108e0f5e7f3cdbcd36161776d058d1d9b7153b92ef1af9e
+              repository: ghcr.io/thephaseless/byparr
+              tag: 2.1.0@sha256:01a46a2865d9a6db5eb8ead04ec0dd33b8fbe233e8565ae70b50d4cc0af4cfb0
             probes:
               liveness: &probes
                 enabled: true
                 path: /health
                 type: HTTP
               readiness: *probes
+              startup:
+                enabled: true
+                path: /health
+                type: HTTP
             resources:
               requests:
                 cpu: 50m
@@ -48,6 +52,10 @@ spec:
               type: RuntimeDefault
           automountServiceAccountToken: false
     persistence:
+      cache:
+        type: emptyDir
+        globalMounts:
+          - path: /cache
       tmpfs:
         type: emptyDir
         globalMounts:
