@@ -35,7 +35,8 @@ spec:
           seccompProfile:
             type: RuntimeDefault
     csi:
-      enableCephfsDriver: false
+      cephFSKernelMountOptions: ms_mode=prefer-crc
+      enableCephfsDriver: true
       enableCephfsSnapshotter: false
       enableLiveness: true
       serviceMonitor:
@@ -45,5 +46,7 @@ spec:
     monitoring:
       enabled: true
     resources:
-      requests: { cpu: 100m, memory: 128Mi }
+      requests:
+        cpu: 100m
+        memory: 128Mi
       limits: {}
