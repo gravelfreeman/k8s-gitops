@@ -8,7 +8,6 @@ configMapGenerator:
   - name: custom-definitions
     files:
       - newasgard.yml=./resources/newasgard.yml
-      - tv-vault.yml=./resources/tv-vault.yml
   - name: qcm-newznab-scripts
     files:
       - qcm-newznab.py=./resources/qcm-newznab.py
