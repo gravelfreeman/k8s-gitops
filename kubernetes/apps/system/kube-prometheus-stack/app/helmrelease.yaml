@@ -85,8 +85,11 @@ spec:
           access: proxy
           url: http://loki.loki.svc.cluster.local:3100
       resources:
-        requests: { cpu: 50m, memory: 128Mi }
-        limits: { memory: 512Mi }
+        requests:
+          cpu: 50m
+          memory: 128Mi
+        limits:
+          memory: 512Mi
       route:
         main:
           enabled: true
@@ -96,6 +99,9 @@ spec:
               namespace: envoy-gateway
               sectionName: https
       sidecar:
+        dashboards:
+          provider:
+            allowUiUpdates: true
         datasources:
           alertmanager:
             enabled: false
@@ -109,10 +115,14 @@ spec:
     prometheusOperator:
       fullnameOverride: prometheus-operator
       resources:
-        requests: { cpu: 10m, memory: 100Mi }
+        requests:
+          cpu: 10m
+          memory: 100Mi
     prometheusConfigReloader:
       resources:
-        requests: { cpu: 10m, memory: 100Mi }
+        requests:
+          cpu: 10m
+          memory: 100Mi
     prometheus:
       serviceAccount:
         name: prometheus
@@ -138,8 +148,10 @@ spec:
         retention: 14d
         retentionSize: 50GB
         resources:
-          requests: { cpu: 100m }
-          limits: { memory: 2000Mi }
+          requests:
+            cpu: 100m
+          limits:
+            memory: 2000Mi
         storageSpec:
           volumeClaimTemplate:
             metadata:
@@ -147,7 +159,8 @@ spec:
             spec:
               storageClassName: ceph-block
               resources:
-                requests: { storage: 50Gi }
+                requests:
+                  storage: 50Gi
     kube-state-metrics:
       fullnameOverride: kube-state-metrics
     prometheus-node-exporter:
