@@ -19,6 +19,7 @@ resources:
   - csi-driver-nfs/ks.yaml
   - descheduler/ks.yaml
   - flux-system
+  - intel-gpu-driver/ks.yaml
   - k8tz/ks.yaml
   - kube-prometheus-stack/ks.yaml
   - kubelet-csr-approver/ks.yaml

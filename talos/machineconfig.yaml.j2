@@ -51,6 +51,9 @@ machine:
       - name: dm_mod
       - name: dm_snapshot
       - name: dm_thin_pool
+      - name: i915
+      - name: mei
+      - name: mei_me
       - name: nbd
       - name: thunderbolt
       - name: thunderbolt_net
@@ -90,6 +93,7 @@ machine:
   udev:
     rules:
       - ACTION=="add", SUBSYSTEM=="thunderbolt", ATTR{authorized}=="0", ATTR{authorized}="1"
+      - SUBSYSTEM=="drm", KERNEL=="card*", GROUP="44", MODE="0660"
       - SUBSYSTEM=="drm", KERNEL=="renderD*", GROUP="44", MODE="0660"
 cluster:
   clusterName: ms01
