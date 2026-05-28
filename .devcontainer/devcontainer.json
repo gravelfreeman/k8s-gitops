@@ -61,7 +61,7 @@
         "BlueGlassBlock.better-json5",
         "MichalHajny.kustomize-navigator",
         "ms-kubernetes-tools.vscode-kubernetes-tools",
-        "openai.chatgpt",
+        "openai.chatgpt@26.513.21555",
         "redhat.vscode-yaml",
         "samuelcolvin.jinjahtml",
         "tamasfe.even-better-toml",
