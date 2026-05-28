@@ -13,8 +13,29 @@ tasks:
       - op user get --me
       - which op restic
 
+  delete:
+    desc: Delete a VolSync restic snapshot on Backblaze B2 [APP=required ID=required]
+    prompt: Delete VolSync restic snapshot {{.ID}} from {{.APP}} and prune unreferenced data?
+    cmd: restic -r "s3:https://${S3_ENDPOINT}/${S3_BUCKET}/volsync/{{.APP}}" --password-command 'op read "op://{{.OP_VAULT}}/backblaze/RESTIC_PASSWORD"' forget "{{.ID}}" --prune
+    requires:
+      vars: [APP, ID]
+    preconditions:
+      - op user get --me
+      - which op restic
+
+  unlock:
+    desc: Unlock a VolSync restic repository on Backblaze B2 [APP=required]
+    prompt: Unlock VolSync restic repository {{.APP}}?
+    cmd: restic -r "s3:https://${S3_ENDPOINT}/${S3_BUCKET}/volsync/{{.APP}}" --password-command 'op read "op://{{.OP_VAULT}}/backblaze/RESTIC_PASSWORD"' unlock
+    requires:
+      vars: [APP]
+    preconditions:
+      - op user get --me
+      - which op restic
+
   backup:
     desc: Create an on-demand VolSync restic backup [APP=required NS=APP CLAIM=data]
+    prompt: Create an on-demand VolSync restic backup for {{.PVC_NAME}} in {{.NS}}?
     cmds:
       - kubectl patch persistentvolumeclaim "{{.PVC_NAME}}" -n "{{.NS}}" --type=merge -p "{\"metadata\":{\"annotations\":{\"volsync.backube/copy-trigger\":\"$VOLSYNC_TRIGGER_ID\"}}}"
       - |-
@@ -55,8 +76,8 @@ tasks:
       - op user get --me
       - which op restic
 
-  delete:
-    desc: Delete a VolSync restic repository prefix from Backblaze B2 [TARGET=required]
+  purge:
+    desc: Purge a restic repository from Backblaze B2 [TARGET=required]
     prompt: Permanently delete every object and version under {{.RESTIC_TARGET}} from Backblaze B2? This cannot be undone.
     cmds:
       - aws --endpoint-url "https://${S3_ENDPOINT}" s3 rm "s3://${S3_BUCKET}{{.RESTIC_TARGET}}/" --recursive --only-show-errors
