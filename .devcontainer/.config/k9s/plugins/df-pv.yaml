@@ -101,9 +101,7 @@ df-pv:
 
         : >"$DF_USAGE_FILE"
 
-        if ! df_output="$(kubectl df-pv --context "$CONTEXT" -d -n "$NAMESPACE" 2>&1)"; then
-          return 0
-        fi
+        df_output="$(kubectl df-pv --context "$CONTEXT" -d -n "$NAMESPACE" 2>&1 || true)"
 
         printf '%s\n' "$df_output" | awk -v namespace="$NAMESPACE" '
           function size_to_mib(size, value, unit) {
@@ -113,6 +111,7 @@ df-pv:
             sub(/^[0-9.]+/, "", unit)
             if (unit != "B") sub(/B$/, "", unit)
 
+            if (unit == "" && value == 0) return 0
             if (unit == "Ti") return value * 1024 * 1024
             if (unit == "Gi") return value * 1024
             if (unit == "Mi") return value
@@ -121,7 +120,7 @@ df-pv:
             return -1
           }
 
-          $3 == namespace && $7 ~ /^[0-9][0-9.]*[A-Za-z]+$/ && $8 ~ /^[0-9][0-9.]*[A-Za-z]+$/ {
+          $3 == namespace && $7 ~ /^[0-9][0-9.]*[A-Za-z]+$/ && ($8 == "0" || $8 ~ /^[0-9][0-9.]*[A-Za-z]+$/) {
             total_size = size_to_mib($7)
             used_size = size_to_mib($8)
 
