@@ -8,6 +8,23 @@ spec:
   chartRef:
     kind: OCIRepository
     name: *app
+  postRenderers:
+    - kustomize:
+        patches:
+          - patch: |-
+              - op: add
+                path: /webhooks/0/objectSelector
+                value:
+                  matchExpressions:
+                    - key: app
+                      operator: NotIn
+                      values:
+                        - volume-exposer
+            target:
+              group: admissionregistration.k8s.io
+              kind: MutatingWebhookConfiguration
+              name: *app
+              version: v1
   values:
     namespace: null
     replicaCount: 2
