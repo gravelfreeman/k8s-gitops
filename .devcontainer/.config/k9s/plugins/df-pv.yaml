@@ -17,9 +17,11 @@ df-pv:
 
       USED_ANNOTATION_KEY="df-pv-used"
       USED_PCT_ANNOTATION_KEY="df-pv-used-pct"
-      LOCK_MAX_AGE_SECONDS="${DF_PV_LOCK_MAX_AGE_SECONDS:-1800}"
-      LONGHORN_NAMESPACE="${DF_PV_LONGHORN_NAMESPACE:-longhorn-system}"
-      TMP_BASE="${TMPDIR:-/tmp}"
+      LOCK_MAX_AGE_SECONDS="1800"
+      LONGHORN_NAMESPACE="longhorn-system"
+      ROOK_CEPH_NAMESPACE="rook-ceph"
+      ROOK_CEPH_TOOLS="deploy/rook-ceph-tools"
+      TMP_BASE="/tmp"
 
       CONTEXT="${1:-}"
       NAMESPACE="${2:-}"
@@ -32,6 +34,7 @@ df-pv:
             sub(/[A-Za-z]+$/, "", value)
             sub(/^[0-9.]+/, "", unit)
           }
+          if (unit != "B") sub(/B$/, "", unit)
           if (unit == "Ti") mult = 1024 * 1024
           else if (unit == "Gi") mult = 1024
           else if (unit == "Mi") mult = 1
@@ -108,6 +111,7 @@ df-pv:
             unit = size
             sub(/[A-Za-z]+$/, "", value)
             sub(/^[0-9.]+/, "", unit)
+            if (unit != "B") sub(/B$/, "", unit)
 
             if (unit == "Ti") return value * 1024 * 1024
             if (unit == "Gi") return value * 1024
@@ -151,6 +155,31 @@ df-pv:
         done <"$raw_file" >"$LONGHORN_MAP_FILE"
       }
 
+      load_rook_ceph_map() {
+        local claim_namespace driver image_name pool raw_file used_size used_unit volume_name
+
+        : >"$ROOK_CEPH_MAP_FILE"
+
+        if ! kubectl --context "$CONTEXT" -n "$ROOK_CEPH_NAMESPACE" get "$ROOK_CEPH_TOOLS" >/dev/null 2>&1; then
+          return 0
+        fi
+
+        raw_file="$TMP_DIR/rook-ceph-pv.tsv"
+        kubectl --context "$CONTEXT" get pv \
+          -o go-template='{{range .items}}{{.metadata.name}}{{"\t"}}{{with .spec.claimRef}}{{.namespace}}{{end}}{{"\t"}}{{with .spec.csi}}{{.driver}}{{"\t"}}{{index .volumeAttributes "pool"}}{{"\t"}}{{index .volumeAttributes "imageName"}}{{end}}{{"\n"}}{{end}}' \
+          >"$raw_file"
+
+        while IFS=$'\t' read -r volume_name claim_namespace driver pool image_name; do
+          [[ "$claim_namespace" == "$NAMESPACE" ]] || continue
+          [[ "$driver" == *rbd.csi.ceph.com ]] || continue
+          [[ -n "$pool" && -n "$image_name" ]] || continue
+
+          read -r used_size used_unit <<<"$(kubectl --context "$CONTEXT" -n "$ROOK_CEPH_NAMESPACE" exec "$ROOK_CEPH_TOOLS" -- rbd du -p "$pool" "$image_name" 2>/dev/null | awk 'NR == 2 { print $(NF - 1), $NF; exit }')"
+          [[ -n "$used_size" && -n "$used_unit" ]] || continue
+          printf '%s\t%s\n' "$volume_name" "$(to_mib "$used_size" "$used_unit")"
+        done <"$raw_file" >"$ROOK_CEPH_MAP_FILE"
+      }
+
       refresh_view() {
         local pvc_name capacity_text current_used current_pct volume_name
         local usage_record source_name used_size_mib total_size_mib
@@ -159,6 +188,7 @@ df-pv:
         load_pvc_inventory
         load_df_usage_map
         load_longhorn_map
+        load_rook_ceph_map
 
         while IFS=$'\t' read -r pvc_name capacity_text current_used current_pct volume_name; do
           [[ -z "$pvc_name" ]] && continue
@@ -175,6 +205,11 @@ df-pv:
             used_size_mib="$(awk -F '\t' -v volume="$volume_name" '$1 == volume { print $2; exit }' "$LONGHORN_MAP_FILE")"
             if [[ -n "$used_size_mib" ]]; then
               source_name='longhorn'
+            else
+              used_size_mib="$(awk -F '\t' -v volume="$volume_name" '$1 == volume { print $2; exit }' "$ROOK_CEPH_MAP_FILE")"
+              if [[ -n "$used_size_mib" ]]; then
+                source_name='rook-ceph'
+              fi
             fi
           fi
 
@@ -220,6 +255,7 @@ df-pv:
 
       TMP_DIR="$(mktemp -d "${TMP_BASE%/}/df-pv.XXXXXX")"
       LONGHORN_MAP_FILE="$TMP_DIR/longhorn.tsv"
+      ROOK_CEPH_MAP_FILE="$TMP_DIR/rook-ceph.tsv"
       PVC_INVENTORY_FILE="$TMP_DIR/pvc.tsv"
       DF_USAGE_FILE="$TMP_DIR/df.tsv"
 
