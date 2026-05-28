@@ -30,7 +30,11 @@
     "source=${localEnv:HOME}/.gitconfig,target=/tmp/host.gitconfig,type=bind,consistency=cached,readonly",
     "source=${localEnv:HOME}/.codex,target=/home/vscode/.codex,type=bind"
   ],
-  "runArgs": [ "--privileged" ],
+  "runArgs": [
+    "--device=/dev/fuse",
+    "--cap-add=SYS_ADMIN",
+    "--security-opt=apparmor:unconfined",
+  ],
   "containerEnv": {
     "SHELL": "/bin/zsh",
     "SSH_AUTH_SOCK": "/tmp/ssh-agent.sock",
