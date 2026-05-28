@@ -121,7 +121,10 @@ spec:
             namespace: envoy-gateway
             sectionName: https
         rules:
-          - matches:
+          - backendRefs:
+              - identifier: grimmory
+                port: *httpPort
+            matches:
               - path:
                   type: PathPrefix
                   value: /api/kobo
