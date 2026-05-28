@@ -201,6 +201,10 @@ spec:
           - name: envoy-internal
             namespace: envoy-gateway
             sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: plex
+                port: 32400
     service:
       orchestrator:
         controller: orchestrator
