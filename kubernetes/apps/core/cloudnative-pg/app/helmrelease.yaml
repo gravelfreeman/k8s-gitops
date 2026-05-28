@@ -15,3 +15,6 @@ spec:
       podMonitorEnabled: true
       grafanaDashboard:
         create: true
+    podAnnotations:
+      k8tz.io/inject: "true"
+      k8tz.io/timezone: America/Montreal
