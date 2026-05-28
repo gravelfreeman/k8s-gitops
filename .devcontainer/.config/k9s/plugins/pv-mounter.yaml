@@ -195,6 +195,12 @@ pv-mounter:
           [[ -n "$mount_path" ]] || return 1
 
           if ! _pv_mounter clean "$NAMESPACE" "$PVC_NAME" "$mount_path"; then
+              umount "$mount_path" >/dev/null 2>&1 || true
+              kubectl --context "$CONTEXT" delete pod -n "$NAMESPACE" \
+                  -l "app=volume-exposer,pvcName=$PVC_NAME" --ignore-not-found --wait=false >/dev/null 2>&1 || true
+          fi
+
+          if _pvc_mount_path_check "$mount_path"; then
               kubectl --context "$CONTEXT" annotate pvc "$PVC_NAME" -n "$NAMESPACE" \
                   "$PVC_MOUNTED_ANNOTATION_KEY=clean command failed" --overwrite >/dev/null 2>&1 || true
               return 1
@@ -210,12 +216,6 @@ pv-mounter:
                   \( -name '.DS_Store' -o -name '.localized' \) -exec rm -f {} + 2>/dev/null || true
               rmdir "$target_dir" 2>/dev/null || true
           done
-
-          if [[ -d "$mount_path" ]]; then
-              kubectl --context "$CONTEXT" annotate pvc "$PVC_NAME" -n "$NAMESPACE" \
-                  "$PVC_MOUNTED_ANNOTATION_KEY=path error" --overwrite >/dev/null 2>&1 || true
-              return 1
-          fi
       }
 
       main() {
@@ -232,12 +232,6 @@ pv-mounter:
                   annotation_value="$(_pvc_annotation_read "$NAMESPACE" "$PVC_NAME")"
                   probe_path="$(_pvc_mount_path "$NAMESPACE" "$PVC_NAME")"
 
-                  case "$annotation_value" in
-                      "~") probe_path="$HOME" ;;
-                      "~/"*) probe_path="$HOME/${annotation_value#\~/}" ;;
-                      /*) probe_path="$annotation_value" ;;
-                  esac
-
                   if [[ -n "$probe_path" ]] && _pvc_mount_path_check "$probe_path"; then
                       _pvc_annotation_write "$NAMESPACE" "$PVC_NAME" "$probe_path" || true
                       printf "Cleaning '%s' in namespace '%s'\n" "$PVC_NAME" "$NAMESPACE"
@@ -245,12 +239,10 @@ pv-mounter:
                       exit 0
                   fi
 
-                  case "$annotation_value" in
-                      "~"|"~/"*|/*)
-                          kubectl --context "$CONTEXT" annotate pvc "$PVC_NAME" -n "$NAMESPACE" \
-                              "${PVC_MOUNTED_ANNOTATION_KEY}-" >/dev/null 2>&1 || true
-                          ;;
-                  esac
+                  if [[ -n "$annotation_value" ]]; then
+                      kubectl --context "$CONTEXT" annotate pvc "$PVC_NAME" -n "$NAMESPACE" \
+                          "${PVC_MOUNTED_ANNOTATION_KEY}-" >/dev/null 2>&1 || true
+                  fi
 
                   sibling_pvc="$(_mounted_sibling_pvc "$NAMESPACE" "$PVC_NAME" || true)"
                   if [[ -n "$sibling_pvc" ]]; then
