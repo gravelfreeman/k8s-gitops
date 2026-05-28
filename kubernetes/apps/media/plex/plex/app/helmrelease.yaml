@@ -55,7 +55,7 @@ spec:
               ORCHESTRATOR_URL: http://orchestrator:3500
               ADVERTISE_IP: http://10.0.20.240:32400,https://plex.${DOMAIN_1}
               TRANSCODE_OPERATING_MODE: remote
-              PMS_SERVICE: plex
+              PMS_SERVICE: *app
               PMS_PORT: "32400"
               LOCAL_RELAY_PORT: "32499"
             probes:
@@ -122,7 +122,7 @@ spec:
             intel.feature.node.kubernetes.io/gpu: "true"
           resourceClaims:
             - name: gpu
-              resourceClaimTemplateName: plex
+              resourceClaimTemplateName: *app
           securityContext: *plexSecurityContext
     persistence:
       config:
@@ -204,7 +204,7 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - identifier: plex
+              - identifier: *app
                 port: 32400
     service:
       orchestrator:
@@ -219,7 +219,7 @@ spec:
         labels:
           io.cilium/bgp-advertise: "true"
           network.k8s-gitops.io/lb-pool: services
-        controller: plex
+        controller: *app
         ports:
           http:
             protocol: TCP
