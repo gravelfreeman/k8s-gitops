@@ -56,6 +56,8 @@ spec:
               ADVERTISE_IP: http://10.0.20.240:32400,https://plex.${DOMAIN_1}
               TRANSCODE_OPERATING_MODE: remote
               PMS_SERVICE: plex
+              PMS_PORT: "32400"
+              LOCAL_RELAY_PORT: "32499"
             probes:
               liveness: &plexProbes
                 enabled: true
@@ -120,7 +122,7 @@ spec:
             intel.feature.node.kubernetes.io/gpu: "true"
           resourceClaims:
             - name: gpu
-              resourceClaimTemplateName: plex-worker-gpu
+              resourceClaimTemplateName: plex
           securityContext: *plexSecurityContext
     persistence:
       config:
@@ -185,17 +187,16 @@ spec:
       workerGpuClaimTemplate:
         apiVersion: resource.k8s.io/v1
         kind: ResourceClaimTemplate
-        forceRename: plex-worker-gpu
         spec:
           spec:
-            devices:
-              requests:
-                - name: gpu
-                  exactly:
-                    deviceClassName: gpu.intel.com
+            spec:
+              devices:
+                requests:
+                  - name: gpu
+                    exactly:
+                      deviceClassName: gpu.intel.com
     route:
       plex:
-        forceRename: *app
         hostnames: ['plex.${DOMAIN_1}']
         parentRefs:
           - name: envoy-internal
