@@ -100,9 +100,14 @@ process_talosconfig() {
 }
 
 generate_kubeconfig() {
+  local controller
+
   cd "$workspace_dir"
   install -d -m 0700 "$HOME/.kube"
-  task talos:generate-kubeconfig || true
+
+  controller="$(talosctl config info --output json | jq --raw-output '.endpoints[]' | shuf -n 1)"
+  talosctl kubeconfig --nodes "$controller" --force "$HOME/.kube/config"
+  chmod 0600 "$HOME/.kube/config"
 }
 
 post_create() {
