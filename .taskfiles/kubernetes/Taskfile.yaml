@@ -4,6 +4,22 @@ version: "3"
 
 tasks:
 
+  pvc:mount:
+    desc: Mount a PVC in a temporary BusyBox pod (PVC=<pvc-name> [NS=<namespace>] [RUN_AS_USER=568] [RUN_AS_GROUP=568])
+    silent: true
+    cmd: >-
+      PVC="{{.PVC}}" NS="{{.NS | default ""}}" RUN_AS_USER="{{.RUN_AS_USER | default "568"}}" RUN_AS_GROUP="{{.RUN_AS_GROUP | default "568"}}" POD="pvc-mount-{{.PVC}}"; [ -n "$NS" ] || NS="$(kubectl get pvc -A --field-selector metadata.name="$PVC" -o jsonpath='{.items[0].metadata.namespace}')"; [ -n "$NS" ] || { echo "PVC '$PVC' not found"; exit 1; }; export PVC POD RUN_AS_USER RUN_AS_GROUP; envsubst < .taskfiles/kubernetes/templates/pvc-mount.yaml | kubectl -n "$NS" apply -f - && kubectl -n "$NS" wait pod/"$POD" --for=condition=Ready --timeout=2m && kubectl -n "$NS" exec -it "$POD" -- sh
+    requires:
+      vars: [PVC]
+
+  pvc:unmount:
+    desc: Delete the temporary BusyBox PVC pod (PVC=<pvc-name> [NS=<namespace>])
+    silent: true
+    cmd: >-
+      PVC="{{.PVC}}" NS="{{.NS | default ""}}" POD="pvc-mount-{{.PVC}}"; [ -n "$NS" ] || NS="$(kubectl get pod -A --field-selector metadata.name="$POD" -o jsonpath='{.items[0].metadata.namespace}')"; [ -n "$NS" ] || { echo "pod '$POD' not found"; exit 1; }; kubectl -n "$NS" delete pod "$POD" --ignore-not-found
+    requires:
+      vars: [PVC]
+
   secrets:list:
     desc: List ignored app files
     silent: true
