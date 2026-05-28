@@ -1,0 +1,25 @@
+overlays:
+  french_audio:
+    plex_search:
+      all:
+        audio_language: fr
+        audience_rating.gte: 3.0
+    overlay:
+      name: text( )
+      url: https://raw.githubusercontent.com/gravelfreeman/kometa-posters/main/overlays/images/flags/fr.png
+      horizontal_align: right
+      horizontal_offset: 180
+      vertical_align: bottom
+      vertical_offset: 50
+      queue: flags
+      weight: 590
+      back_align: left
+      back_color: "#FFFFFF00"
+      back_height: 80
+      back_radius: 26
+      back_width: 40
+      font: fonts/Inter-Bold.ttf
+      font_color: "#FFFFFF"
+      font_size: 50
+      addon_position: left
+      addon_offset: 10

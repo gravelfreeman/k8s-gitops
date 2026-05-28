@@ -1,0 +1,226 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app plex
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    controllers:
+      orchestrator:
+        annotations: &annotations
+          reloader.stakater.com/auto: "true"
+        containers:
+          orchestrator:
+            image:
+              repository: ghcr.io/pabloromeo/clusterplex_orchestrator
+              tag: 1.4.16@sha256:0fe80de2d22cf62cc180a7f19b30956eaaf35512c3b78608168e483004dde99f
+            probes:
+              liveness: &orchestratorProbes
+                enabled: true
+                type: HTTP
+                path: /health
+              readiness: *orchestratorProbes
+            resources:
+              requests:
+                cpu: 200m
+                memory: 64Mi
+              limits:
+                memory: 128Mi
+            securityContext: &containerSecurityContext
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+        pod:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+          automountServiceAccountToken: false
+      plex:
+        annotations: *annotations
+        containers:
+          plex:
+            image:
+              repository: lscr.io/linuxserver/plex
+              tag: 1.43.2@sha256:626eb0d52b4522db3be91110a89161be6ccffc0741e9abf0e93aaf4fea98ccb9
+            env:
+              PGID: "568"
+              PUID: "568"
+              VERSION: docker
+              DOCKER_MODS: ghcr.io/pabloromeo/clusterplex_dockermod:1.4.16@sha256:4cc23e80b6e126ac4b839672945b4a4c153f74215536e85e6309f8592b49f8e7
+              ORCHESTRATOR_URL: http://orchestrator:3500
+              ADVERTISE_IP: http://10.0.20.240:32400,https://plex.${DOMAIN_1}
+              TRANSCODE_OPERATING_MODE: remote
+              PMS_SERVICE: plex
+            probes:
+              liveness: &plexProbes
+                enabled: true
+                type: HTTP
+                path: /identity
+                port: 32400
+              readiness: *plexProbes
+              startup:
+                <<: *plexProbes
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 10
+            resources: &resources
+              requests:
+                cpu: "2"
+                memory: 4Gi
+              limits:
+                memory: 12Gi
+            securityContext: *containerSecurityContext
+        pod:
+          nodeSelector:
+            intel.feature.node.kubernetes.io/gpu: "true"
+          securityContext: &plexSecurityContext
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+            supplementalGroups: [44]
+            seccompProfile:
+              type: RuntimeDefault
+          automountServiceAccountToken: false
+      worker:
+        type: daemonset
+        annotations: *annotations
+        containers:
+          worker:
+            image:
+              repository: lscr.io/linuxserver/plex
+              tag: 1.43.2@sha256:626eb0d52b4522db3be91110a89161be6ccffc0741e9abf0e93aaf4fea98ccb9
+            env:
+              PGID: "568"
+              PUID: "568"
+              VERSION: docker
+              DOCKER_MODS: ghcr.io/pabloromeo/clusterplex_worker_dockermod:1.4.16@sha256:be639d9631fb3beb8d86a26ac924bf532a829def21b02929b97379d714acf252
+              ORCHESTRATOR_URL: http://orchestrator:3500
+              STAT_CPU_INTERVAL: "10000"
+              FFMPEG_HWACCEL: vaapi
+            probes:
+              liveness: &workerProbes
+                enabled: true
+                type: HTTP
+                path: /health
+                port: 3501
+              readiness: *workerProbes
+              startup:
+                <<: *workerProbes
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 10
+            resources: *resources
+            securityContext: *containerSecurityContext
+        pod:
+          nodeSelector:
+            intel.feature.node.kubernetes.io/gpu: "true"
+          resourceClaims:
+            - name: gpu
+              resourceClaimTemplateName: plex-worker-gpu
+          securityContext: *plexSecurityContext
+    persistence:
+      config:
+        type: persistentVolumeClaim
+        existingClaim: plex-data
+        advancedMounts:
+          plex:
+            plex:
+              - path: /config
+      media:
+        type: custom
+        volumeSpec:
+          csi:
+            driver: nfs.csi.k8s.io
+            volumeAttributes:
+              server: 10.0.10.15
+              share: /mnt/eden/media
+        advancedMounts:
+          plex:
+            plex:
+              - path: /media
+          worker:
+            worker:
+              - path: /media
+      seerr:
+        type: custom
+        volumeSpec:
+          csi:
+            driver: nfs.csi.k8s.io
+            volumeAttributes:
+              server: 10.0.10.15
+              share: /mnt/ungava/media
+        advancedMounts:
+          plex:
+            plex:
+              - path: /seerr
+          worker:
+            worker:
+              - path: /seerr
+      transcode:
+        type: persistentVolumeClaim
+        suffix: transcode
+        storageClass: ceph-filesystem
+        accessMode: ReadWriteMany
+        size: 256Gi
+        advancedMounts:
+          plex:
+            plex:
+              - path: /transcode
+              - path: /config/Library/Application Support/Plex Media Server/Cache/Transcode
+          worker:
+            worker:
+              - path: /transcode
+              - path: /config/Library/Application Support/Plex Media Server/Cache/Transcode
+      codecs:
+        type: emptyDir
+        advancedMounts:
+          worker:
+            worker:
+              - path: /codecs
+    rawResources:
+      workerGpuClaimTemplate:
+        apiVersion: resource.k8s.io/v1
+        kind: ResourceClaimTemplate
+        forceRename: plex-worker-gpu
+        spec:
+          spec:
+            devices:
+              requests:
+                - name: gpu
+                  exactly:
+                    deviceClassName: gpu.intel.com
+    route:
+      plex:
+        forceRename: *app
+        hostnames: ['plex.${DOMAIN_1}']
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy-gateway
+            sectionName: https
+    service:
+      orchestrator:
+        controller: orchestrator
+        ports:
+          http:
+            port: 3500
+      plex:
+        type: LoadBalancer
+        annotations:
+          lbipam.cilium.io/ips: 10.0.20.240
+        labels:
+          io.cilium/bgp-advertise: "true"
+          network.k8s-gitops.io/lb-pool: services
+        controller: plex
+        ports:
+          http:
+            protocol: TCP
+            port: 32400
+            targetPort: 32400
+          relay:
+            protocol: TCP
+            port: 32499
+            targetPort: 32499

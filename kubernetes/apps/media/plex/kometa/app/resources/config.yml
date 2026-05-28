@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/kometa-team/kometa/nightly/json-schema/config-schema.json
+libraries:
+  Séries:
+    <<: &libraryBase
+      operations:
+        mass_critic_rating_update: imdb
+      remove_overlays: false
+      reapply_overlays: false
+    overlay_files:
+      - &overlayMediaInfo
+        file: /config/media_info.yml
+      - &overlayAudienceRating
+        file: /config/audience_rating.yml
+      - &overlayFrenchFlag
+        file: /config/french_flag.yml
+      - &overlaySeriesStatus
+        file: /config/series_status.yml
+  Séries sur demande:
+    <<: *libraryBase
+    overlay_files:
+      - *overlayMediaInfo
+      - *overlayAudienceRating
+      - *overlayFrenchFlag
+      - *overlaySeriesStatus
+  Films:
+    <<: *libraryBase
+    overlay_files:
+      - *overlayMediaInfo
+      - *overlayAudienceRating
+      - *overlayFrenchFlag
+  Films sur demande:
+    <<: *libraryBase
+    overlay_files:
+      - *overlayMediaInfo
+      - *overlayAudienceRating
+      - *overlayFrenchFlag
+  Films québécois: &defaultTemplate
+    <<: *libraryBase
+    overlay_files:
+      - *overlayMediaInfo
+      - *overlayAudienceRating
+  Films jeunesse: *defaultTemplate
+  Séries comédie: *defaultTemplate
+  Séries documentaires: *defaultTemplate
+  Séries québécoises: *defaultTemplate
+  Séries jeunesse: *defaultTemplate
+  Spectacles musique: *defaultTemplate
+  Louis de Funès: *defaultTemplate
+  Comédie: *defaultTemplate
+settings:
+  overlay_artwork_filetype: webp_lossy
+  overlay_artwork_quality: 95
+plex:
+  url: http://plex.plex.svc.cluster.local:32400
+  token: <<plextoken>>
+tmdb:
+  apikey: <<tmdbapikey>>
+  language: fr

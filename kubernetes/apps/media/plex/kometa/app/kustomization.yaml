@@ -1,0 +1,17 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - externalsecret.yaml
+  - helmrelease.yaml
+configMapGenerator:
+  - name: kometa-config
+    files:
+      - config.yml=./resources/config.yml
+      - audience_rating.yml=./resources/overlays/audience_rating.yml
+      - french_flag.yml=./resources/overlays/french_flag.yml
+      - media_info.yml=./resources/overlays/media_info.yml
+      - series_status.yml=./resources/overlays/series_status.yml
+      - AvenirNextLTPro-Bold.ttf=./resources/fonts/AvenirNextLTPro-Bold.ttf
+generatorOptions:
+  disableNameSuffixHash: true

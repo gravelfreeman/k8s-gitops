@@ -1,0 +1,22 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &namespace plex
+spec:
+  dependsOn:
+    - name: envoy-gateway-config
+    - name: external-secrets-store
+    - name: openebs
+    - name: rook-ceph-cluster
+    - name: volsync
+  interval: 1h
+  path: kubernetes/components/common
+  postBuild:
+    substitute:
+      POD_SECURITY_ENFORCE: baseline
+  prune: false
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: *namespace

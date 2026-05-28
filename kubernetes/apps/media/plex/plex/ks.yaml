@@ -1,0 +1,33 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: clusterplex
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: plex
+  components:
+    - ../../../../../components/common/system
+    - ../../../../../components/volsync
+  dependsOn:
+    - name: envoy-gateway-config
+    - name: external-secrets-store
+    - name: intel-gpu-driver
+    - name: openebs
+    - name: plex
+    - name: rook-ceph-cluster
+    - name: volsync
+  interval: 1h
+  path: kubernetes/apps/media/plex/plex/app
+  postBuild:
+    substitute:
+      APP: plex
+      VOLSYNC_CAPACITY: 512Gi
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: plex
+  timeout: 5m
+  wait: true

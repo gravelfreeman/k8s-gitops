@@ -16,6 +16,11 @@ labels:
 resources:
   - autobrr/ks.yaml
   - grimmory/ks.yaml
+  - plex/ks.yaml
+  - plex/imagemaid/ks.yaml
+  - plex/kometa/ks.yaml
+  - plex/plex/ks.yaml
+  - plex/plex-auto-languages/ks.yaml
   - prowlarr/ks.yaml
   - torrent/ks.yaml
   - torrent/qbittorrent-1/ks.yaml

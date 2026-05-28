@@ -1,0 +1,87 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kometa
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    controllers:
+      kometa:
+        type: cronjob
+        cronjob:
+          backoffLimit: 0
+          schedule: "0 3 * * *"
+        containers:
+          app:
+            image:
+              repository: docker.io/kometateam/kometa
+              tag: v2.3.1@sha256:683c04827ef3fecf1cc5cb178f75f91f968aef6c6d89d34bc9c70966fd1d7259
+            env:
+              HOME: /config
+              KOMETA_READ_ONLY_CONFIG: "true"
+              KOMETA_RUN: "true"
+              PYTHONDONTWRITEBYTECODE: "1"
+            resources:
+              requests:
+                cpu: 250m
+                memory: 512Mi
+              limits:
+                memory: 2Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: [ALL]
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+          automountServiceAccountToken: false
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        existingClaim: kometa-data
+        globalMounts:
+          - path: /config
+      config:
+        type: configMap
+        name: kometa-config
+        advancedMounts:
+          kometa:
+            app:
+              - path: /config/config.yml
+                subPath: config.yml
+              - path: /config/AvenirNextLTPro-Bold.ttf
+                subPath: AvenirNextLTPro-Bold.ttf
+              - path: /config/audience_rating.yml
+                subPath: audience_rating.yml
+              - path: /config/french_flag.yml
+                subPath: french_flag.yml
+              - path: /config/media_info.yml
+                subPath: media_info.yml
+              - path: /config/series_status.yml
+                subPath: series_status.yml
+      secrets:
+        type: secret
+        name: kometa-app-secret
+        advancedMounts:
+          kometa:
+            app:
+              - path: /config/.env
+                subPath: .env
+                readOnly: true
+      workdir:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
