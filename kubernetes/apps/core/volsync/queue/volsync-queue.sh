@@ -11,7 +11,6 @@ PVC_STATUS_WAITING_FOR_TRIGGER='WaitingForTrigger'
 RS_MOVER_RESULT_SUCCESSFUL='Successful'
 RS_MOVER_RESULT_FAILED='Failed'
 RS_SYNC_STATUS_TRUE='True'
-RS_SYNC_REASON_ERROR='Error'
 
 VOLSYNC_IDLE_TIMEOUT_SECONDS="${VOLSYNC_IDLE_TIMEOUT_SECONDS:-600}"
 VOLSYNC_RUN_TIMEOUT_SECONDS="${VOLSYNC_RUN_TIMEOUT_SECONDS:-7200}"
@@ -136,17 +135,23 @@ replicationsource_completion_reached() {
   initial_replicationsource_state_line="$3"
   decode_replicationsource_state "$replicationsource_state_line"
 
-  if { [ -z "$initial_last_sync_time" ] && [ -n "$replicationsource_last_sync_time" ] ||
-    [ -n "$initial_last_sync_time" ] && [ "$replicationsource_last_sync_time" != "$initial_last_sync_time" ]; } &&
-    [ "$replicationsource_latest_mover_result" = "$RS_MOVER_RESULT_SUCCESSFUL" ]; then
-    STATE_EVALUATION_OUTCOME="success"
-    return 0
+  if [ -z "$initial_last_sync_time" ] && [ -n "$replicationsource_last_sync_time" ] ||
+    [ -n "$initial_last_sync_time" ] && [ "$replicationsource_last_sync_time" != "$initial_last_sync_time" ]; then
+    if [ "$replicationsource_latest_mover_result" = "$RS_MOVER_RESULT_SUCCESSFUL" ]; then
+      STATE_EVALUATION_OUTCOME="success"
+      return 0
+    fi
+
+    if [ "$replicationsource_latest_mover_result" = "$RS_MOVER_RESULT_FAILED" ]; then
+      STATE_EVALUATION_OUTCOME="failed"
+      STATE_EVALUATION_MESSAGE="replication failed"
+      return 0
+    fi
   fi
 
   if [ "$replicationsource_state_line" != "$initial_replicationsource_state_line" ] &&
-    { [ "$replicationsource_sync_reason" = "$RS_SYNC_REASON_ERROR" ] ||
-      { [ "$replicationsource_sync_status" != "$RS_SYNC_STATUS_TRUE" ] &&
-        [ "$replicationsource_latest_mover_result" = "$RS_MOVER_RESULT_FAILED" ]; }; }; then
+    [ "$replicationsource_sync_status" != "$RS_SYNC_STATUS_TRUE" ] &&
+    [ "$replicationsource_latest_mover_result" = "$RS_MOVER_RESULT_FAILED" ]; then
     STATE_EVALUATION_OUTCOME="failed"
     STATE_EVALUATION_MESSAGE="replication failed"
     return 0
