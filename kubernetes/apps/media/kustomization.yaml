@@ -18,7 +18,7 @@ resources:
   - grimmory/ks.yaml
   - plex/ks.yaml
   - plex/imagemaid/ks.yaml
-  # - plex/kometa/ks.yaml
+  - plex/kometa/ks.yaml
   - plex/plex/ks.yaml
   - plex/plex-auto-languages/ks.yaml
   - prowlarr/ks.yaml
