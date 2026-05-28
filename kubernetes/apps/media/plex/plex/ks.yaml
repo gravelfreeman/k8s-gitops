@@ -29,5 +29,5 @@ spec:
     kind: GitRepository
     name: flux-system
   targetNamespace: plex
-  timeout: 5m
+  timeout: 20m
   wait: true
