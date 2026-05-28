@@ -13,17 +13,41 @@ tasks:
       - op user get --me
       - which op restic
 
-  move:
+  copy:
     desc: Copy VolSync restic snapshots on Backblaze B2 [SOURCE=required TARGET=required]
     prompt: Copy VolSync restic snapshots from {{.SOURCE}} to {{.TARGET}}?
     cmds:
       - restic -r "s3:https://${S3_ENDPOINT}/${S3_BUCKET}{{.TARGET}}" --password-command 'op read "op://{{.OP_VAULT}}/backblaze/RESTIC_PASSWORD"' init --from-repo "s3:https://${S3_ENDPOINT}/${S3_BUCKET}{{.SOURCE}}" --from-password-command 'op read "op://{{.OP_VAULT}}/backblaze/RESTIC_PASSWORD"' --copy-chunker-params || true
-      - restic -r "s3:https://${S3_ENDPOINT}/${S3_BUCKET}{{.TARGET}}" --password-command 'op read "op://{{.OP_VAULT}}/backblaze/RESTIC_PASSWORD"' copy --from-repo "s3:https://${S3_ENDPOINT}/${S3_BUCKET}{{.SOURCE}}" --from-password-command 'op read "op://{{.OP_VAULT}}/backblaze/RESTIC_PASSWORD"'
+      - GOMEMLIMIT="{{.RESTIC_COPY_GOMEMLIMIT}}" GOGC="{{.RESTIC_COPY_GOGC}}" restic -r "s3:https://${S3_ENDPOINT}/${S3_BUCKET}{{.TARGET}}" --password-command 'op read "op://{{.OP_VAULT}}/backblaze/RESTIC_PASSWORD"' copy --from-repo "s3:https://${S3_ENDPOINT}/${S3_BUCKET}{{.SOURCE}}" --from-password-command 'op read "op://{{.OP_VAULT}}/backblaze/RESTIC_PASSWORD"' {{.RESTIC_COPY_ARGS}}
     requires:
       vars: [SOURCE, TARGET]
+    vars:
+      RESTIC_COPY_ARGS: '{{.RESTIC_COPY_ARGS | default ""}}'
+      RESTIC_COPY_GOGC: '{{.RESTIC_COPY_GOGC | default "20"}}'
+      RESTIC_COPY_GOMEMLIMIT: '{{.RESTIC_COPY_GOMEMLIMIT | default "256MiB"}}'
     preconditions:
       - op user get --me
       - which op restic
+
+  delete:
+    desc: Delete a VolSync restic repository prefix from Backblaze B2 [TARGET=required]
+    prompt: Permanently delete every object and version under {{.RESTIC_TARGET}} from Backblaze B2? This cannot be undone.
+    cmds:
+      - aws --endpoint-url "https://${S3_ENDPOINT}" s3 rm "s3://${S3_BUCKET}{{.RESTIC_TARGET}}/" --recursive --only-show-errors
+      - |-
+        prefix="{{.RESTIC_TARGET}}"; prefix="${prefix#/}/"
+        aws --endpoint-url "https://${S3_ENDPOINT}" s3api list-object-versions --bucket "${S3_BUCKET}" --prefix "${prefix}" |
+          jq -c '[.Versions[]?, .DeleteMarkers[]?] | map({Key, VersionId}) | range(0; length; 1000) as $i | {Objects: .[$i:$i+1000], Quiet: true}' |
+          while IFS= read -r batch; do
+            aws --endpoint-url "https://${S3_ENDPOINT}" s3api delete-objects --bucket "${S3_BUCKET}" --delete "${batch}" >/dev/null
+          done
+    requires:
+      vars: [TARGET]
+    vars:
+      RESTIC_TARGET: '{{trimSuffix "/" .TARGET}}'
+    preconditions:
+      - test -n "{{.RESTIC_TARGET}}"
+      - which aws jq
 
   restore:
     desc: Restore VolSync restic snapshots locally [SOURCE=required]
