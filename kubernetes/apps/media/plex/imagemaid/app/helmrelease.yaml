@@ -22,7 +22,7 @@ spec:
             image:
               repository: docker.io/kometateam/imagemaid
               tag: v1.2.0@sha256:94cf9ed79a264238c64cdcbf241822fc3569225cc103de542a6390bfaf393034
-            command: ["/tini", "-s", "/bin/sh", "-ec"]
+            command: ["/tini", "-s", "--", "/bin/sh", "-ec"]
             args:
               - |
                 export PLEX_TOKEN="$(cat /run/secrets/PLEX_TOKEN)"
