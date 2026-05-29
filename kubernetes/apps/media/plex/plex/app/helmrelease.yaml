@@ -59,6 +59,8 @@ spec:
               PMS_PORT: "32400"
               LOCAL_RELAY_PORT: "32499"
             probes:
+              liveness:
+                enabled: false
               readiness: &plexProbes
                 enabled: true
                 type: HTTP
