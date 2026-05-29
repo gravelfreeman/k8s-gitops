@@ -24,6 +24,7 @@ spec:
               tag: v2.3.1@sha256:683c04827ef3fecf1cc5cb178f75f91f968aef6c6d89d34bc9c70966fd1d7259
             env:
               HOME: /config
+              KOMETA_DEBUG: "false"
               KOMETA_READ_ONLY_CONFIG: "true"
               KOMETA_RUN: "true"
               PYTHONDONTWRITEBYTECODE: "1"

@@ -1,5 +1,12 @@
+queues:
+  flags:
+    - horizontal_align: right
+      horizontal_offset: 180
+      vertical_align: bottom
+      vertical_offset: 50
 overlays:
   french_audio:
+    ignore_blank_results: true
     plex_search:
       all:
         audio_language: fr
@@ -7,10 +14,6 @@ overlays:
     overlay:
       name: text( )
       url: https://raw.githubusercontent.com/gravelfreeman/kometa-posters/main/overlays/images/flags/fr.png
-      horizontal_align: right
-      horizontal_offset: 180
-      vertical_align: bottom
-      vertical_offset: 50
       queue: flags
       weight: 590
       back_align: left

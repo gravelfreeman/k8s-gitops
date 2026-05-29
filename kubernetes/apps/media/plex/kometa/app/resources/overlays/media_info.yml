@@ -220,6 +220,11 @@ templates:
         resolution: <<resolution>>
   edition_info:
     conditionals:
+      resolution:
+        default: <<res>>
+        conditions:
+          - res: 4K
+            value: 4k
       regex:
         conditions:
           - key: IMAX
@@ -267,7 +272,7 @@ templates:
     ignore_blank_results: true
     plex_all: true
     filters:
-      resolution: <<res>>
+      resolution: <<resolution>>
       filepath.regex: <<regex>>
   backdrop:
     conditionals:
