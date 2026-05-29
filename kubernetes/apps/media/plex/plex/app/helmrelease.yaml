@@ -59,12 +59,13 @@ spec:
               PMS_PORT: "32400"
               LOCAL_RELAY_PORT: "32499"
             probes:
-              liveness: &plexProbes
+              readiness: &plexProbes
                 enabled: true
                 type: HTTP
                 path: /identity
                 port: 32400
-              readiness: *plexProbes
+                spec:
+                  timeoutSeconds: 5
               startup:
                 <<: *plexProbes
                 spec:
