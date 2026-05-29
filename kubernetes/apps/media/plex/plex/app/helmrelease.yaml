@@ -103,6 +103,8 @@ spec:
               ORCHESTRATOR_URL: http://plex-orchestrator:3500
               STAT_CPU_INTERVAL: "10000"
               FFMPEG_HWACCEL: vaapi
+              TRANSCODER_PATH: /usr/local/bin/
+              TRANSCODER_NAME: plex-transcoder-vaapi
             probes:
               liveness: &workerProbes
                 enabled: true
@@ -180,6 +182,16 @@ spec:
             worker:
               - path: /transcode
               - path: /config/Library/Application Support/Plex Media Server/Cache/Transcode
+      worker-init:
+        type: configMap
+        name: plex-worker-init
+        defaultMode: 0555
+        advancedMounts:
+          worker:
+            worker:
+              - path: /custom-cont-init.d/install-intel-vaapi
+                subPath: install-intel-vaapi
+                readOnly: true
       codecs:
         type: emptyDir
         advancedMounts:

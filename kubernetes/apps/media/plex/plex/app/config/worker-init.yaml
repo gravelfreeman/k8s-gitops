@@ -1,0 +1,45 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: plex-worker-init
+data:
+  install-intel-vaapi: |
+    #!/usr/bin/with-contenv bash
+    set -euo pipefail
+
+    install -d -m 0700 /run/user/0
+
+    root=/opt/plex-vaapi-alpine
+    cache=/tmp/plex-vaapi-alpine
+    base=https://dl-cdn.alpinelinux.org/alpine/edge
+    rm -rf "${root}" "${cache}"
+    install -d "${root}" "${cache}"
+
+    fetch_pkg() {
+      repo="${1}"
+      pkg="${2}"
+      sha256="${3}"
+      curl -fsSLo "${cache}/${pkg}" "${base}/${repo}/x86_64/${pkg}"
+      echo "${sha256}  ${cache}/${pkg}" | sha256sum -c -
+      tar -xzf "${cache}/${pkg}" -C "${root}"
+    }
+
+    fetch_pkg main musl-1.2.6-r2.apk 2aed6644a1332a63ee8873cc5b83e8c358bc6be45a7e16de9c9042e86cf30157
+    fetch_pkg main libgcc-15.2.0-r4.apk d2e7b85de9ec34474fa8562e51ec5991a18cc3c500ce19a6c770b979cf671eac
+    fetch_pkg main libstdc++-15.2.0-r4.apk 90ba31dd0e9e6070c5712bfb31c1194a17dcbaf52bcabbf5ca777b751eba50c3
+    fetch_pkg main libdrm-2.4.133-r0.apk 9eae715f3e014fd52af84123bdd17ec057d5869f6da3306e9c147af7c8bec9ad
+    fetch_pkg main libva-2.23.0-r0.apk 7b045a6aa14b0259138bf9f03755c8486a0034eb37c0f2a839144204afc6fc85
+    fetch_pkg main libpciaccess-0.19-r0.apk 03fdccd1e2a0825e7f7fabbac67212e05d271d31d2eff44cc92f707e69908ad4
+    fetch_pkg community intel-gmmlib-22.10.0-r0.apk adec028d3da9b4d5161db895b1a0f93e7d9c9c7ca7bcf76d11503d5f1e566daa
+    fetch_pkg community intel-media-driver-26.1.6-r0.apk 28ca33657a1b54523f43008db6e70dcd3f9f0445aaaa4612f69ca29553ec6a66
+
+    cat > /usr/local/bin/plex-transcoder-vaapi <<'EOF'
+    #!/usr/bin/env bash
+    export LD_LIBRARY_PATH=/opt/plex-vaapi-alpine/usr/lib:/opt/plex-vaapi-alpine/lib:/usr/lib/plexmediaserver/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+    export LIBVA_DRIVER_NAME=iHD
+    export LIBVA_DRIVERS_PATH=/opt/plex-vaapi-alpine/usr/lib/dri
+    export XDG_RUNTIME_DIR=/run/user/0
+    exec "/usr/lib/plexmediaserver/Plex Transcoder" "$@"
+    EOF
+    chmod 0755 /usr/local/bin/plex-transcoder-vaapi
