@@ -13,16 +13,16 @@ data:
     root=/opt/plex-vaapi-alpine
     cache=/tmp/plex-vaapi-alpine
     base=https://dl-cdn.alpinelinux.org/alpine/edge
-    rm -rf "${root}" "${cache}"
-    install -d "${root}" "${cache}"
+    rm -rf "$root" "$cache"
+    install -d "$root" "$cache"
 
     fetch_pkg() {
-      repo="${1}"
-      pkg="${2}"
-      sha256="${3}"
-      curl -fsSLo "${cache}/${pkg}" "${base}/${repo}/x86_64/${pkg}"
-      echo "${sha256}  ${cache}/${pkg}" | sha256sum -c -
-      tar -xzf "${cache}/${pkg}" -C "${root}"
+      repo="$1"
+      pkg="$2"
+      sha256="$3"
+      curl -fsSLo "$cache/$pkg" "$base/$repo/x86_64/$pkg"
+      echo "$sha256  $cache/$pkg" | sha256sum -c -
+      tar -xzf "$cache/$pkg" -C "$root"
     }
 
     fetch_pkg main musl-1.2.6-r2.apk 2aed6644a1332a63ee8873cc5b83e8c358bc6be45a7e16de9c9042e86cf30157
@@ -36,7 +36,12 @@ data:
 
     cat > /usr/local/bin/plex-transcoder-vaapi <<'EOF'
     #!/usr/bin/env bash
-    export LD_LIBRARY_PATH=/opt/plex-vaapi-alpine/usr/lib:/opt/plex-vaapi-alpine/lib:/usr/lib/plexmediaserver/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+    vaapi_libs=/opt/plex-vaapi-alpine/usr/lib:/opt/plex-vaapi-alpine/lib:/usr/lib/plexmediaserver/lib
+    if [ -n "$LD_LIBRARY_PATH" ]; then
+      export LD_LIBRARY_PATH="$vaapi_libs:$LD_LIBRARY_PATH"
+    else
+      export LD_LIBRARY_PATH="$vaapi_libs"
+    fi
     export LIBVA_DRIVER_NAME=iHD
     export LIBVA_DRIVERS_PATH=/opt/plex-vaapi-alpine/usr/lib/dri
     export XDG_RUNTIME_DIR=/run/user/0
