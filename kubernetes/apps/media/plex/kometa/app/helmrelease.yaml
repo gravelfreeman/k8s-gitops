@@ -27,6 +27,7 @@ spec:
               KOMETA_DEBUG: "false"
               KOMETA_READ_ONLY_CONFIG: "true"
               KOMETA_RUN: "true"
+              KOMETA_WIDTH: "180"
               PYTHONDONTWRITEBYTECODE: "1"
             resources:
               requests:
