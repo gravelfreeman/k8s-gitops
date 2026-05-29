@@ -207,7 +207,7 @@ templates:
           - key: 1080P
             value: 1080p
           - key: Ultra-HD
-            value: 4k
+            value: 4K
     optional:
       - use_<<key>>
       - use_<<type>>
@@ -220,11 +220,6 @@ templates:
         resolution: <<resolution>>
   edition_info:
     conditionals:
-      resolution:
-        default: <<res>>
-        conditions:
-          - res: 4K
-            value: 4k
       regex:
         conditions:
           - key: IMAX
@@ -270,9 +265,10 @@ templates:
       - <<use_<<type>>>>
       - <<allowed_libraries>>
     ignore_blank_results: true
-    plex_all: true
+    plex_search:
+      all:
+        resolution: <<res>>
     filters:
-      resolution: <<resolution>>
       filepath.regex: <<regex>>
   backdrop:
     conditionals:
