@@ -10,11 +10,16 @@ spec:
   components:
     - ../../../../components/common/system
   dependsOn:
+    - name: cert-manager
     - name: cilium
   healthChecks:
     - apiVersion: helm.toolkit.fluxcd.io/v2
       kind: HelmRelease
       name: *app
+      namespace: kube-system
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      name: intel-gpu-plugin
       namespace: kube-system
   interval: 1h
   path: kubernetes/apps/system/intel-gpu-driver/app

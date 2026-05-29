@@ -10,12 +10,26 @@ spec:
     kind: OCIRepository
     name: *app
   values:
-    cdi:
-      dynamicPath: /run/cdi
-      staticPath: /run/cdi
-    kubeletPlugin:
-      privileged: true
-      nodeSelector:
-        intel.feature.node.kubernetes.io/gpu: "true"
-      healthMonitoring:
-        enabled: false
+    manager:
+      devices:
+        gpu: true
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: intel-gpu-plugin
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: intel-gpu-plugin
+  dependsOn:
+    - name: intel-gpu-driver
+  values:
+    enableMonitoring: false
+    name: i915
+    nodeFeatureRule: false
+    nodeSelector:
+      intel.feature.node.kubernetes.io/gpu: "true"
+    sharedDevNum: 10
