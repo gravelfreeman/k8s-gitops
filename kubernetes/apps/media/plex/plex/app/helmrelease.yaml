@@ -115,7 +115,10 @@ spec:
                 spec:
                   failureThreshold: 30
                   periodSeconds: 10
-            resources: *resources
+            resources:
+              <<: *resources
+              claims:
+                - name: gpu
             securityContext: *containerSecurityContext
         pod:
           nodeSelector:
