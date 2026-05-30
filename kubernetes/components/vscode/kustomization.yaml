@@ -8,10 +8,13 @@ patches:
         name: _
       spec:
         values:
-          defaultContainerOptions:
-            env:
-              HOME: /devcontainer/home
-              VSCODE_AGENT_FOLDER: /devcontainer/vscode-server
+          controllers:
+            app:
+              containers:
+                app:
+                  env:
+                    HOME: /devcontainer/home
+                    VSCODE_AGENT_FOLDER: /devcontainer/vscode-server
           configMaps:
             vscode:
               suffix: vscode
