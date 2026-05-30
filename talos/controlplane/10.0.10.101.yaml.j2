@@ -4,7 +4,7 @@ machine:
     diskSelector:
       serial: op://${OP_VAULT}/talos/MACHINE_DISK_SERIAL_M1
   network:
-    hostname: "m1.k8s.{% raw %}{{ op://${OP_VAULT}/common/DOMAIN_0 }}{% endraw %}"
+    hostname: "m1.k8s.{% raw %}{{ op://${OP_VAULT}/flux-common/DOMAIN_0 }}{% endraw %}"
     interfaces:
       - deviceSelector: # management
           hardwareAddr: "op://${OP_VAULT}/talos/MACHINE_NETWORK_MAC_M1"
