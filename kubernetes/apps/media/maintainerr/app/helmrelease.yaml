@@ -79,9 +79,6 @@ spec:
               - path: /ui
             app:
               - path: /opt/app/apps/server/dist/ui
-                subPath: ui
-              - path: /opt/data/logs
-                subPath: logs
         globalMounts:
           - path: /tmp
     route:
