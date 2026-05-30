@@ -1,0 +1,47 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app home-assistant
+  namespace: flux-system
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: home-assistant
+  components:
+    - ../../../../components/common
+    - ../../../../components/cnpg
+    - ../../../../components/envoy-oidc
+    - ../../../../components/vscode
+    - ../../../../components/volsync
+  dependsOn:
+    - name: cloudnative-pg
+    - name: envoy-gateway-config
+    - name: external-secrets-store
+    - name: multus-networks
+    - name: openebs
+    - name: rook-ceph-cluster
+    - name: volsync
+  interval: 30m
+  patches:
+    - patch: |-
+        - op: replace
+          path: /spec/bootstrap
+          value:
+            initdb:
+              database: home-assistant
+              owner: home-assistant
+      target:
+        group: postgresql.cnpg.io
+        kind: Cluster
+        version: v1
+  path: kubernetes/apps/domotics/home-assistant/app
+  postBuild:
+    substitute:
+      APP: *app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: *app
+  wait: true
