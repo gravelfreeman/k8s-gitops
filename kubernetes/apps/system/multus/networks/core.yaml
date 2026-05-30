@@ -1,0 +1,29 @@
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: multus-core
+spec:
+  config: |-
+    {
+      "cniVersion": "1.1.0",
+      "name": "core",
+      "plugins": [
+        {
+          "type": "ipvlan",
+          "master": "enp89s0",
+          "mode": "l2",
+          "ipam": {
+            "type": "static",
+            "routes": [
+              {
+                "dst": "0.0.0.0/0",
+                "gw": "10.0.10.1"
+              }
+            ]
+          }
+        },
+        {
+          "type": "sbr"
+        }
+      ]
+    }
