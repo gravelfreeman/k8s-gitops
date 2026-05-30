@@ -1,0 +1,42 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+patches:
+  - patch: |-
+      apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      metadata:
+        name: _
+      spec:
+        values:
+          defaultContainerOptions:
+            env:
+              VSCODE_AGENT_FOLDER: /devcontainer/vscode-server
+          configMaps:
+            vscode:
+              suffix: vscode
+              data:
+                group: |-
+                  root:x:0:
+                  workspace:x:${DEVCONTAINER_ID:=568:568}
+                passwd: |-
+                  root:x:0:0:root:/root:/sbin/nologin
+                  workspace:x:${DEVCONTAINER_ID:=568:568}:workspace:/devcontainer/workspace:/bin/sh
+          persistence:
+            vscode:
+              type: configMap
+              identifier: vscode
+              globalMounts:
+                - path: /etc/group
+                  subPath: group
+                  readOnly: true
+                - path: /etc/passwd
+                  subPath: passwd
+                  readOnly: true
+            vscode-workdir:
+              type: emptyDir
+              globalMounts:
+                - path: /devcontainer
+    target:
+      group: helm.toolkit.fluxcd.io
+      kind: HelmRelease
+      version: v2
