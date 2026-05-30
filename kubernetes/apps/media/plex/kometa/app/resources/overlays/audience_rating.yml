@@ -7,6 +7,7 @@ templates:
       horizontal_align: right
       vertical_offset: 50
       vertical_align: bottom
+      minimum_votes: 100
     conditionals:
       url:
         conditions:
@@ -28,11 +29,12 @@ templates:
         default: <<overlay_name>>
         conditions:
           - key: [audience_score_high, audience_score_mid, audience_score_low]
-            value: text(<<audience_rating>>)
+            value: text(<<audience_rating#>>)
     optional: [builder_level]
     plex_all: true
     filters:
       audience_rating.gte: <<audience_rating.gte>>
+      tmdb_vote_count.gte: <<minimum_votes>>
     builder_level: <<builder_level>>
     overlay:
       name: <<names>>
