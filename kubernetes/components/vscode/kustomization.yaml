@@ -10,6 +10,7 @@ patches:
         values:
           defaultContainerOptions:
             env:
+              HOME: /devcontainer/home
               VSCODE_AGENT_FOLDER: /devcontainer/vscode-server
           configMaps:
             vscode:
@@ -20,7 +21,7 @@ patches:
                   workspace:x:${DEVCONTAINER_ID:=568:568}
                 passwd: |-
                   root:x:0:0:root:/root:/sbin/nologin
-                  workspace:x:${DEVCONTAINER_ID:=568:568}:workspace:/devcontainer/workspace:/bin/sh
+                  workspace:x:${DEVCONTAINER_ID:=568:568}:workspace:/devcontainer/home:/bin/sh
           persistence:
             vscode:
               type: configMap

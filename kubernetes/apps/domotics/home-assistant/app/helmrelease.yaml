@@ -14,42 +14,12 @@ spec:
       app:
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          seed-config:
-            image:
-              repository: docker.io/library/busybox
-              tag: 1.37.0
-            args:
-              - |-
-                set -eu
-                if [ ! -f /config/configuration.yaml ]; then
-                  printf '%s\n' \
-                    'default_config:' \
-                    '' \
-                    'http:' \
-                    '  server_port: 8123' \
-                    '  trusted_proxies:' \
-                    '    - 10.0.0.0/8' \
-                    '    - 172.16.0.0/12' \
-                    '  use_x_forwarded_for: true' \
-                    '' \
-                    'recorder:' \
-                    '  db_url: !env_var RECORDER_DB_URL' \
-                    > /config/configuration.yaml
-                fi
-            command:
-              - /bin/sh
-              - -c
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities:
-                drop: [ALL]
         containers:
           app:
             image:
               repository: ghcr.io/home-operations/home-assistant
               tag: 2026.5.4@sha256:42d1bc5e99ed0ae8f49b72b8994e25e1a6b0f1467ba26c1b959f54ca42541ffd
+            args: [--log-file, /tmp/home-assistant.log]
             env:
               RECORDER_DB_URL:
                 valueFrom:
@@ -79,7 +49,7 @@ spec:
                 drop: [ALL]
         pod:
           annotations:
-            k8s.v1.cni.cncf.io/networks: '[{"name":"core","namespace":"multus","ips":["10.0.10.123/24"]}]'
+            k8s.v1.cni.cncf.io/networks: '[{"name":"core","namespace":"multus","ips":["10.0.10.123/24"],"mac":"02:0a:00:0a:00:7b"}]'
           securityContext:
             runAsNonRoot: true
             runAsUser: 568

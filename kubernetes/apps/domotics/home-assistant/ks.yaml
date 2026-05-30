@@ -11,7 +11,6 @@ spec:
   components:
     - ../../../../components/common
     - ../../../../components/cnpg
-    - ../../../../components/envoy-oidc
     - ../../../../components/vscode
     - ../../../../components/volsync
   dependsOn:
@@ -23,18 +22,6 @@ spec:
     - name: rook-ceph-cluster
     - name: volsync
   interval: 30m
-  patches:
-    - patch: |-
-        - op: replace
-          path: /spec/bootstrap
-          value:
-            initdb:
-              database: home-assistant
-              owner: home-assistant
-      target:
-        group: postgresql.cnpg.io
-        kind: Cluster
-        version: v1
   path: kubernetes/apps/domotics/home-assistant/app
   postBuild:
     substitute:

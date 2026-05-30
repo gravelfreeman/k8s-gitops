@@ -9,9 +9,9 @@ spec:
       "name": "iot",
       "plugins": [
         {
-          "type": "ipvlan",
+          "type": "macvlan",
           "master": "enp89s0.30",
-          "mode": "l2",
+          "mode": "bridge",
           "ipam": {
             "type": "static",
             "routes": [

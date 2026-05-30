@@ -9,9 +9,9 @@ spec:
       "name": "core",
       "plugins": [
         {
-          "type": "ipvlan",
+          "type": "macvlan",
           "master": "enp89s0",
-          "mode": "l2",
+          "mode": "bridge",
           "ipam": {
             "type": "static",
             "routes": [
