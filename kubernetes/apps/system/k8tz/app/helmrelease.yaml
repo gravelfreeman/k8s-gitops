@@ -48,6 +48,7 @@ spec:
         - dragonfly
         - envoy-gateway
         - external-dns
+        - external-secrets
         - kube-system
         - openebs
         - reloader
