@@ -8,6 +8,7 @@ machine:
     interfaces:
       - deviceSelector: # management
           hardwareAddr: "op://${OP_VAULT}/talos/MACHINE_NETWORK_MAC_M3"
+          physical: true
         addresses: [10.0.10.103/24]
         vip:
           ip: 10.0.10.100
