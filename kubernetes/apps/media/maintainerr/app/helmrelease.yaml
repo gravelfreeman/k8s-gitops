@@ -73,14 +73,17 @@ spec:
           - path: /opt/data
       workdir:
         type: emptyDir
+        globalMounts:
+          - path: /tmp
         advancedMounts:
           maintainerr:
             copy-ui:
               - path: /ui
             app:
               - path: /opt/app/apps/server/dist/ui
-        globalMounts:
-          - path: /tmp
+                subPath: ui
+              - path: /opt/data/logs
+                subPath: logs
     route:
       app:
         hostnames: ['maintainerr.${DOMAIN_1}']
