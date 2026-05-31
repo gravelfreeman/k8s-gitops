@@ -54,7 +54,7 @@ spec:
         type: configMap
         name: mosquitto-config
         globalMounts:
-          - path: /mosquitto/data/mosquitto.conf
+          - path: /mosquitto/config/mosquitto.conf
             subPath: mosquitto.conf
             readOnly: true
     service:
