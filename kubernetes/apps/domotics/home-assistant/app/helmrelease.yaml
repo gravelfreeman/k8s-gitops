@@ -26,6 +26,9 @@ spec:
                   secretKeyRef:
                     key: fqdn-uri
                     name: home-assistant-cnpg-app
+            envFrom:
+              - secretRef:
+                  name: home-assistant-app-secret
             probes:
               liveness:
                 enabled: true
