@@ -23,17 +23,6 @@ spec:
               PLEX_TOKEN_FILE: /run/secrets/plex_token
               PLEX_URL: http://plex.plex.svc.cluster.local:32400
               PYTHONDONTWRITEBYTECODE: "1"
-            probes:
-              liveness:
-                enabled: true
-                type: HTTP
-                path: /health
-                port: 9880
-              readiness:
-                enabled: true
-                type: HTTP
-                path: /ready
-                port: 9880
             resources:
               requests:
                 cpu: 25m

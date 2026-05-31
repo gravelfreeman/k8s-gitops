@@ -116,7 +116,7 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - identifier: grimmory
+              - identifier: app
                 port: 6060
             matches:
               - path:
