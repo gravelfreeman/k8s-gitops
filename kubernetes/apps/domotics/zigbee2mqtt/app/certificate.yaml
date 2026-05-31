@@ -1,0 +1,18 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/cert-manager.io/certificate_v1.json
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: zigbee2mqtt-mqtt-client-tls
+spec:
+  commonName: zigbee2mqtt
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: mqtt-ca
+  privateKey:
+    algorithm: ECDSA
+    rotationPolicy: Always
+    size: 256
+  secretName: zigbee2mqtt-mqtt-client-tls
+  usages: [client auth]

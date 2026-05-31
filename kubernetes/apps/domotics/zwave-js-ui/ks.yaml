@@ -1,0 +1,31 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app zwave-js-ui
+  namespace: flux-system
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: zwave-js-ui
+  components:
+    - ../../../../components/common/app
+    - ../../../../components/envoy-oidc
+    - ../../../../components/volsync
+  dependsOn:
+    - name: envoy-gateway-config
+    - name: external-secrets-store
+    - name: openebs
+    - name: rook-ceph-cluster
+    - name: volsync
+  interval: 30m
+  path: kubernetes/apps/domotics/zwave-js-ui/app
+  postBuild:
+    substitute:
+      APP: *app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: *app
+  wait: true

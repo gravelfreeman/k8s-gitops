@@ -1,0 +1,64 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: esphome
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    controllers:
+      esphome:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/esphome/esphome
+              tag: 2026.5.1@sha256:7886a4b0f04bd7d5e092e0b0cae277a47e39088d4d9028935df3304655300acd
+            args: [dashboard, /data]
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+            resources:
+              requests:
+                cpu: 50m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: [ALL]
+        pod:
+          annotations:
+            k8s.v1.cni.cncf.io/networks: '[{"name":"iot","namespace":"multus","ips":["10.0.10.52/24"],"mac":"02:0a:00:0a:00:34"}]'
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+    persistence:
+      data:
+        existingClaim: 'esphome-data'
+      cache:
+        type: emptyDir
+    route:
+      app:
+        hostnames: ['esphome.${DOMAIN_0}']
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy-gateway
+            sectionName: https
+    service:
+      app:
+        ports:
+          http:
+            port: 6052

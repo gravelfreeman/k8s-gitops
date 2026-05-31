@@ -1,0 +1,22 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/master-standalone/networkpolicy-networking-v1.json
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: &app zwave-js-ui
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: *app
+  policyTypes: [Ingress]
+  ingress:
+    - ports:
+        - protocol: TCP
+          port: 8091
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: home-assistant
+      ports:
+        - protocol: TCP
+          port: 3000
