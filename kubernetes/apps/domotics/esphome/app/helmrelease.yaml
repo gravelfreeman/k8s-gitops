@@ -36,7 +36,7 @@ spec:
                 drop: [ALL]
         pod:
           annotations:
-            k8s.v1.cni.cncf.io/networks: '[{"name":"iot","namespace":"multus","ips":["10.0.10.52/24"],"mac":"02:0a:00:0a:00:34"}]'
+            k8s.v1.cni.cncf.io/networks: '[{"name":"iot","namespace":"multus","ips":["10.0.30.52/24"],"mac":"02:0a:00:1e:00:34"}]'
           securityContext:
             runAsNonRoot: true
             runAsUser: 568
