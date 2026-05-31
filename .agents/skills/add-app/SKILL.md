@@ -1,6 +1,6 @@
 ---
 name: add-app
-description: Scaffold or update an app-template application in this Talos/Kubernetes/Flux GitOps cluster, following the local one-namespace-per-app, shared app-template, External Secrets, CNPG, VolSync, and Dragonfly component patterns.
+description: Scaffold or update an app-template application in this Talos/Kubernetes/Flux GitOps cluster, following the local one-namespace-per-app, shared app-template, External Secrets, and shared component patterns.
 ---
 
 # Add New Application
@@ -31,7 +31,7 @@ Create the directory:
 kubernetes/apps/<domain>/<app-name>/app/
 ```
 
-Use one Kubernetes namespace per app. The app namespace is the app name, created through `components/common`.
+Use one Kubernetes namespace per app. For app-template workloads, create the app namespace through `components/common/app`.
 
 ### Step 3: Generate Files
 
@@ -52,11 +52,13 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   components:
-    - ../../../../components/common
+    - ../../../../components/common/app
     # - ../../../../components/cnpg
     # - ../../../../components/dragonfly
     # - ../../../../components/dragonfly/tls
+    # - ../../../../components/envoy-oidc
     # - ../../../../components/volsync
+    # - ../../../../components/vpn
  # dependsOn:
     # - name: cloudnative-pg
     # - name: dragonfly-operator
@@ -89,7 +91,6 @@ kind: Kustomization
 resources:
   - externalsecret.yaml
   - helmrelease.yaml
-  - ingress.yaml
 ```
 
 - Use `configMapGenerator` only for static config files.
@@ -115,8 +116,6 @@ spec:
   values:
     controllers:
       <app-name>:
-        annotations:
-          reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
@@ -124,14 +123,14 @@ spec:
               tag: <vX.X.X>@sha256:<digest>
             probes:
               liveness: &probes
-                custom: true
-                spec:
-                  httpGet:
-                    path: /health
-                    port: &httpPort <port>
+                enabled: true
+                type: HTTP
+                path: /health
               readiness: *probes
             resources:
-              requests: { cpu: 25m, memory: 128Mi }
+              requests:
+                cpu: 25m
+                memory: 128Mi
             securityContext:
               readOnlyRootFilesystem: true
               allowPrivilegeEscalation: false
@@ -149,16 +148,12 @@ spec:
           automountServiceAccountToken: false
     persistence:
       data:
-        type: persistentVolumeClaim
         existingClaim: <app-name>-data
-        globalMounts:
-          - path: /data
     service:
       app:
-        controller: <app-name>
         ports:
           http:
-            port: *httpPort
+            port: <service-port>
 ```
 
 - Run apps as *non-root* UID/GID `568` by default.

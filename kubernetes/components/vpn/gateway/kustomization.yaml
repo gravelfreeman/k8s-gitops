@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
 components:
-  - ../../common/system
+  - ../../common/app/shared
 resources:
   - externalsecret.yaml
   - gluetungateway.yaml

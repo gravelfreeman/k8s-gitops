@@ -8,7 +8,7 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   components:
-    - ../../../../components/common/system
+    - ../../../../components/common/shared
   interval: 1h
   path: kubernetes/apps/system/kubelet-csr-approver/app
   prune: true

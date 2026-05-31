@@ -13,8 +13,6 @@ spec:
   values:
     controllers:
       grimmory:
-        annotations:
-          reloader.stakater.com/auto: "true"
         containers:
           grimmory:
             image:
@@ -32,15 +30,16 @@ spec:
                   name: grimmory-app-secret
             probes:
               liveness: &probes
-                custom: true
-                spec:
-                  httpGet:
-                    path: /api/v1/healthcheck
-                    port: &httpPort 6060
+                enabled: true
+                type: HTTP
+                path: /api/v1/healthcheck
               readiness: *probes
             resources:
-              requests: { cpu: 50m, memory: 2Gi }
-              limits: { memory: 6Gi }
+              requests:
+                cpu: 50m
+                memory: 2Gi
+              limits:
+                memory: 6Gi
           mariadb:
             image:
               repository: docker.io/library/mariadb
@@ -69,7 +68,6 @@ spec:
           type: RuntimeDefault
     persistence:
       data:
-        type: persistentVolumeClaim
         existingClaim: grimmory-data
         advancedMounts:
           grimmory:
@@ -102,10 +100,6 @@ spec:
           grimmory:
             mariadb:
               - path: /run/mysqld
-      tmpfs:
-        type: emptyDir
-        globalMounts:
-          - path: /tmp
     route:
       app:
         forceRename: *app
@@ -123,14 +117,13 @@ spec:
         rules:
           - backendRefs:
               - identifier: grimmory
-                port: *httpPort
+                port: 6060
             matches:
               - path:
                   type: PathPrefix
                   value: /api/kobo
     service:
-      grimmory:
-        controller: *app
+      app:
         ports:
           http:
-            port: *httpPort
+            port: 6060

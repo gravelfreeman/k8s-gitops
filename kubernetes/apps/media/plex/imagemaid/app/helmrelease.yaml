@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app imagemaid
+  name: imagemaid
 spec:
   interval: 30m
   chartRef:
@@ -69,18 +69,11 @@ spec:
                   topologyKey: kubernetes.io/hostname
     persistence:
       plex:
-        type: persistentVolumeClaim
         existingClaim: plex-data
-        globalMounts:
-          - path: /plex
-      workdir:
-        type: emptyDir
-        globalMounts:
-          - path: /config
-          - path: /tmp
       secret:
         type: secret
         name: imagemaid-app-secret
         globalMounts:
           - path: /run/secrets
-            readOnly: true
+      config:
+        type: emptyDir

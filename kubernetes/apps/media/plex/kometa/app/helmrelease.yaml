@@ -51,12 +51,9 @@ spec:
               type: RuntimeDefault
           automountServiceAccountToken: false
     persistence:
-      data:
-        type: persistentVolumeClaim
-        existingClaim: kometa-data
-        globalMounts:
-          - path: /config
       config:
+        existingClaim: kometa-data
+      kometa-config:
         type: configMap
         name: kometa-config
         advancedMounts:
@@ -82,9 +79,7 @@ spec:
             app:
               - path: /config/.env
                 subPath: .env
-                readOnly: true
-      workdir:
+      logs:
         type: emptyDir
         globalMounts:
           - path: /config/logs
-          - path: /tmp

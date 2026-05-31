@@ -9,11 +9,12 @@ spec:
     labels:
       app.kubernetes.io/name: home-assistant
   components:
-    - ../../../../components/common
+    - ../../../../components/common/app
     - ../../../../components/cnpg
     - ../../../../components/vscode
     - ../../../../components/volsync
   dependsOn:
+    - name: cert-manager-issuers
     - name: cloudnative-pg
     - name: envoy-gateway-config
     - name: external-secrets-store

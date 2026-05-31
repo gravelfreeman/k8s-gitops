@@ -13,8 +13,6 @@ spec:
   values:
     controllers:
       qbitmanage:
-        annotations:
-          reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
@@ -71,10 +69,6 @@ spec:
         globalMounts:
           - path: /config
             readOnly: true
-      tmp:
-        type: emptyDir
-        globalMounts:
-          - path: /tmp
     service:
       app:
         controller: *app

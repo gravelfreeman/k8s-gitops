@@ -11,6 +11,8 @@ spec:
   values:
     fullnameOverride: *app
     reloader:
+      autoReloadAll: true
+      ignoreNamespaces: kube-system,rook-ceph,openebs,snapshot-controller,flux-system,external-secrets,cert-manager,cloudnative-pg,dragonfly,volsync,reloader,system-upgrade
       readOnlyRootFileSystem: true
       deployment:
         containerSecurityContext:

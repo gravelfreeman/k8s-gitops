@@ -29,7 +29,7 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   components:
-    - ../../../../components/common/system
+    - ../../../../components/common/app/shared
   dependsOn:
     - name: gluetun
     - name: flux-shared

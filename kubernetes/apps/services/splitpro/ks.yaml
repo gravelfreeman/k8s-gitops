@@ -8,7 +8,7 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   components:
-    - ../../../../components/common
+    - ../../../../components/common/app
     - ../../../../components/cnpg
     - ../../../../components/volsync
   dependsOn:

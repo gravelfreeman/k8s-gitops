@@ -56,16 +56,14 @@ spec:
               type: RuntimeDefault
           automountServiceAccountToken: false
     persistence:
+      secrets:
+        type: secret
+        name: plex-auto-languages-app-secret
+        globalMounts:
+          - path: /run/secrets
       workdir:
         type: emptyDir
         globalMounts:
           - path: /config
           - path: /logs
           - path: /.local
-          - path: /tmp
-      secret:
-        type: secret
-        name: plex-auto-languages-app-secret
-        globalMounts:
-          - path: /run/secrets
-            readOnly: true

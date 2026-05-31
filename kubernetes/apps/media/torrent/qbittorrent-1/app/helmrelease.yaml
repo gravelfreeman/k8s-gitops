@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app qbittorrent-1
+  name: qbittorrent-1
 spec:
   interval: 30m
   chartRef:
@@ -13,8 +13,6 @@ spec:
   values:
     controllers:
       qbittorrent-1:
-        annotations:
-          reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
@@ -25,8 +23,8 @@ spec:
                 enabled: true
               readiness:
                 enabled: true
-                path: /api/v2/app/version
                 type: HTTP
+                path: /api/v2/app/version
               startup:
                 enabled: true
             resources:
@@ -52,10 +50,7 @@ spec:
           automountServiceAccountToken: false
     persistence:
       config:
-        type: persistentVolumeClaim
         existingClaim: qbittorrent-1-data
-        globalMounts:
-          - path: /config
       media:
         type: custom
         volumeSpec:
@@ -64,12 +59,6 @@ spec:
             volumeAttributes:
               server: 10.0.10.15
               share: /mnt/eden/media
-        globalMounts:
-          - path: /media
-      tmpfs:
-        type: emptyDir
-        globalMounts:
-          - path: /tmp
     route:
       app:
         hostnames: ['qb1.${DOMAIN_1}']
@@ -79,7 +68,6 @@ spec:
             sectionName: https
     service:
       app:
-        controller: *app
         ports:
           http:
             primary: true

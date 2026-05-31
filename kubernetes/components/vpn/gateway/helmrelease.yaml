@@ -28,8 +28,6 @@ spec:
         strategy: Recreate
         serviceAccount:
           name: *app
-        annotations:
-          reloader.stakater.com/auto: "true"
         initContainers:
           ip-forward:
             image: &gluetunImage

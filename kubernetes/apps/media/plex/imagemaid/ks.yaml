@@ -8,7 +8,7 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   components:
-    - ../../../../../components/common/system
+    - ../../../../../components/common/app/shared
   dependsOn:
     - name: clusterplex
   interval: 1h

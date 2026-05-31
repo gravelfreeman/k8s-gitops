@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app autobrr
+  name: autobrr
 spec:
   interval: 30m
   chartRef:
@@ -13,8 +13,6 @@ spec:
   values:
     controllers:
       autobrr:
-        annotations:
-          reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
@@ -29,20 +27,19 @@ spec:
               AUTOBRR__OIDC_DISABLE_BUILT_IN_LOGIN: true
             probes:
               liveness:
-                custom: true
-                spec:
-                  httpGet:
-                    path: /api/healthz/liveness
-                    port: &httpPort 7474
+                enabled: true
+                type: HTTP
+                path: /api/healthz/liveness
               readiness:
-                custom: true
-                spec:
-                  httpGet:
-                    path: /api/healthz/readiness
-                    port: *httpPort
+                enabled: true
+                type: HTTP
+                path: /api/healthz/readiness
             resources:
-              requests: { cpu: 25m, memory: 128Mi }
-              limits: { memory: 256Mi }
+              requests:
+                cpu: 25m
+                memory: 128Mi
+              limits:
+                memory: 256Mi
             securityContext:
               readOnlyRootFilesystem: true
               allowPrivilegeEscalation: false
@@ -59,21 +56,11 @@ spec:
               type: RuntimeDefault
           automountServiceAccountToken: false
     persistence:
-      data:
-        type: persistentVolumeClaim
-        existingClaim: autobrr-data
-        globalMounts:
-          - path: /config
+      config:
+        existingClaim: 'autobrr-data'
       secrets:
         type: secret
         name: autobrr-app-secret
-        globalMounts:
-          - path: /secrets
-            readOnly: true
-      tmpfs:
-        type: emptyDir
-        globalMounts:
-          - path: /tmp
     route:
       app:
         hostnames: ['autobrr.${DOMAIN_1}']
@@ -83,7 +70,6 @@ spec:
             sectionName: https
     service:
       app:
-        controller: *app
         ports:
           http:
-            port: *httpPort
+            port: 7474

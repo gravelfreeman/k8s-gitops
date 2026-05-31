@@ -13,8 +13,6 @@ spec:
   values:
     controllers:
       orchestrator:
-        annotations: &annotations
-          reloader.stakater.com/auto: "true"
         containers:
           orchestrator:
             image:
@@ -41,7 +39,6 @@ spec:
               type: RuntimeDefault
           automountServiceAccountToken: false
       plex:
-        annotations: *annotations
         containers:
           plex:
             image:
@@ -93,7 +90,6 @@ spec:
           automountServiceAccountToken: false
       worker:
         type: daemonset
-        annotations: *annotations
         containers:
           worker:
             image:
@@ -129,7 +125,6 @@ spec:
           securityContext: *plexSecurityContext
     persistence:
       config:
-        type: persistentVolumeClaim
         existingClaim: plex-data
         advancedMounts:
           plex:
@@ -166,7 +161,6 @@ spec:
             worker:
               - path: /seerr
       transcode:
-        type: persistentVolumeClaim
         suffix: transcode
         storageClass: ceph-filesystem
         accessMode: ReadWriteMany
@@ -189,7 +183,6 @@ spec:
             worker:
               - path: /custom-cont-init.d/install-intel-vaapi
                 subPath: install-intel-vaapi
-                readOnly: true
       codecs:
         type: emptyDir
         advancedMounts:

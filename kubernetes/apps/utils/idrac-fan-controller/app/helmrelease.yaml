@@ -28,10 +28,12 @@ spec:
                 custom: true
                 spec:
                   exec:
-                    command: [ /app/healthcheck.sh ]
+                    command: [/app/healthcheck.sh]
               readiness: *probes
             resources:
-              requests: { cpu: 10m, memory: 32Mi }
+              requests:
+                cpu: 10m
+                memory: 32Mi
             securityContext:
               readOnlyRootFilesystem: true
               allowPrivilegeEscalation: false

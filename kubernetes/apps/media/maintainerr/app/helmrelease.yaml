@@ -13,8 +13,6 @@ spec:
   values:
     controllers:
       maintainerr:
-        annotations:
-          reloader.stakater.com/auto: "true"
         initContainers:
           copy-ui:
             image:
@@ -39,11 +37,10 @@ spec:
             command: ["/bin/sh", "-ec"]
             args: [exec npm run --prefix /opt/app/apps/server start]
             probes:
-              liveness: &probes
+              liveness:
                 enabled: true
-                type: HTTP
-                path: /
-              readiness: *probes
+              readiness:
+                enabled: true
             resources:
               requests:
                 cpu: 25m
@@ -67,14 +64,11 @@ spec:
           automountServiceAccountToken: false
     persistence:
       data:
-        type: persistentVolumeClaim
         existingClaim: maintainerr-data
         globalMounts:
           - path: /opt/data
       workdir:
         type: emptyDir
-        globalMounts:
-          - path: /tmp
         advancedMounts:
           maintainerr:
             copy-ui:
@@ -93,7 +87,6 @@ spec:
             sectionName: https
     service:
       app:
-        controller: *app
         ports:
           http:
             port: 6246

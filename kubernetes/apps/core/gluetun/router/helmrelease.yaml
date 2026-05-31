@@ -15,8 +15,6 @@ spec:
       gluetun-router:
         serviceAccount:
           name: *app
-        annotations:
-          reloader.stakater.com/auto: "true"
         containers:
           app:
             image:

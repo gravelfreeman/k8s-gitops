@@ -8,7 +8,7 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   components:
-    - ../../../../components/common
+    - ../../../../components/common/app
   dependsOn:
     - name: envoy-gateway-config
     - name: external-secrets-store

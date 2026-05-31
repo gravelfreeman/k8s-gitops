@@ -18,7 +18,8 @@ spec:
         runAsGroup: 473
         runAsNonRoot: true
         runAsUser: 473
-        seccompProfile: { type: RuntimeDefault }
+        seccompProfile:
+          type: RuntimeDefault
     alloy:
       configMap:
         create: false
@@ -31,15 +32,20 @@ spec:
             fieldRef:
               fieldPath: spec.nodeName
       resources:
-        requests: { cpu: 50m, memory: 128Mi }
-        limits: { memory: 512Mi }
+        requests:
+          cpu: 50m
+          memory: 128Mi
+        limits:
+          memory: 512Mi
       securityContext:
         allowPrivilegeEscalation: false
-        capabilities: { drop: ["ALL"] }
+        capabilities:
+          drop: ["ALL"]
     configReloader:
       securityContext:
         allowPrivilegeEscalation: false
-        capabilities: { drop: ["ALL"] }
+        capabilities:
+          drop: ["ALL"]
     controller:
       podAnnotations:
         configmap.reloader.stakater.com/reload: alloy-configmap

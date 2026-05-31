@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app byparr
+  name: byparr
 spec:
   interval: 30m
   chartRef:
@@ -13,8 +13,6 @@ spec:
   values:
     controllers:
       byparr:
-        annotations:
-          reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
@@ -23,8 +21,8 @@ spec:
             probes:
               liveness: &probes
                 enabled: true
-                path: /docs
                 type: HTTP
+                path: /docs
               readiness: *probes
               startup: *probes
             resources:
@@ -51,15 +49,8 @@ spec:
     persistence:
       cache:
         type: emptyDir
-        globalMounts:
-          - path: /cache
-      tmpfs:
-        type: emptyDir
-        globalMounts:
-          - path: /tmp
     service:
       app:
-        controller: *app
         ports:
           http:
             port: 8191

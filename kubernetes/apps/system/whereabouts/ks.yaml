@@ -8,7 +8,7 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   components:
-    - ../../../../components/common/system
+    - ../../../../components/common/shared
   dependsOn:
     - name: multus
   interval: 1h

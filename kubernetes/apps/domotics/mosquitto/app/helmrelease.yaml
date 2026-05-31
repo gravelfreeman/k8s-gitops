@@ -12,8 +12,6 @@ spec:
   values:
     controllers:
       mosquitto:
-        annotations:
-          reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
@@ -45,20 +43,21 @@ spec:
               type: RuntimeDefault
     persistence:
       data:
-        storageClass: ceph-block
         accessMode: ReadWriteOnce
         size: 1Gi
-        globalMounts:
-          - path: /mosquitto/data
       config:
         type: configMap
         name: mosquitto-config
         globalMounts:
           - path: /mosquitto/config/mosquitto.conf
             subPath: mosquitto.conf
-            readOnly: true
+      secret:
+        type: secret
+        name: mosquitto-tls
+        globalMounts:
+          - path: /mosquitto/certs
     service:
       app:
         ports:
           mqtt:
-            port: 1883
+            port: 8883

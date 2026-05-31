@@ -9,8 +9,9 @@ spec:
     labels:
       app.kubernetes.io/name: mosquitto
   components:
-    - ../../../../components/common
+    - ../../../../components/common/app
   dependsOn:
+    - name: cert-manager-issuers
     - name: rook-ceph-cluster
   interval: 30m
   path: kubernetes/apps/domotics/mosquitto/app

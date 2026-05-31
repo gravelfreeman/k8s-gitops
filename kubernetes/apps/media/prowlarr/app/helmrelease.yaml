@@ -13,8 +13,6 @@ spec:
   values:
     controllers:
       prowlarr:
-        annotations:
-          reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
@@ -23,11 +21,11 @@ spec:
             env:
               PROWLARR__AUTH__METHOD: External
             probes:
-              liveness: &prowlarrProbes
+              liveness: &probes
                 enabled: true
-                path: /ping
                 type: HTTP
-              readiness: *prowlarrProbes
+                path: /ping
+              readiness: *probes
             resources:
               requests:
                 cpu: 25m
@@ -49,11 +47,8 @@ spec:
                   name: prowlarr-app-secret
             probes:
               liveness: &qcmProbes
-                custom: true
-                spec:
-                  httpGet:
-                    path: /ping
-                    port: 9697
+                <<: *probes
+                port: 9697
               readiness: *qcmProbes
             resources:
               requests:
@@ -73,27 +68,18 @@ spec:
               type: RuntimeDefault
           automountServiceAccountToken: false
     persistence:
-      data:
-        type: persistentVolumeClaim
+      config:
         existingClaim: prowlarr-data
-        globalMounts:
-          - path: /config
       custom-definitions:
         type: configMap
         name: custom-definitions
         globalMounts:
           - path: /config/Definitions/Custom
-            readOnly: true
       qcm-newznab-scripts:
         type: configMap
         name: qcm-newznab-scripts
         globalMounts:
           - path: /app/qcm-newznab
-            readOnly: true
-      tmpfs:
-        type: emptyDir
-        globalMounts:
-          - path: /tmp
     route:
       app:
         hostnames: ['prowlarr.${DOMAIN_1}']
@@ -103,7 +89,6 @@ spec:
             sectionName: https
     service:
       app:
-        controller: *app
         ports:
           http:
             port: 9696

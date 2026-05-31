@@ -53,14 +53,16 @@ spec:
                 spec:
                   httpGet:
                     path: /api/healthcheck
-                    port: &port 3000
                     httpHeaders:
                       - name: Host
                         value: root.${DOMAIN_0}
               readiness: *probes
             resources:
-              requests: { cpu: 200m, memory: 256Mi }
-              limits: { memory: 384Mi }
+              requests:
+                cpu: 200m
+                memory: 256Mi
+              limits:
+                memory: 384Mi
             securityContext:
               readOnlyRootFilesystem: true
               allowPrivilegeEscalation: false
@@ -124,7 +126,6 @@ spec:
         globalMounts:
           - path: /app/config/bookmarks.yaml
             subPath: bookmarks.yaml
-            readOnly: true
       assets:
         type: configMap
         name: homepage-assets
@@ -136,12 +137,8 @@ spec:
           - path: /app/public/images/logo.png
             subPath: logo.png
       secrets:
-        enabled: true
         type: secret
         name: homepage-file-secret
-        globalMounts:
-          - path: /secrets
-            readOnly: true
       logs:
         type: emptyDir
         globalMounts:
@@ -155,7 +152,6 @@ spec:
             sectionName: https
     service:
       app:
-        controller: *app
         ports:
           http:
-            port: *port
+            port: 3000
