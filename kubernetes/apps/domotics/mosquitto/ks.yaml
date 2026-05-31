@@ -1,0 +1,25 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app mosquitto
+  namespace: flux-system
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: mosquitto
+  components:
+    - ../../../../components/common
+  dependsOn:
+    - name: rook-ceph-cluster
+  interval: 30m
+  path: kubernetes/apps/domotics/mosquitto/app
+  postBuild:
+    substitute:
+      APP: *app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: *app
+  wait: true
