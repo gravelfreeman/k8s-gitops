@@ -24,6 +24,7 @@ spec:
                   secretKeyRef:
                     key: fqdn-uri
                     name: home-assistant-cnpg-app
+              SSL_CERT_FILE: /certs/mqtt/ca.crt
             envFrom:
               - secretRef:
                   name: home-assistant-app-secret
