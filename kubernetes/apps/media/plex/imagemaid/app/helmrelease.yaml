@@ -27,7 +27,7 @@ spec:
               - |
                 export PLEX_TOKEN="$(cat /run/secrets/PLEX_TOKEN)"
                 export DISCORD="$(cat /run/secrets/DISCORD)"
-                exec python3 /imagemaid.py --
+                exec python3 /imagemaid.py
             env:
               MODE: remove
               TIMEOUT: "86400"
