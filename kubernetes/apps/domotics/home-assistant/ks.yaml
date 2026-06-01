@@ -14,7 +14,6 @@ spec:
     - ../../../../components/vscode
     - ../../../../components/volsync
   dependsOn:
-    - name: cert-manager-issuers
     - name: cloudnative-pg
     - name: envoy-gateway-config
     - name: external-secrets-store
