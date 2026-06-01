@@ -47,6 +47,7 @@ spec:
     persistence:
       config:
         storageClass: ceph-block
+        accessMode: ReadWriteOnce
         size: 1Gi
       secrets:
         type: secret
