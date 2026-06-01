@@ -45,10 +45,6 @@ spec:
               type: RuntimeDefault
           automountServiceAccountToken: false
     persistence:
-      config:
-        storageClass: ceph-block
-        accessMode: ReadWriteOnce
-        size: 1Gi
       secrets:
         type: secret
         name: plex-auto-languages-app-secret
@@ -57,5 +53,6 @@ spec:
       workdir:
         type: emptyDir
         globalMounts:
+          - path: /config
           - path: /logs
           - path: /.local
