@@ -14,12 +14,12 @@ spec:
     - major: 13
       image: ghcr.io/cloudnative-pg/postgresql:13.22-202511100817-system-trixie@sha256:c3cb9c42e2940c5205218f1d527cbbdb894611eed028b1c8ee61123b820bff73
     - major: 14
-      image: ghcr.io/cloudnative-pg/postgresql:14.22-202604060836-system-trixie@sha256:5625bc6fcee620e9bfcf3384ec695f0d0c1913b39884bd576c8a4b6cf87387f6
+      image: ghcr.io/cloudnative-pg/postgresql:18.3-202604060836-system-trixie@sha256:b8f92f161fe9a8d63691803b48ba3e4e76943fa4a59f435b2153889230ae9c20
     - major: 15
       image: ghcr.io/cloudnative-pg/postgresql:15.17-202604060834-system-trixie@sha256:73f474cf26d0fd918505ac882cc6d69b5376bcaac925ae5f179231735abc9300
     - major: 16
-      image: ghcr.io/cloudnative-pg/postgresql:16.13-202604060836-system-trixie@sha256:2a377d2a1935a02043c0b3f3927bc389c662e94e493b68d5b8f1beedfa387d35
+      image: ghcr.io/cloudnative-pg/postgresql:18.3-202604060836-system-trixie@sha256:b8f92f161fe9a8d63691803b48ba3e4e76943fa4a59f435b2153889230ae9c20
     - major: 17
-      image: ghcr.io/cloudnative-pg/postgresql:17.9-202604060836-system-trixie@sha256:beceb503a138021558e6694e91c2dee95508c92b5b4912f034eb55d40dbcc697
+      image: ghcr.io/cloudnative-pg/postgresql:18.3-202604060836-system-trixie@sha256:b8f92f161fe9a8d63691803b48ba3e4e76943fa4a59f435b2153889230ae9c20
     - major: 18
       image: ghcr.io/cloudnative-pg/postgresql:18.3-202604060836-system-trixie@sha256:b8f92f161fe9a8d63691803b48ba3e4e76943fa4a59f435b2153889230ae9c20
