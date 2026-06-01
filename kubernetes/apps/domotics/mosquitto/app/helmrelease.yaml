@@ -44,7 +44,6 @@ spec:
     persistence:
       data:
         storageClass: ceph-block
-        accessMode: ReadWriteOnce
         size: 1Gi
       config:
         type: configMap
