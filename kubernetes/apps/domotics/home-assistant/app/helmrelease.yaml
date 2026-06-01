@@ -50,7 +50,7 @@ spec:
                 drop: [ALL]
         pod:
           annotations:
-            k8s.v1.cni.cncf.io/networks: '[{"name":"home-assistant","namespace":"home-assistant","ips":["10.0.10.123/24"],"mac":"02:0a:00:0a:00:7b"}]'
+            k8s.v1.cni.cncf.io/networks: '[{"name":"iot","namespace":"multus","ips":["10.0.30.30/24"],"mac":"02:0a:00:1e:00:7b"}]'
           securityContext:
             runAsNonRoot: true
             runAsUser: 568
