@@ -13,6 +13,7 @@ spec:
     bpf:
       hostLegacyRouting: true
       masquerade: true
+      vlanBypass: [30]
     bgpControlPlane:
       enabled: true
     cgroup:
