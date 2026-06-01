@@ -24,7 +24,6 @@ spec:
                   secretKeyRef:
                     key: fqdn-uri
                     name: home-assistant-cnpg-app
-              SSL_CERT_FILE: /certs/mqtt/ca.crt
             envFrom:
               - secretRef:
                   name: home-assistant-app-secret
@@ -61,21 +60,12 @@ spec:
             seccompProfile:
               type: RuntimeDefault
     persistence:
-      data:
-        type: persistentVolumeClaim
+      config:
         existingClaim: home-assistant-data
-        globalMounts:
-          - path: /config
       workdir:
         type: emptyDir
         globalMounts:
           - path: /config/.venv
-      mqtt-tls:
-        type: secret
-        name: home-assistant-mqtt-client-tls
-        globalMounts:
-          - path: /certs/mqtt
-            readOnly: true
     route:
       app:
         hostnames: ['home.${DOMAIN_0}']
