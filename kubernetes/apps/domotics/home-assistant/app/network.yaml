@@ -1,12 +1,12 @@
 apiVersion: k8s.cni.cncf.io/v1
 kind: NetworkAttachmentDefinition
 metadata:
-  name: core
+  name: home-assistant
 spec:
   config: |-
     {
       "cniVersion": "1.1.0",
-      "name": "core",
+      "name": "home-assistant",
       "plugins": [
         {
           "type": "macvlan",
@@ -16,14 +16,11 @@ spec:
             "type": "static",
             "routes": [
               {
-                "dst": "0.0.0.0/0",
+                "dst": "10.0.30.0/24",
                 "gw": "10.0.10.1"
               }
             ]
           }
-        },
-        {
-          "type": "sbr"
         }
       ]
     }
