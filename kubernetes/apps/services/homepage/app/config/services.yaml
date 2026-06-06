@@ -3,11 +3,11 @@
 - Servers:
   - Scale-1:
       icon: 'sh-truenas-scale.svg'
-      href: 'https://10.0.10.15'
-      siteMonitor: 'http://10.0.10.15'
+      href: 'https://10.0.10.10'
+      siteMonitor: 'http://10.0.10.10'
       widgets:
         - type: truenas
-          url: 'http://10.0.10.15'
+          url: 'http://10.0.10.10'
           key: '{{HOMEPAGE_FILE_SCALE_01_KEY}}'
           enablePools: 'true'
           nasType: 'scale'

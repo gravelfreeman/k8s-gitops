@@ -61,7 +61,7 @@ spec:
           csi:
             driver: nfs.csi.k8s.io
             volumeAttributes:
-              server: 10.0.10.15
+              server: 10.0.10.10
               share: /mnt/eden/media
       secrets:
         type: secret
