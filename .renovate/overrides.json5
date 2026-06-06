@@ -7,5 +7,14 @@
       matchPackageNames: ["/factory\\.talos\\.dev/"],
       overridePackageName: "ghcr.io/siderolabs/installer",
     },
+    {
+      description: "Update Alpine APK SHA256 pins",
+      matchDatasources: ["custom.alpine-apk"],
+      postUpgradeTasks: {
+        commands: ["bash .renovate/scripts/alpine-sha.sh"],
+        fileFilters: ["kubernetes/apps/media/plex/plex/app/config/worker-init.yaml"],
+        executionMode: "branch",
+      },
+    },
   ],
 }
