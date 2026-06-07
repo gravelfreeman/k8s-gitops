@@ -18,6 +18,8 @@ spec:
             image:
               repository: ghcr.io/liftedkilt/openchore/api
               tag: latest@sha256:8841a0005910b768b099b3c3404d07cee81abcc327acf9adf28acf85568053d6
+            env:
+              AI_ENDPOINT: http://openchore-litert:8080
             probes:
               liveness: &apiProbes
                 enabled: true
@@ -46,6 +48,29 @@ spec:
                 enabled: true
             resources: *resources
             securityContext: *securityContext
+      litert:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/liftedkilt/openchore/litert
+              tag: latest@sha256:23f50e034c3c8368025f0ee469917145c19f603ea17c10db0be804d926f572c9
+            env:
+              HF_HOME: /app/model/.cache/huggingface
+              XDG_CACHE_HOME: /app/model/.cache
+              PYTHONDONTWRITEBYTECODE: "1"
+            probes:
+              liveness: &litertProbes
+                enabled: true
+                type: HTTP
+                path: /health
+              readiness: *litertProbes
+            resources:
+              requests:
+                cpu: 500m
+                memory: 2Gi
+              limits:
+                memory: 4Gi
+            securityContext: *securityContext
     defaultPodOptions:
       automountServiceAccountToken: false
       securityContext:
@@ -71,6 +96,14 @@ spec:
             app:
               - path: /etc/nginx/conf.d/default.conf
                 subPath: default.conf
+      litert-model:
+        suffix: litert-model
+        accessMode: ReadWriteOnce
+        size: 10Gi
+        advancedMounts:
+          litert:
+            app:
+              - path: /app/model
       workdir:
         type: emptyDir
         globalMounts:
@@ -95,6 +128,11 @@ spec:
             port: 8080
       web:
         controller: web
+        ports:
+          http:
+            port: 8080
+      litert:
+        controller: litert
         ports:
           http:
             port: 8080
