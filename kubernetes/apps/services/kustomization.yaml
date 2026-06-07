@@ -13,8 +13,10 @@ labels:
     pairs:
       domain: services
 resources:
+  - donetick/ks.yaml
   - flatnotes/ks.yaml
   - homepage/ks.yaml
   - immich/ks.yaml
   - mealie/ks.yaml
+  - openchore/ks.yaml
   - splitpro/ks.yaml
