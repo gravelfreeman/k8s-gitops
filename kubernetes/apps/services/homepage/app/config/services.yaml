@@ -7,7 +7,8 @@
       siteMonitor: 'http://10.0.10.10'
       widgets:
         - type: truenas
-          url: 'http://10.0.10.10'
+          url: 'https://10.0.10.10'
+          version: 2
           key: '{{HOMEPAGE_FILE_SCALE_01_KEY}}'
           enablePools: 'true'
           nasType: 'scale'
@@ -17,7 +18,8 @@
       siteMonitor: 'http://10.1.10.15'
       widgets:
         - type: 'truenas'
-          url: 'http://10.1.10.15'
+          url: 'https://10.1.10.15'
+          version: 2
           key: '{{HOMEPAGE_FILE_SCALE_02_KEY}}'
           enablePools: 'true'
           nasType: 'scale'
