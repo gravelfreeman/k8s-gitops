@@ -57,6 +57,7 @@ spec:
           csi:
             driver: nfs.csi.k8s.io
             volumeAttributes:
+              mountOptions: nfsvers=4.2
               server: 10.0.10.10
               share: /mnt/core/media-rw
         globalMounts:
