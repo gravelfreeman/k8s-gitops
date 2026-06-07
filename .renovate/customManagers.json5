@@ -26,7 +26,7 @@
       ],
       datasourceTemplate: "custom.alpine-apk",
       versioningTemplate: "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-r(?<build>\\d+)$",
-      extractVersionTemplate: "^{{{packageName}}}-(?<version>.+)\\.apk$",
+      extractVersionTemplate: "^{{{replace '\\\\+' '\\\\+' packageName}}}-(?<version>.+)\\.apk$",
       autoReplaceStringTemplate: "# renovate: datasource=custom.alpine-apk depName={{{depName}}} packageName={{{packageName}}} registryUrl={{{registryUrl}}}\\n    fetch_pkg {{{repo}}} {{{packageName}}}-{{{newValue}}}.apk {{{currentDigest}}}",
     },
   ],
