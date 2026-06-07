@@ -61,9 +61,8 @@ spec:
           csi:
             driver: nfs.csi.k8s.io
             volumeAttributes:
-              mountOptions: nfsvers=4.2
-              server: 10.0.10.10
-              share: /mnt/core/media-rw
+              server: 10.0.10.11
+              share: /media-rw
       secrets:
         type: secret
         name: qui-app-secret
