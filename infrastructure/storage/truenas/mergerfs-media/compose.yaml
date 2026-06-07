@@ -1,0 +1,87 @@
+services:
+  mergerfs-all-rw:
+    image: ghcr.io/hotio/mergerfs:release-v2.42.0@sha256:bab99bd24e0378e2f8b97c2c5dd1a2f413cf6a17c696ab3412a54c0af2bf2ed3
+    container_name: mergerfs-all-rw
+    restart: unless-stopped
+    cap_add:
+      - SYS_ADMIN
+    devices:
+      - /dev/fuse:/dev/fuse
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - type: bind
+        source: /mnt/eden/media
+        target: /branch/eden
+      - type: bind
+        source: /mnt/mfs-1/media
+        target: /branch/mfs-1
+      - type: bind
+        source: /mnt/mfs-2/media
+        target: /branch/mfs-2
+      - type: bind
+        source: /mnt/mfs-3/media
+        target: /branch/mfs-3
+      - type: bind
+        source: /mnt/core/media-rw
+        target: /media
+        bind:
+          propagation: rshared
+    command:
+      - "-o"
+      - "allow_other,use_ino,category.create=epmfs,category.search=ff,category.action=epall,ignorepponrename=true,moveonenospc=true,cache.files=off,inodecalc=path-hash,statfs=full,export-support=true,fsname=mergerfs-all-rw"
+      - "/branch/eden:/branch/mfs-1=RW,1500G:/branch/mfs-2=RW,1100G:/branch/mfs-3=RW,1100G"
+      - "/media"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >
+          grep -q ' /media .* - fuse.mergerfs ' /proc/self/mountinfo &&
+          test ! -e /media/MERGERFS_NOT_MOUNTED
+      interval: 5s
+      retries: 3
+      start_period: 10s
+      timeout: 3s
+  mergerfs-mfs-nc:
+    image: ghcr.io/hotio/mergerfs:release-v2.42.0@sha256:bab99bd24e0378e2f8b97c2c5dd1a2f413cf6a17c696ab3412a54c0af2bf2ed3
+    container_name: mergerfs-mfs-nc
+    restart: unless-stopped
+    cap_add:
+      - SYS_ADMIN
+    devices:
+      - /dev/fuse:/dev/fuse
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - type: bind
+        source: /mnt/eden/media
+        target: /branch/eden
+      - type: bind
+        source: /mnt/mfs-1/media
+        target: /branch/mfs-1
+      - type: bind
+        source: /mnt/mfs-2/media
+        target: /branch/mfs-2
+      - type: bind
+        source: /mnt/mfs-3/media
+        target: /branch/mfs-3
+      - type: bind
+        source: /mnt/core/media-nc
+        target: /media
+        bind:
+          propagation: rshared
+    command:
+      - "-o"
+      - "allow_other,use_ino,category.create=epff,category.search=ff,category.action=epall,ignorepponrename=true,moveonenospc=true,cache.files=off,inodecalc=path-hash,statfs=full,export-support=true,fsname=mergerfs-mfs-nc"
+      - "/branch/eden:/branch/mfs-1=NC,1500G:/branch/mfs-2=NC,1100G:/branch/mfs-3=NC,1100G"
+      - "/media"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >
+          grep -q ' /media .* - fuse.mergerfs ' /proc/self/mountinfo &&
+          test ! -e /media/MERGERFS_NOT_MOUNTED
+      interval: 5s
+      retries: 3
+      start_period: 10s
+      timeout: 3s
