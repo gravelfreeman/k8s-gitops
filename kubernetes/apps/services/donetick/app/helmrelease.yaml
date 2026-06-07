@@ -37,7 +37,7 @@ spec:
               DT_OAUTH2_TOKEN_URL: https://id.${DOMAIN_0}/api/oidc/token
               DT_OAUTH2_USER_INFO_URL: https://id.${DOMAIN_0}/api/oidc/userinfo
               DT_SERVER_PUBLIC_HOST: https://donetick.${DOMAIN_0}
-              DT_SQLITE_PATH: /donetick-data/donetick.db
+              DT_SQLITE_PATH: /data/donetick.db
             probes:
               liveness: &probes
                 enabled: true
