@@ -137,29 +137,16 @@ spec:
             driver: nfs.csi.k8s.io
             volumeAttributes:
               server: 10.0.10.10
-              share: /mnt/eden/media
+              share: /mnt/core/media-rw
         advancedMounts:
           plex:
             plex:
               - path: /media
+                readOnly: true
           worker:
             worker:
               - path: /media
-      seerr:
-        type: custom
-        volumeSpec:
-          csi:
-            driver: nfs.csi.k8s.io
-            volumeAttributes:
-              server: 10.0.10.10
-              share: /mnt/ungava/media
-        advancedMounts:
-          plex:
-            plex:
-              - path: /seerr
-          worker:
-            worker:
-              - path: /seerr
+                readOnly: true
       transcode:
         suffix: transcode
         storageClass: ceph-filesystem

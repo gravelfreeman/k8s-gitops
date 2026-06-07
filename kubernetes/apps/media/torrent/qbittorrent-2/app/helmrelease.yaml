@@ -58,7 +58,10 @@ spec:
             driver: nfs.csi.k8s.io
             volumeAttributes:
               server: 10.0.10.10
-              share: /mnt/ungava/media
+              share: /mnt/core/media-rw
+        globalMounts:
+          - path: /media/share/qb2
+            subPath: share/qb2
     route:
       app:
         hostnames: ['qb2.${DOMAIN_1}']

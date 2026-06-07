@@ -59,6 +59,9 @@ spec:
             volumeAttributes:
               server: 10.0.10.10
               share: /mnt/eden/media
+        globalMounts:
+          - path: /media/share/qb3
+            subPath: share/qb3
     route:
       app:
         hostnames: ['qb3.${DOMAIN_1}']

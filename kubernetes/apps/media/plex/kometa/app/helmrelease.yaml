@@ -16,7 +16,7 @@ spec:
         type: cronjob
         cronjob:
           backoffLimit: 0
-          schedule: "0 3 * * *"
+          schedule: "0 2 * * *"
         containers:
           app:
             image:
