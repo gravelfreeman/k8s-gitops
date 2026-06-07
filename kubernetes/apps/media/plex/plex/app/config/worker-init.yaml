@@ -11,7 +11,7 @@ data:
     install -d -m 0700 /run/user/0
 
     root=/opt/plex-vaapi-alpine
-    cache=/tmp/plex-vaapi-alpine
+    cache=/run/plex-vaapi-alpine
     base=https://dl-cdn.alpinelinux.org/alpine/edge
     rm -rf "$root" "$cache"
     install -d "$root" "$cache"

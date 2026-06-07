@@ -155,12 +155,14 @@ spec:
         advancedMounts:
           plex:
             plex:
-              - path: /transcode
               - path: /config/Library/Application Support/Plex Media Server/Cache/Transcode
+              - path: /transcode
+              - path: /tmp
           worker:
             worker:
-              - path: /transcode
               - path: /config/Library/Application Support/Plex Media Server/Cache/Transcode
+              - path: /transcode
+              - path: /tmp
       worker-init:
         type: configMap
         name: plex-worker-init
@@ -176,6 +178,8 @@ spec:
           worker:
             worker:
               - path: /codecs
+      tmp:
+        enabled: false
     route:
       plex:
         hostnames: ['plex.${DOMAIN_1}']
