@@ -55,7 +55,8 @@ spec:
               repository: docker.io/ollama/ollama
               tag: latest@sha256:fbaaecc6c632a73c2b4ca25ef52dbee0b68d07783fcb850f916404c004040f90
             env:
-              OLLAMA_MODELS: /models
+              HOME: /models
+              OLLAMA_MODELS: /models/.ollama/models
             probes:
               liveness: &ollamaProbes
                 enabled: true
