@@ -19,6 +19,11 @@ spec:
               repository: donetick/donetick
               tag: v0.1.75@sha256:5c207a86e5425052e9ffe5286f96f71babfe57337760d303a5fb56a856790d11
             env:
+              DT_JWT_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: donetick-app-secret
+                    key: JWT_SECRET
               DT_OAUTH2_AUTH_URL: https://id.${DOMAIN_0}/authorize
               DT_OAUTH2_CLIENT_ID: ab6e378f-3a1c-4a6a-8477-e9c7a6ff2423
               DT_OAUTH2_CLIENT_SECRET:
