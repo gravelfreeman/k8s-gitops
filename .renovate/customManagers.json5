@@ -22,12 +22,12 @@
       description: "Process Alpine APK dependencies",
       managerFilePatterns: ["/kubernetes/apps/media/plex/plex/app/config/worker-init\\.yaml$/"],
       matchStrings: [
-        "# renovate: datasource=custom\\.alpine-apk depName=(?<depName>\\S+) packageName=(?<packageName>\\S+) registryUrl=(?<registryUrl>\\S+)\\n\\s+fetch_pkg (?<repo>\\S+) (?<packagePrefix>\\S+)-(?<currentValue>\\d[^\\s]+)\\.apk (?<currentDigest>[a-f0-9]{64})"
+        "# renovate: datasource=custom\\.alpine-apk depName=(?<depName>\\S+) packageName=(?<packageName>\\S+) registryUrl=(?<registryUrl>\\S+)\\n\\s+fetch_pkg (?<repo>\\S+) (?<packagePrefix>\\S+)-(?<currentValue>\\d[^\\s]+)\\.apk (?<currentSha256>[a-f0-9]{64})"
       ],
       datasourceTemplate: "custom.alpine-apk",
       versioningTemplate: "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-r(?<build>\\d+)$",
       extractVersionTemplate: "^{{{packageName}}}-(?<version>.+)\\.apk$",
-      autoReplaceStringTemplate: "# renovate: datasource=custom.alpine-apk depName={{{depName}}} packageName={{{packageName}}} registryUrl={{{registryUrl}}}\\n    fetch_pkg {{{repo}}} {{{packagePrefix}}}-{{{newValue}}}.apk {{{currentDigest}}}",
+      autoReplaceStringTemplate: "# renovate: datasource=custom.alpine-apk depName={{{depName}}} packageName={{{packageName}}} registryUrl={{{registryUrl}}}\\n    fetch_pkg {{{repo}}} {{{packagePrefix}}}-{{{newValue}}}.apk {{{currentSha256}}}",
     },
   ],
   customDatasources: {
