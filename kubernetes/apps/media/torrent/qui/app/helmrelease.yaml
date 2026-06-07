@@ -62,7 +62,7 @@ spec:
             driver: nfs.csi.k8s.io
             volumeAttributes:
               server: 10.0.10.10
-              share: /mnt/eden/media
+              share: /mnt/core/media-rw
       secrets:
         type: secret
         name: qui-app-secret
