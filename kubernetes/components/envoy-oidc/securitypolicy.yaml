@@ -1,5 +1,5 @@
 ---
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/gateway.envoyproxy.io/securitypolicy_v1alpha1.json
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
 metadata:
@@ -18,7 +18,7 @@ spec:
       name: ${APP}-oidc-secret
     clientSecret:
       name: ${APP}-oidc-secret
-    forwardAccessToken: true
+    forwardAccessToken: ${ENVOY_OIDC_FORWARD_ACCESS_TOKEN:=true}
     cookieNames:
       idToken: pocketid-token
     scopes: [profile,email,groups]

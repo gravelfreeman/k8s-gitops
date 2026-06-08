@@ -53,6 +53,7 @@ route:
 | Name | Default | Description |
 | ---- | ------- | ----------- |
 | `APP` *(required)* | none | Application name. |
+| `ENVOY_OIDC_FORWARD_ACCESS_TOKEN` | `true` | Forward the Pocket ID access token to the upstream app. |
 | `ENVOY_OIDC_GROUP` | `admin` | Primary Pocket ID group allowed to access the app. |
 
 ## Resources
