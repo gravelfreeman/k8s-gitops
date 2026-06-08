@@ -51,7 +51,7 @@ spec:
               DOCKER_MODS: ghcr.io/pabloromeo/clusterplex_dockermod:1.4.16@sha256:4cc23e80b6e126ac4b839672945b4a4c153f74215536e85e6309f8592b49f8e7
               ORCHESTRATOR_URL: http://plex-orchestrator:3500
               ADVERTISE_IP: http://10.0.20.240:32400,https://plex.${DOMAIN_1}
-              TRANSCODE_OPERATING_MODE: remote
+              TRANSCODE_OPERATING_MODE: both
               PMS_SERVICE: *app
               PMS_PORT: "32400"
               LOCAL_RELAY_PORT: "32499"
@@ -124,7 +124,7 @@ spec:
             intel.feature.node.kubernetes.io/gpu: "true"
           securityContext: *plexSecurityContext
     persistence:
-      config:
+      data:
         existingClaim: plex-data
         advancedMounts:
           plex:
@@ -147,20 +147,30 @@ spec:
             worker:
               - path: /media
                 readOnly: true
-      transcode:
-        suffix: transcode
+      runtime:
+        suffix: runtime
         storageClass: ceph-filesystem
         accessMode: ReadWriteMany
         size: 256Gi
         advancedMounts:
           plex:
             plex:
-              - path: /config/Library/Application Support/Plex Media Server/Cache/Transcode
+              - path: /config/Library/Application Support/Plex Media Server/Cache
+                subPath: cache
+              - path: /config/Library/Application Support/Plex Media Server/Drivers
+                subPath: drivers
               - path: /transcode
+                subPath: transcode
           worker:
             worker:
-              - path: /config/Library/Application Support/Plex Media Server/Cache/Transcode
+              - path: /codecs
+                subPath: codecs
+              - path: /config/Library/Application Support/Plex Media Server/Cache
+                subPath: cache
+              - path: /config/Library/Application Support/Plex Media Server/Drivers
+                subPath: drivers
               - path: /transcode
+                subPath: transcode
       worker-init:
         type: configMap
         name: plex-worker-init
@@ -170,12 +180,6 @@ spec:
             worker:
               - path: /custom-cont-init.d/install-intel-vaapi
                 subPath: install-intel-vaapi
-      codecs:
-        type: emptyDir
-        advancedMounts:
-          worker:
-            worker:
-              - path: /codecs
       tmp:
         enabled: false
     route:
