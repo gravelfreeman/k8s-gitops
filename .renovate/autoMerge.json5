@@ -5,6 +5,7 @@
       description: "Auto-merge minor and patch updates after stability window",
       automerge: true,
       automergeType: "pr",
+      prCreation: "immediate",
       matchUpdateTypes: ["minor", "patch"],
       minimumReleaseAge: "3 days",
       internalChecksFilter: "none",
