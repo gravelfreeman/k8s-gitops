@@ -40,7 +40,7 @@ spec:
           qcm-newznab:
             image:
               repository: docker.io/library/python
-              tag: 3.12-alpine@sha256:236173eb74001afe2f60862de935b74fcbd00adfca247b2c27051a70a6a39a2d
+              tag: 3.14-alpine@sha256:5a824eb82cc75361f98611f3cfc5091ea33f10a6ccea4d4ebdabbc523b9a1614
             command: ["python", "-u", "/app/qcm-newznab/qcm-newznab.py"]
             envFrom:
               - secretRef:
