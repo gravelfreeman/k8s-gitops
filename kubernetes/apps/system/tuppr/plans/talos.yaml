@@ -16,4 +16,4 @@ spec:
         status.ceph.health in ['HEALTH_OK']
   talos:
     # renovate: datasource=docker depName=ghcr.io/siderolabs/installer
-    version: v1.13.0
+    version: v1.13.3
