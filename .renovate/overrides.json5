@@ -16,5 +16,11 @@
         executionMode: "branch",
       },
     },
+    {
+      description: "Keep TensorChord CNPG catalog on PostgreSQL 16",
+      matchFileNames: ["kubernetes/apps/core/cloudnative-pg/catalogs/tensorchord.yaml"],
+      matchPackageNames: ["ghcr.io/tensorchord/cloudnative-vectorchord"],
+      allowedVersions: "/^16\\./",
+    },
   ],
 }
