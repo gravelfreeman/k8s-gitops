@@ -17,7 +17,7 @@ spec:
           app:
             image:
               repository: docker.io/bobokun/qbit_manage
-              tag: v4.7.0@sha256:8786f2efc6fb8e26281f09bf6c5d0004e2d2420fd4781af0aed123ae01558e21
+              tag: v4.8.0@sha256:3a4fc26d5cab89333cf918fb94908b4eac47a3144635c967e2a325a2489c8b30
             env:
               QBT_CONFIG: config*.yml
               QBT_SCHEDULE: 1440
