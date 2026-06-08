@@ -48,28 +48,6 @@ spec:
                 enabled: true
             resources: *resources
             securityContext: *securityContext
-      ollama:
-        containers:
-          app:
-            image:
-              repository: docker.io/ollama/ollama
-              tag: latest@sha256:fbaaecc6c632a73c2b4ca25ef52dbee0b68d07783fcb850f916404c004040f90
-            env:
-              HOME: /models
-              OLLAMA_MODELS: /models/.ollama/models
-            probes:
-              liveness: &ollamaProbes
-                enabled: true
-                type: HTTP
-                path: /api/tags
-              readiness: *ollamaProbes
-            resources:
-              requests:
-                cpu: 500m
-                memory: 2Gi
-              limits:
-                memory: 16Gi
-            securityContext: *securityContext
       # LiteRT is disabled until the upstream image includes the native runtime libraries.
       # litert:
       #   containers:
@@ -119,14 +97,6 @@ spec:
             app:
               - path: /etc/nginx/conf.d/default.conf
                 subPath: default.conf
-      ollama:
-        suffix: ollama
-        accessMode: ReadWriteOnce
-        size: 10Gi
-        advancedMounts:
-          ollama:
-            app:
-              - path: /models
       # litert-model:
       #   suffix: litert-model
       #   accessMode: ReadWriteOnce
@@ -162,11 +132,6 @@ spec:
         ports:
           http:
             port: 8080
-      ollama:
-        controller: ollama
-        ports:
-          http:
-            port: 11434
       # litert:
       #   controller: litert
       #   ports:
