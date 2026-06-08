@@ -18,6 +18,8 @@ spec:
             image:
               repository: ghcr.io/pabloromeo/clusterplex_orchestrator
               tag: 1.4.16@sha256:0fe80de2d22cf62cc180a7f19b30956eaaf35512c3b78608168e483004dde99f
+            env:
+              WORKER_SELECTION_STRATEGY: LOAD_TASKS
             probes:
               liveness: &orchestratorProbes
                 enabled: true
@@ -101,7 +103,7 @@ spec:
               VERSION: docker
               DOCKER_MODS: ghcr.io/pabloromeo/clusterplex_worker_dockermod:1.4.16@sha256:be639d9631fb3beb8d86a26ac924bf532a829def21b02929b97379d714acf252
               ORCHESTRATOR_URL: http://plex-orchestrator:3500
-              STAT_CPU_INTERVAL: "10000"
+              STAT_CPU_INTERVAL: "2000"
               FFMPEG_HWACCEL: vaapi
               TRANSCODER_PATH: /usr/local/bin/
               TRANSCODER_NAME: plex-transcoder-vaapi
