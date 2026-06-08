@@ -9,6 +9,7 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../../components/common/app
+    - ../../../../components/envoy-oidc
     - ../../../../components/volsync
   dependsOn:
     - name: envoy-gateway-config
