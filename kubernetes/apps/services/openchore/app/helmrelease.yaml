@@ -40,7 +40,7 @@ spec:
           app:
             image:
               repository: ghcr.io/liftedkilt/openchore/web
-              tag: latest@sha256:c0773d8953c2d1b105263e89b0ffbf6b469412d7dc190d11c23d0ae7eccdf5fc
+              tag: latest@sha256:4859066b7860aa71e7b50d1366e15d398ac43086cbd77331db07b11047c8d60b
             probes:
               liveness:
                 enabled: true
