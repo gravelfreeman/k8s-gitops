@@ -17,7 +17,7 @@ spec:
           app:
             image:
               repository: ghcr.io/liftedkilt/openchore/api
-              tag: latest@sha256:8841a0005910b768b099b3c3404d07cee81abcc327acf9adf28acf85568053d6
+              tag: latest@sha256:d7e815ed667e192ae5b4ca29d1edabaaa475c2a896bdafe171dfe6e6e3dffb74
             env:
               AI_ENDPOINT: http://openchore-ollama:11434
             probes:
