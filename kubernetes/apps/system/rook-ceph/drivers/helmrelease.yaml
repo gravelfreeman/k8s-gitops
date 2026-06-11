@@ -38,3 +38,4 @@ spec:
         name: rook-ceph.rbd.csi.ceph.com
         controllerPlugin:
           replicas: 2
+        snapshotPolicy: volumeSnapshot
