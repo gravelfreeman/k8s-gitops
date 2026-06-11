@@ -185,7 +185,7 @@ spec:
           - path: /tmp/gluetun
     service:
       app:
-        controller: *app
+        controller: ${APP}
         ports:
           agent:
             port: 9000
@@ -200,7 +200,7 @@ spec:
         labels:
           io.cilium/bgp-advertise: "true"
           network.k8s-gitops.io/lb-pool: services
-        controller: *app
+        controller: ${APP}
         ports:
           http:
             enabled: ${VPN_HTTPPROXY_ENABLED:=${VPN_PROXIES_ENABLED:=false}}
