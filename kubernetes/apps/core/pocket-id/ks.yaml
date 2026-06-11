@@ -20,6 +20,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      CNPG_STORAGE_SIZE: 20Gi
       ENVOY_GATEWAY_ACCESS: external
   prune: true
   sourceRef:
