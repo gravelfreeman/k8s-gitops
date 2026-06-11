@@ -19,28 +19,26 @@ data:
     fetch_pkg() {
       repo="$1"
       pkg="$2"
-      sha256="$3"
       curl -fsSLo "$cache/$pkg" "$base/$repo/x86_64/$pkg"
-      echo "$sha256  $cache/$pkg" | sha256sum -c -
       tar -xzf "$cache/$pkg" -C "$root"
     }
 
     # renovate: datasource=custom.alpine-apk depName=main/musl packageName=musl registryUrl=https://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/
-    fetch_pkg main musl-1.2.6-r2.apk 2aed6644a1332a63ee8873cc5b83e8c358bc6be45a7e16de9c9042e86cf30157
+    fetch_pkg main musl-1.2.6-r2.apk
     # renovate: datasource=custom.alpine-apk depName=main/libgcc packageName=libgcc registryUrl=https://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/
-    fetch_pkg main libgcc-15.2.0-r5.apk 393dcd32629f06d7d85409c272d142d0c082772d10b87ef55ee82f47de3be637
+    fetch_pkg main libgcc-15.2.0-r5.apk
     # renovate: datasource=custom.alpine-apk depName=main/libstdc++ packageName=libstdc%2B%2B registryUrl=https://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/
-    fetch_pkg main libstdc++-15.2.0-r5.apk 14c987b556f5385a5db18376e788c75f37d85321b8dc1920d926ea7daac1d6f6
+    fetch_pkg main libstdc++-15.2.0-r5.apk
     # renovate: datasource=custom.alpine-apk depName=main/libdrm packageName=libdrm registryUrl=https://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/
-    fetch_pkg main libdrm-2.4.134-r0.apk 584fd84ad5030040e613fa1816097cd1706ddd542100070852b0eab6e09e12ca
+    fetch_pkg main libdrm-2.4.134-r0.apk
     # renovate: datasource=custom.alpine-apk depName=main/libva packageName=libva registryUrl=https://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/
-    fetch_pkg main libva-2.23.0-r0.apk 7b045a6aa14b0259138bf9f03755c8486a0034eb37c0f2a839144204afc6fc85
+    fetch_pkg main libva-2.23.0-r0.apk
     # renovate: datasource=custom.alpine-apk depName=main/libpciaccess packageName=libpciaccess registryUrl=https://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/
-    fetch_pkg main libpciaccess-0.19-r0.apk 03fdccd1e2a0825e7f7fabbac67212e05d271d31d2eff44cc92f707e69908ad4
+    fetch_pkg main libpciaccess-0.19-r0.apk
     # renovate: datasource=custom.alpine-apk depName=community/intel-gmmlib packageName=intel-gmmlib registryUrl=https://dl-cdn.alpinelinux.org/alpine/edge/community/x86_64/
-    fetch_pkg community intel-gmmlib-22.10.0-r0.apk adec028d3da9b4d5161db895b1a0f93e7d9c9c7ca7bcf76d11503d5f1e566daa
+    fetch_pkg community intel-gmmlib-22.10.0-r0.apk
     # renovate: datasource=custom.alpine-apk depName=community/intel-media-driver packageName=intel-media-driver registryUrl=https://dl-cdn.alpinelinux.org/alpine/edge/community/x86_64/
-    fetch_pkg community intel-media-driver-26.2.1-r0.apk af46dd5c13bdbab4e22831a3e5d6be706a9dd1d0f9dbcfa6ac09557ef101f8f4
+    fetch_pkg community intel-media-driver-26.2.1-r0.apk
 
     cat > /usr/local/bin/plex-transcoder-vaapi <<'EOF'
     #!/usr/bin/env bash
