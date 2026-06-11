@@ -52,3 +52,21 @@ tasks:
       - sh: test -f .gitignore
       - sh: op user get --me
       - sh: which yq
+
+  tuppr:reset:
+    desc: Reset the Tuppr Talos upgrade campaign
+    prompt: Reset the Tuppr Talos upgrade campaign ... continue?
+    silent: true
+    cmds:
+      - kubectl annotate talosupgrade.tuppr.home-operations.com talos tuppr.home-operations.com/reset="$(date -u +%FT%TZ)" --overwrite
+      - task kubernetes:tuppr:watch
+    preconditions:
+      - sh: which kubectl
+      - sh: which task
+
+  tuppr:watch:
+    desc: Watch the Tuppr Talos upgrade campaign
+    silent: true
+    cmd: kubectl get talosupgrade.tuppr.home-operations.com talos -w
+    preconditions:
+      - sh: which kubectl
