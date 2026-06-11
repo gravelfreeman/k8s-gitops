@@ -9,7 +9,6 @@ spec:
   chartRef:
     kind: OCIRepository
     name: *app
-  releaseName: *app
   values:
     containerSecurityContext:
       allowPrivilegeEscalation: false
@@ -35,10 +34,6 @@ spec:
           seccompProfile:
             type: RuntimeDefault
     csi:
-      cephFSKernelMountOptions: ms_mode=prefer-crc
-      enableCephfsDriver: true
-      enableCephfsSnapshotter: false
-      enableLiveness: true
       serviceMonitor:
         enabled: true
     image:
