@@ -15,6 +15,7 @@ RS_SYNC_STATUS_TRUE='True'
 VOLSYNC_IDLE_TIMEOUT_SECONDS="${VOLSYNC_IDLE_TIMEOUT_SECONDS:-600}"
 VOLSYNC_RUN_TIMEOUT_SECONDS="${VOLSYNC_RUN_TIMEOUT_SECONDS:-7200}"
 VOLSYNC_POLL_INTERVAL_SECONDS="${VOLSYNC_POLL_INTERVAL_SECONDS:-10}"
+VOLSYNC_QUEUE_EXCLUDE_TARGETS="${VOLSYNC_QUEUE_EXCLUDE_TARGETS:-}"
 
 PVC_STATE_TEMPLATE='{{with index .metadata.annotations "volsync.backube/use-copy-trigger"}}{{.}}{{end}}|{{with index .metadata.annotations "volsync.backube/latest-copy-trigger"}}{{.}}{{end}}|{{with index .metadata.annotations "volsync.backube/latest-copy-status"}}{{.}}{{end}}'
 PVC_QUEUE_TEMPLATE='{{range .items}}{{.metadata.namespace}}{{"\t"}}{{.metadata.name}}{{"\t"}}{{with index .metadata.annotations "volsync.backube/use-copy-trigger"}}{{.}}{{end}}{{"\n"}}{{end}}'
@@ -39,6 +40,19 @@ log_with_level() {
 }
 
 log_debug() { [ "$DEBUG" = "1" ] || return 0; log_with_level DEBUG "$*"; }
+
+target_excluded() {
+  target="$1"
+  [ -n "$VOLSYNC_QUEUE_EXCLUDE_TARGETS" ] || return 1
+
+  for excluded_target in $VOLSYNC_QUEUE_EXCLUDE_TARGETS; do
+    if [ "$excluded_target" = "$target" ]; then
+      return 0
+    fi
+  done
+
+  return 1
+}
 
 log_debug_pvc_state() {
   target="$1"; pvc_state_line="$2"
@@ -349,6 +363,16 @@ validate_environment() {
         log_event fail bootstrap "invalid ${variable_name}=0 expected positive integer"
         return 1
         ;;
+      esac
+  done
+
+  for excluded_target in $VOLSYNC_QUEUE_EXCLUDE_TARGETS; do
+    case "$excluded_target" in
+      */*) ;;
+      *)
+        log_event fail bootstrap "invalid VOLSYNC_QUEUE_EXCLUDE_TARGETS entry=${excluded_target} expected namespace/pvc"
+        return 1
+        ;;
     esac
   done
 
@@ -389,6 +413,7 @@ validate_environment() {
 run_id="$(date +%Y%m%dT%H%M%S%z)"
 queue_file="$(mktemp)"
 raw_queue_file="$(mktemp)"
+excluded_count=0
 trap 'rm -f "$queue_file" "$raw_queue_file"' EXIT
 
 if ! validate_environment; then
@@ -403,6 +428,14 @@ fi
 while IFS="$TAB" read -r namespace name use_copy_trigger; do
   [ -z "$namespace" ] && continue
   [ -n "$use_copy_trigger" ] || continue
+
+  target="${namespace}/${name}"
+  if target_excluded "$target"; then
+    log_event skip "$target" "skipped: excluded by VOLSYNC_QUEUE_EXCLUDE_TARGETS"
+    excluded_count=$((excluded_count + 1))
+    continue
+  fi
+
   printf '%s\t%s\n' "$namespace" "$name" >> "$queue_file"
 done < "$raw_queue_file"
 
@@ -412,7 +445,11 @@ if ! sort -k1,1 -k2,2 -o "$queue_file" "$queue_file"; then
 fi
 
 if [ ! -s "$queue_file" ]; then
-  log_warn "(queue) no queued pvcs found"
+  if [ "$excluded_count" -gt 0 ]; then
+    log_warn "(queue) no queued pvcs found excluded=${excluded_count}"
+  else
+    log_warn "(queue) no queued pvcs found"
+  fi
   exit 0
 fi
 
@@ -448,6 +485,7 @@ summary_detail="completed success=${success_count}"
 [ "$timeout_count" -gt 0 ] && summary_detail="${summary_detail} timed_out=${timeout_count}"
 [ "$api_error_count" -gt 0 ] && summary_detail="${summary_detail} api_errors=${api_error_count}"
 [ "$skipped_count" -gt 0 ] && summary_detail="${summary_detail} skipped=${skipped_count}"
+[ "$excluded_count" -gt 0 ] && summary_detail="${summary_detail} excluded=${excluded_count}"
 
 if [ "$failed_count" -gt 0 ] || [ "$timeout_count" -gt 0 ] || [ "$api_error_count" -gt 0 ] || [ "$skipped_count" -gt 0 ]; then
   log_warn "(queue) $summary_detail"

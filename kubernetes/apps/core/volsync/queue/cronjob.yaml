@@ -28,6 +28,9 @@ spec:
           containers:
             - name: queue
               image: bitnami/kubectl@sha256:d7e2de67927af4b644c0631e114024e32062ffde7af8e6af1be532eda91656b0
+              # env:
+              #   - name: VOLSYNC_QUEUE_EXCLUDE_TARGETS
+              #     value: plex/plex-data
               securityContext:
                 allowPrivilegeEscalation: false
                 capabilities:
