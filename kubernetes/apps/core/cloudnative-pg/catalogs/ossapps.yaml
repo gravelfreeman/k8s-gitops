@@ -8,5 +8,5 @@ metadata:
     images.freedscript.io/profile: ossapps
 spec:
   images:
-    - major: 17
-      image: docker.io/ossapps/postgres:17.7-trixie@sha256:7b28a64dca6bc8a5a9df32b69f413939f93d1b87b169748f3754ef25eaa5b962
+    - major: 18
+      image: docker.io/ossapps/postgres:18.3-trixie@sha256:6f057a7b35ece59fa6b2beba1bf694539fb33ba4b9a42de0de13322ea5db5c48

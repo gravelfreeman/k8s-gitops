@@ -23,7 +23,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      CNPG_IMAGE_CATALOG_MAJOR: "17"
+      CNPG_IMAGE_CATALOG_MAJOR: "18"
       CNPG_IMAGE_CATALOG_NAME: postgresql-ossapps
       CNPG_POSTGRES_GID: "999"
       CNPG_POSTGRES_UID: "999"
