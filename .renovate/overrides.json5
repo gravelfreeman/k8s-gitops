@@ -13,5 +13,12 @@
       matchPackageNames: ["ghcr.io/tensorchord/cloudnative-vectorchord"],
       allowedVersions: "/^16\\./",
     },
+    {
+      description: "Keep CNPG system catalog entries on their declared PostgreSQL major",
+      matchFileNames: ["kubernetes/apps/core/cloudnative-pg/catalogs/system-trixie.yaml"],
+      matchPackageNames: ["ghcr.io/cloudnative-pg/postgresql"],
+      matchUpdateTypes: ["major"],
+      enabled: false,
+    },
   ],
 }
