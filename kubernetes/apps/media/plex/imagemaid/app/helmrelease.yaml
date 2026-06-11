@@ -59,7 +59,6 @@ spec:
             fsGroupChangePolicy: OnRootMismatch
             seccompProfile:
               type: RuntimeDefault
-          automountServiceAccountToken: false
           affinity:
             podAffinity:
               requiredDuringSchedulingIgnoredDuringExecution:

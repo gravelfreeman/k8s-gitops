@@ -26,8 +26,6 @@ spec:
       ${APP}:
         replicas: 1
         strategy: Recreate
-        serviceAccount:
-          name: *app
         initContainers:
           ip-forward:
             image: &gluetunImage
@@ -156,7 +154,6 @@ spec:
             fsGroupChangePolicy: OnRootMismatch
             seccompProfile:
               type: RuntimeDefault
-          automountServiceAccountToken: false
     persistence:
       agent:
         type: configMap

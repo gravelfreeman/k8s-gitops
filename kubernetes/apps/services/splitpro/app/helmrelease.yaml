@@ -73,7 +73,6 @@ spec:
             fsGroupChangePolicy: OnRootMismatch
             seccompProfile:
               type: RuntimeDefault
-          automountServiceAccountToken: false
     persistence:
       data:
         existingClaim: splitpro-data

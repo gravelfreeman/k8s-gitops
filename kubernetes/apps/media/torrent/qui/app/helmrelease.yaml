@@ -51,7 +51,6 @@ spec:
             fsGroupChangePolicy: OnRootMismatch
             seccompProfile:
               type: RuntimeDefault
-          automountServiceAccountToken: false
     persistence:
       config:
         existingClaim: qui-data

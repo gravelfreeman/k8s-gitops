@@ -13,8 +13,6 @@ spec:
   values:
     controllers:
       gluetun-router:
-        serviceAccount:
-          name: *app
         containers:
           app:
             image:

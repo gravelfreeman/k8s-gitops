@@ -41,7 +41,6 @@ spec:
             fsGroupChangePolicy: OnRootMismatch
             seccompProfile:
               type: RuntimeDefault
-          automountServiceAccountToken: false
     persistence:
       media:
         type: custom

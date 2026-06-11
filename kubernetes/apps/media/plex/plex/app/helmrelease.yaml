@@ -39,7 +39,6 @@ spec:
           securityContext:
             seccompProfile:
               type: RuntimeDefault
-          automountServiceAccountToken: false
       plex:
         containers:
           plex:
@@ -89,7 +88,6 @@ spec:
             supplementalGroups: [44]
             seccompProfile:
               type: RuntimeDefault
-          automountServiceAccountToken: false
       worker:
         type: daemonset
         containers:
@@ -184,6 +182,7 @@ spec:
                 subPath: install-intel-vaapi
       tmp:
         enabled: false
+        type: emptyDir
     route:
       plex:
         hostnames: ['plex.${DOMAIN_1}']

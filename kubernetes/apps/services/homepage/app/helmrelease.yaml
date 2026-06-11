@@ -78,8 +78,6 @@ spec:
             fsGroupChangePolicy: OnRootMismatch
             seccompProfile:
               type: RuntimeDefault
-    serviceAccount:
-      homepage: {}
     rbac:
       roles:
         homepage:
