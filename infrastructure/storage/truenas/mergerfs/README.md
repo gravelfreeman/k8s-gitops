@@ -193,7 +193,7 @@ Merged view:
 | Service | Mountpoint | Use | Branch behavior |
 | --- | --- | --- | --- |
 | `mergerfs-all-rw` | `/mnt/core/media-rw` | NFS path for media apps that need one `/media` tree | `eden`, `mfs-1`, `mfs-2`, and `mfs-3` can create/write |
-| `mergerfs-mfs-nc` | `/mnt/core/media-nc` | SMB/admin view | `eden` can create/write; `mfs-*` are `NC` (`No Create`) |
+| `mergerfs-mfs-nc` | `/mnt/core/media-nc` | Direct client/admin NFS view | `eden` can create/write; `mfs-*` are `NC` (`No Create`) |
 
 `NC` prevents new files from being created on the `mfs-*` branches through the
 admin mount. Existing files on those branches can still be read, changed,
@@ -211,8 +211,8 @@ Both mounts use:
 
 The app mount uses `category.create=epmfs`, so new files go to an existing path
 on the branch with the most free space. The admin mount uses
-`category.create=epff` with `mfs-* = NC`, so normal SMB/admin creation prefers
-`eden`.
+`category.create=epff` with `mfs-* = NC`, so normal direct-client/admin
+creation prefers `eden`.
 
 The request branch thresholds target roughly 20% free space:
 
@@ -256,7 +256,7 @@ Suggested datasets:
 - `/mnt/mfs-2/media`: request media library
 - `/mnt/mfs-3/media`: request media library
 - `/mnt/core/media-rw`: nfs share for applications
-- `/mnt/core/media-nc`: samba share for user access
+- `/mnt/core/media-nc`: nfs share for direct user/admin access
 
 ## Verification
 
