@@ -37,48 +37,6 @@ extract_archive() {
   esac
 }
 
-is_archive() {
-  local asset_name="$1"
-
-  case "$asset_name" in
-  *.tar.gz | *.tgz | *.zip)
-    return 0
-    ;;
-  *)
-    return 1
-    ;;
-  esac
-}
-
-install_binary_from_release() {
-  local repo="$1"
-  local match_filter="$2"
-  local arch="$3"
-  local binary_name="$4"
-  local destination="${5:-$HOME/.local/bin/$binary_name}"
-  local asset_name
-  local extracted_bin
-
-  mkdir -p "$(dirname "$destination")"
-
-  asset_name="$(download_github_release_asset "$repo" "$match_filter" "$arch")" || return 1
-
-  if ! is_archive "$asset_name"; then
-    install -m 0755 "$asset_name" "$destination"
-    return 0
-  fi
-
-  extract_archive "$asset_name" || return 1
-
-  extracted_bin="$(find . -maxdepth 3 -type f -name "$binary_name" | head -n1)"
-  if [ -z "$extracted_bin" ]; then
-    echo "Unable to locate extracted ${binary_name} binary in ${asset_name}" >&2
-    return 1
-  fi
-
-  install -m 0755 "$extracted_bin" "$destination"
-}
-
 linux_arch() {
   case "$(uname -m)" in
   aarch64 | arm64)

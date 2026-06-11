@@ -1,6 +1,9 @@
-__SSH_INCLUDE_1PASSWORD__
-
-Host *
+Host github.com
+  HostName github.com
+  User git
   IdentityAgent __SSH_AUTH_SOCK__
-  PreferredAuthentications publickey
+  IdentityFile ~/.ssh/github-auth.pub
   IdentitiesOnly yes
+  PreferredAuthentications publickey
+  StrictHostKeyChecking accept-new
+  UserKnownHostsFile ~/.ssh/known_hosts

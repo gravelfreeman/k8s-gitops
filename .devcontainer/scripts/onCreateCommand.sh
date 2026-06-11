@@ -5,35 +5,32 @@ workspace_dir="$1"
 
 . "$workspace_dir/.devcontainer/scripts/common.sh"
 
-setup_clipboard_shim() {
-  mkdir -p "$HOME/.local/bin"
-  install -m 0755 "$workspace_dir/.devcontainer/templates/xclip" "$HOME/.local/bin/xclip"
-  export PATH="$HOME/.local/bin:$PATH"
-}
-
 setup_shell_config() {
   rm -rf "$HOME/.config/zsh"
-  rm -f "$HOME/.zprofile" "$HOME/.zshrc"
-  ln -sfn "$workspace_dir/.devcontainer/.config/.zprofile" "$HOME/.zprofile"
+  rm -f "$HOME/.zshrc"
   ln -sfn "$workspace_dir/.devcontainer/.config/.zshrc" "$HOME/.zshrc"
   ln -sfn "$workspace_dir/.devcontainer/.config/zsh" "$HOME/.config/zsh"
 }
 
 setup_ssh_config() {
   install -d -m 700 "$HOME/.ssh"
-  rm -rf "$HOME/.ssh/1Password"
-  ln -sfn /tmp/host-ssh/1Password "$HOME/.ssh/1Password"
+  touch "$HOME/.ssh/known_hosts"
 
-  if [ -f /tmp/host-ssh/known_hosts ]; then
-    cp /tmp/host-ssh/known_hosts "$HOME/.ssh/known_hosts"
+  if [ -f /tmp/host-secrets/ssh/github-auth.pub ]; then
+    cp /tmp/host-secrets/ssh/github-auth.pub "$HOME/.ssh/github-auth.pub"
+    chmod 600 "$HOME/.ssh/github-auth.pub"
+  fi
+
+  if [ -f /tmp/host-secrets/ssh/github-signing.pub ]; then
+    cp /tmp/host-secrets/ssh/github-signing.pub "$HOME/.ssh/github-signing.pub"
+    chmod 600 "$HOME/.ssh/github-signing.pub"
   fi
 
   sed \
-    -e "s|__SSH_INCLUDE_1PASSWORD__|Include ~/.ssh/1Password/config|g" \
     -e "s|__SSH_AUTH_SOCK__|/tmp/ssh-agent.sock|g" \
     "$workspace_dir/.devcontainer/templates/.sshconfig" >"$HOME/.ssh/config"
 
-  chmod 600 "$HOME/.ssh/config"
+  chmod 600 "$HOME/.ssh/config" "$HOME/.ssh/known_hosts"
 }
 
 setup_git_config() {
@@ -58,7 +55,6 @@ setup_k9s_config() {
 
 on_create() {
   mkdir -p "$HOME/.config"
-  run_step "Setting up clipboard shim" setup_clipboard_shim
   run_step "Setting up shell config" setup_shell_config
   run_step "Setting up SSH config" setup_ssh_config
   run_step "Setting up git config" setup_git_config

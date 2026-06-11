@@ -1,72 +1,57 @@
 {
-  "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
-  "name": "k8s-gitops",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu@sha256:bb779775cfc7d2e65f9b0f80f17770878f5a50c00d15cc873b627c5c214ce37e",
-  "features": {
-    "ghcr.io/devcontainers/features/aws-cli:1": {},
-    "ghcr.io/devcontainers/features/common-utils:2": {
-      "installZsh": true,
-      "installOhMyZsh": true,
-      "installOhMyZshConfig": true
+    "name": "k8s-gitops",
+    "build": { "dockerfile": "Dockerfile" },
+    "features": {
+        "ghcr.io/devcontainers/features/aws-cli:1": {},
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "installZsh": true,
+            "installOhMyZsh": true,
+            "installOhMyZshConfig": true,
+            "username": "zed"
+        },
+        "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+            "minikube": "none"
+        },
+        "ghcr.io/devcontainers-extra/features/apt-get-packages:1": {
+            "packages": "command-not-found,file,fzf,jq,libimage-exiftool-perl,netcat-openbsd,python3,python3-pip,python3-venv,restic,ripgrep,sshfs,tree,unzip,xz-utils,zip,zsh,zsh-autosuggestions,zsh-syntax-highlighting,zstd"
+        },
+        "ghcr.io/devcontainers-extra/features/cloudflared:1": {},
+        "ghcr.io/devcontainers-extra/features/go-task:1": {},
+        "ghcr.io/devcontainers-extra/features/helmfile:1": {},
+        "ghcr.io/devcontainers-extra/features/talosctl:1": {},
+        "ghcr.io/devcontainer-community/devcontainer-features/k9scli.io:1": {},
+        "ghcr.io/devcontainer-community/devcontainer-features/yq:1": {},
+        "ghcr.io/flexwie/devcontainer-features/op:1": {},
+        "ghcr.io/jsburckhardt/devcontainer-features/flux:1": {},
+        "ghcr.io/rio/features/kustomize:1": {}
     },
-    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": { "minikube": "none" },
-    "ghcr.io/devcontainers-extra/features/apt-get-packages:1": {
-      "packages": "file,fzf,jq,libimage-exiftool-perl,netcat-openbsd,python3,python3-pip,python3-venv,restic,ripgrep,sshfs,tree,unzip,xz-utils,zip,zsh,zstd" },
-    "ghcr.io/devcontainers-extra/features/cloudflared:1": {},
-    "ghcr.io/devcontainers-extra/features/go-task:1": {},
-    "ghcr.io/devcontainers-extra/features/helmfile:1": {},
-    "ghcr.io/devcontainers-extra/features/talosctl:1": {},
-    "ghcr.io/devcontainer-community/devcontainer-features/k9scli.io:1": {},
-    "ghcr.io/devcontainer-community/devcontainer-features/yq:1": {},
-    "ghcr.io/flexwie/devcontainer-features/op:1": {},
-    "ghcr.io/jsburckhardt/devcontainer-features/flux:1": {},
-    "ghcr.io/rio/features/kustomize:1": { "version": "5.8.1" }
-  },
-  "mounts": [
-    "source=/tmp/1password-ssh-agent.sock,target=/tmp/ssh-agent.sock,type=bind",
-    "source=${localEnv:HOME}/.cache/k8s-gitops,target=/tmp/host-secrets,type=bind,consistency=cached",
-    "source=${localEnv:HOME}/.cache/k8s-gitops/talos,target=/tmp/talos,type=bind,consistency=cached",
-    "source=${localEnv:HOME}/.ssh,target=/tmp/host-ssh,type=bind,consistency=cached,readonly",
-    "source=${localEnv:HOME}/.gitconfig,target=/tmp/host.gitconfig,type=bind,consistency=cached,readonly",
-    "source=${localEnv:HOME}/.codex,target=/home/vscode/.codex,type=bind"
-  ],
-  "runArgs": [
-    "--device=/dev/fuse",
-    "--cap-add=SYS_ADMIN",
-    "--security-opt=apparmor:unconfined",
-  ],
-  "containerEnv": {
-    "SHELL": "/bin/zsh",
-    "SSH_AUTH_SOCK": "/tmp/ssh-agent.sock",
-    "PATH": "/home/vscode/.local/bin:/home/vscode/.krew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-    "MINIJINJA_CONFIG_FILE": "${containerWorkspaceFolder}/.devcontainer/.config/.minijinja.toml",
-    "KUBECONFIG": "/home/vscode/.kube/config",
-    "TALOSCONFIG": "/home/vscode/.talos/config"
-  },
-  "updateRemoteUserUID": false,
-  "userEnvProbe": "loginInteractiveShell",
-  "initializeCommand": "bash ${localWorkspaceFolder}/.devcontainer/scripts/initializeCommand.sh ${localWorkspaceFolder}",
-  "onCreateCommand": "bash ${containerWorkspaceFolder}/.devcontainer/scripts/onCreateCommand.sh ${containerWorkspaceFolder}",
-  "postCreateCommand": "bash ${containerWorkspaceFolder}/.devcontainer/scripts/postCreateCommand.sh ${containerWorkspaceFolder}",
-  "customizations": {
-    "vscode": {
-      "settings": {
-        "containers.environment": { "DOCKER_HOST": "ssh://colima" },
-        "github.copilot.chat.commitMessageGeneration.instructions": [ { "file": "./.githooks/commit-msg" } ],
-        "json5.schemaDownload.trustedDomains": { "https://docs.renovatebot.com/": true },
-        "kustomizeNavigator.diagnostics.enabled": false,
-        "yaml.schemas": { "kubernetes": "kubernetes/**/*.yaml" }
-      },
-      "extensions": [
-        "BlueGlassBlock.better-json5",
-        "MichalHajny.kustomize-navigator",
-        "ms-kubernetes-tools.vscode-kubernetes-tools",
-        "openai.chatgpt@26.513.21555",
-        "redhat.vscode-yaml",
-        "samuelcolvin.jinjahtml",
-        "tamasfe.even-better-toml",
-        "weaveworks.vscode-gitops-tools"
-      ]
-    }
-  }
+    "mounts": [
+        "source=${localEnv:HOME}/.cache/k8s-gitops/ssh-agent.sock,target=/tmp/ssh-agent.sock,type=bind",
+        "source=${localEnv:HOME}/.cache/k8s-gitops,target=/tmp/host-secrets,type=bind",
+        "source=${localEnv:HOME}/.cache/k8s-gitops/talos,target=/tmp/talos,type=bind",
+        "source=${localEnv:HOME}/.gitconfig,target=/tmp/host.gitconfig,type=bind,readonly",
+        "source=${localEnv:HOME}/.codex,target=/home/zed/.codex,type=bind"
+    ],
+    "runArgs": [
+        "--device=/dev/fuse",
+        "--cap-add=SYS_ADMIN",
+        "--security-opt=apparmor:unconfined"
+    ],
+    "containerEnv": {
+        "SHELL": "/bin/zsh",
+        "DEVCONTAINER": "true",
+        "K8S_GITOPS_DEVCONTAINER": "true",
+        "SSH_AUTH_SOCK": "/tmp/ssh-agent.sock",
+        "PATH": "/home/zed/.local/bin:/home/zed/.krew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "MINIJINJA_CONFIG_FILE": "${containerWorkspaceFolder}/.devcontainer/.config/.minijinja.toml",
+        "KUBECONFIG": "/home/zed/.kube/config",
+        "TALOSCONFIG": "/home/zed/.talos/config"
+    },
+    "remoteUser": "zed",
+    "containerUser": "zed",
+    "updateRemoteUserUID": false,
+    "userEnvProbe": "loginInteractiveShell",
+    "initializeCommand": "bash ${localWorkspaceFolder}/.devcontainer/scripts/initializeCommand.sh ${localWorkspaceFolder}",
+    "onCreateCommand": "bash ${containerWorkspaceFolder}/.devcontainer/scripts/onCreateCommand.sh ${containerWorkspaceFolder}",
+    "postCreateCommand": "bash ${containerWorkspaceFolder}/.devcontainer/scripts/postCreateCommand.sh ${containerWorkspaceFolder}"
 }

@@ -6,32 +6,6 @@ workspace_dir="$1"
 
 . "$workspace_dir/.devcontainer/scripts/common.sh"
 
-install_oh_my_posh() {
-  install_binary_from_release \
-    "JanDeDobbeleer/oh-my-posh" \
-    '
-      .assets[]
-      | .browser_download_url
-      | select(endswith("/posh-linux-" + $arch))
-    ' \
-    "$(linux_arch)" \
-    "oh-my-posh"
-}
-
-install_zsh_syntax_highlighting() {
-  mkdir -p "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
-  ln -sfn \
-    "$workspace_dir/.devcontainer/.config/zsh/syntax-highlighting.zsh" \
-    "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-}
-
-install_minijinja_cli() {
-  export MINIJINJA_CLI_INSTALL_DIR="$HOME/.local/bin"
-  curl -sSfL "https://github.com/mitsuhiko/minijinja/releases/latest/download/minijinja-cli-installer.sh" | sh
-  rm -f "$HOME/.local/env" "$HOME/.local/env.fish"
-  sed -i '/^\\. "\$HOME\\/\\.local\\/env"$/d' "$HOME/.profile" "$HOME/.bashrc" "$HOME/.zshrc" 2>/dev/null || true
-}
-
 install_krew() {
   local krew="$(download_github_release_asset \
     "kubernetes-sigs/krew" \
@@ -54,42 +28,45 @@ install_krew_plugins() {
     pv-mounter browse-pvc df-pv
 }
 
-install_barman_cli_cloud() {
-  sudo install -d -m 0755 /usr/share/postgresql-common/pgdg
-  curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc \
-    | sudo tee /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc >/dev/null
-  printf 'deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main\n' \
-    | sudo tee /etc/apt/sources.list.d/pgdg.list >/dev/null
-
-  sudo apt-get update
-  sudo apt-get install -y barman-cli-cloud
-}
-
 install_krr() {
-  local venv_dir="$HOME/.local/share/krr-venv"
-  local tmp_dir="$(mktemp -d)"
+  local install_dir="$HOME/.local/share/krr"
+  local asset_name
 
-  curl -fsSL "https://github.com/robusta-dev/krr/archive/refs/tags/$(
-    curl -fsSL "https://api.github.com/repos/robusta-dev/krr/releases/latest" \
-      | jq -r '.tag_name').tar.gz" -o "$tmp_dir/krr.tar.gz"
-  tar -xzf "$tmp_dir/krr.tar.gz" -C "$tmp_dir"
-  local src_dir="$(find "$tmp_dir" -maxdepth 1 -mindepth 1 -type d -name 'krr-*' | head -n1)"
+  if [ "$(uname -s)" != "Linux" ]; then
+    echo "Skipping krr binary install on $(uname -s)"
+    return 0
+  fi
 
-  python3 -m venv "$venv_dir"
-  "$venv_dir/bin/pip" install --quiet --upgrade pip
-  "$venv_dir/bin/pip" install --quiet --no-cache-dir -r "$src_dir/requirements.txt"
-  "$venv_dir/bin/pip" install --quiet --no-deps "$src_dir"
-  install -m 0755 "$venv_dir/bin/krr" "$HOME/.local/bin/krr"
+  asset_name="$(download_github_release_asset \
+    "robusta-dev/krr" \
+    '
+      .assets[]
+      | .browser_download_url
+      | select(test("krr-ubuntu-latest-.*\\.zip$"))
+    ')" || return 1
 
-  rm -rf "$tmp_dir"
+  rm -rf "$install_dir"
+  mkdir -p "$install_dir" "$HOME/.local/bin"
+  unzip -q "$asset_name" -d "$install_dir"
+  ln -sfn "$install_dir/krr/krr" "$HOME/.local/bin/krr"
+  chmod 0755 "$install_dir/krr/krr"
 }
 
 process_talosconfig() {
   local source_file="/tmp/host-secrets/talos/config"
   local target_file="$HOME/.talos/config"
+  local tmp_file
 
   install -d -m 0700 "$(dirname "$target_file")"
-  base64 --decode "$source_file" >"$target_file"
+
+  tmp_file="$(mktemp "${target_file}.tmp.XXXXXX")"
+  if ! base64 --decode "$source_file" >"$tmp_file"; then
+    rm -f "$tmp_file"
+    echo "Unable to decode talosconfig source: ${source_file}" >&2
+    return 1
+  fi
+
+  mv "$tmp_file" "$target_file"
 
   if ! rm -f "$source_file"; then
     echo "WARNING: unable to remove talosconfig host file: ${source_file}" >&2
@@ -110,16 +87,17 @@ generate_kubeconfig() {
   chmod 0600 "$HOME/.kube/config"
 }
 
+lock_runtime_sudo() {
+  sudo rm -f /etc/sudoers.d/zed /etc/sudoers.d/vscode
+}
+
 post_create() {
   local tmp_dir="$(mktemp -d)" && cd "$tmp_dir"
+  trap lock_runtime_sudo EXIT
 
-  run_step "Installing oh-my-posh" install_oh_my_posh
-  run_step "Installing zsh-syntax-highlighting" install_zsh_syntax_highlighting
-  run_step "Installing minijinja-cli" install_minijinja_cli
   run_step "Installing krew" install_krew
   run_step "Installing krew plugins" install_krew_plugins
-  run_step "Installing barman-cli-cloud" install_barman_cli_cloud
-  # run_step "Installing krr" install_krr
+  run_step "Installing krr" install_krr
   run_step "Processing talosconfig" process_talosconfig
   run_step "Generating kubeconfig" generate_kubeconfig
 
