@@ -23,7 +23,6 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      CNPG_IMAGE_CATALOG_MAJOR: "16"
   prune: true
   sourceRef:
     kind: GitRepository
