@@ -7,7 +7,6 @@
       automergeType: "pr",
       prCreation: "immediate",
       matchUpdateTypes: ["minor", "patch"],
-      minimumReleaseAge: "3 days",
       internalChecksFilter: "none",
       ignoreTests: false,
     },
