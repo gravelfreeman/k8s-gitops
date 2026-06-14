@@ -27,6 +27,8 @@ spec:
     substitute:
       APP: *app
       CNPG_IMAGE_CATALOG_NAME: postgresql-tensorchord
+      CNPG_POSTGRES_GID: "999"
+      CNPG_POSTGRES_UID: "999"
       CNPG_SHARED_PRELOAD_LIBRARIES: '[vchord.so]'
       DRAGONFLY_CLIENT_COMMON_NAME: immich-server
       VOLSYNC_CAPACITY: 20Gi
