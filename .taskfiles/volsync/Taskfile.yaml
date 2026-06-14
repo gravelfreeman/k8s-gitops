@@ -82,13 +82,22 @@ tasks:
     desc: Purge a restic repository from Backblaze B2 [TARGET=required]
     prompt: Permanently delete every object and version under {{.RESTIC_TARGET}} from Backblaze B2? This cannot be undone.
     cmds:
-      - aws --endpoint-url "https://${S3_ENDPOINT}" s3 rm "s3://${S3_BUCKET}{{.RESTIC_TARGET}}/" --recursive --only-show-errors
       - |-
-        prefix="{{.RESTIC_TARGET}}"; prefix="${prefix#/}/"
+        prefix="{{.RESTIC_TARGET}}"
+        prefix="${prefix#/}"
+        prefix="${prefix%/}/"
+        tmpfile="$(mktemp)"
+        trap 'rm -f "$tmpfile"' EXIT
         aws --endpoint-url "https://${S3_ENDPOINT}" s3api list-object-versions --bucket "${S3_BUCKET}" --prefix "${prefix}" |
-          jq -c '[.Versions[]?, .DeleteMarkers[]?] | map({Key, VersionId}) | range(0; length; 1000) as $i | {Objects: .[$i:$i+1000], Quiet: true}' |
+          jq -c '
+            [.Versions[]?, .DeleteMarkers[]?]
+            | map({Key, VersionId})
+            | range(0; length; 1000) as $i
+            | {Objects: .[$i:$i+1000], Quiet: true}
+          ' |
           while IFS= read -r batch; do
-            aws --endpoint-url "https://${S3_ENDPOINT}" s3api delete-objects --bucket "${S3_BUCKET}" --delete "${batch}" >/dev/null
+            printf '%s\n' "${batch}" >"${tmpfile}"
+            aws --endpoint-url "https://${S3_ENDPOINT}" s3api delete-objects --bucket "${S3_BUCKET}" --delete "file://${tmpfile}" >/dev/null
           done
     requires:
       vars: [TARGET]
@@ -96,7 +105,7 @@ tasks:
       RESTIC_TARGET: '{{trimSuffix "/" .TARGET}}'
     preconditions:
       - test -n "{{.RESTIC_TARGET}}"
-      - which aws jq
+      - which aws jq mktemp
 
   restore:
     desc: Restore VolSync restic snapshots locally [SOURCE=required]
