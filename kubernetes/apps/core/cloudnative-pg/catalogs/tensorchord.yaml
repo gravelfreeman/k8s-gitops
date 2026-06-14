@@ -9,6 +9,8 @@ metadata:
 spec:
   images:
     - major: 16
-      image: ghcr.io/tensorchord/cloudnative-vectorchord:16.10-0.5.3@sha256:a0776b514bb23858d8aa59b08587223f8b449bba1b278ffbcf85e097d6504eb0
+      image: ghcr.io/immich-app/postgres:16-vectorchord0.5.3-pgvector0.8.1@sha256:4591c961b2653b2d1114b85b216821b8ea16ace14073b76631572080bf4b19b1
+    - major: 17
+      image: ghcr.io/immich-app/postgres:17-vectorchord0.5.3-pgvector0.8.1@sha256:ea1b08c5f5be1a94cca24ad8337ad71cb978f364b36a31c30b489305424607e1
     - major: 18
-      image: ghcr.io/tensorchord/cloudnative-vectorchord:18.3-1.1.1@sha256:392b53675b403d6a2c72b673cc488a7c272514755dd818c622fb9ce4665193c4
+      image: ghcr.io/immich-app/postgres:18-vectorchord0.5.3-pgvector0.8.1@sha256:71964cc1e52ae1db784bc3ed6eeb366242e00a37e334456bd05b47543d76b76f
