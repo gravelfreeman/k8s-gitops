@@ -17,7 +17,7 @@ spec:
           app:
             image:
               repository: ghcr.io/liftedkilt/openchore/api
-              tag: latest@sha256:d7e815ed667e192ae5b4ca29d1edabaaa475c2a896bdafe171dfe6e6e3dffb74
+              tag: sha-e0134c5@sha256:d7e815ed667e192ae5b4ca29d1edabaaa475c2a896bdafe171dfe6e6e3dffb74
             env:
               AI_ENDPOINT: http://openchore-ollama:11434
             probes:
@@ -40,7 +40,7 @@ spec:
           app:
             image:
               repository: ghcr.io/liftedkilt/openchore/web
-              tag: latest@sha256:4859066b7860aa71e7b50d1366e15d398ac43086cbd77331db07b11047c8d60b
+              tag: sha-e0134c5@sha256:4859066b7860aa71e7b50d1366e15d398ac43086cbd77331db07b11047c8d60b
             probes:
               liveness:
                 enabled: true
@@ -48,30 +48,29 @@ spec:
                 enabled: true
             resources: *resources
             securityContext: *securityContext
-      # LiteRT is disabled until the upstream image includes the native runtime libraries.
-      # litert:
-      #   containers:
-      #     app:
-      #       image:
-      #         repository: ghcr.io/liftedkilt/openchore/litert
-      #         tag: latest@sha256:23f50e034c3c8368025f0ee469917145c19f603ea17c10db0be804d926f572c9
-      #       env:
-      #         HF_HOME: /app/model/.cache/huggingface
-      #         XDG_CACHE_HOME: /app/model/.cache
-      #         PYTHONDONTWRITEBYTECODE: "1"
-      #       probes:
-      #         liveness: &litertProbes
-      #           enabled: true
-      #           type: HTTP
-      #           path: /health
-      #         readiness: *litertProbes
-      #       resources:
-      #         requests:
-      #           cpu: 500m
-      #           memory: 2Gi
-      #         limits:
-      #           memory: 4Gi
-      #       securityContext: *securityContext
+      litert:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/liftedkilt/openchore/litert
+              tag: sha-e0134c5@sha256:a728d544eabf064a3f6fe157016fc5e02d6dfda93842e2c4893bd64cbf87d1b4
+            env:
+              HF_HOME: /app/model/.cache/huggingface
+              XDG_CACHE_HOME: /app/model/.cache
+              PYTHONDONTWRITEBYTECODE: "1"
+            probes:
+              liveness: &litertProbes
+                enabled: true
+                type: HTTP
+                path: /health
+              readiness: *litertProbes
+            resources:
+              requests:
+                cpu: 500m
+                memory: 2Gi
+              limits:
+                memory: 4Gi
+            securityContext: *securityContext
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -96,14 +95,14 @@ spec:
             app:
               - path: /etc/nginx/conf.d/default.conf
                 subPath: default.conf
-      # litert-model:
-      #   suffix: litert-model
-      #   accessMode: ReadWriteOnce
-      #   size: 10Gi
-      #   advancedMounts:
-      #     litert:
-      #       app:
-      #         - path: /app/model
+      litert-model:
+        suffix: litert-model
+        accessMode: ReadWriteOnce
+        size: 10Gi
+        advancedMounts:
+          litert:
+            app:
+              - path: /app/model
       workdir:
         type: emptyDir
         globalMounts:
@@ -131,8 +130,8 @@ spec:
         ports:
           http:
             port: 8080
-      # litert:
-      #   controller: litert
-      #   ports:
-      #     http:
-      #       port: 8080
+      litert:
+        controller: litert
+        ports:
+          http:
+            port: 8080
