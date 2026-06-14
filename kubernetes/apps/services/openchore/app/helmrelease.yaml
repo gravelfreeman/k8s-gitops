@@ -19,7 +19,7 @@ spec:
               repository: ghcr.io/liftedkilt/openchore/api
               tag: sha-e0134c5@sha256:d7e815ed667e192ae5b4ca29d1edabaaa475c2a896bdafe171dfe6e6e3dffb74
             env:
-              AI_ENDPOINT: http://openchore-ollama:11434
+              AI_ENDPOINT: http://openchore-litert:8080
             probes:
               liveness: &apiProbes
                 enabled: true
@@ -55,7 +55,6 @@ spec:
               repository: ghcr.io/liftedkilt/openchore/litert
               tag: sha-e0134c5@sha256:a728d544eabf064a3f6fe157016fc5e02d6dfda93842e2c4893bd64cbf87d1b4
             env:
-              HF_HOME: /app/model/.cache/huggingface
               XDG_CACHE_HOME: /app/model/.cache
               PYTHONDONTWRITEBYTECODE: "1"
             probes:
