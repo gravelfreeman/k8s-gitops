@@ -64,6 +64,9 @@ spec:
                 enabled: true
                 type: HTTP
                 path: /health
+                spec:
+                  failureThreshold: 6
+                  timeoutSeconds: 10
             resources:
               requests:
                 cpu: 500m
