@@ -1,0 +1,26 @@
+annotations:
+  artifacthub.io/changes: |-
+    - kind: fixed
+      description: |-
+        Pod spec.serviceAccountName now properly uses the resolved name (including global.nameOverride) when auto-detecting a single serviceAccount.
+    - kind: fixed
+      description: |-
+        Allow omitting namespace in route parentRefs.
+    - kind: changed
+      description: |-
+        Allow setting namespace field on rawResources.
+apiVersion: v2
+description: Function library for Helm charts
+home: https://github.com/bjw-s-labs/helm-charts/tree/main/charts/library/common
+keywords:
+- common
+- library
+kubeVersion: '>=1.31.0-0'
+maintainers:
+- email: me@bjw-s.dev
+  name: bjw-s
+name: common
+sources:
+- https://github.com/bjw-s-labs/helm-charts
+type: library
+version: 5.0.1
