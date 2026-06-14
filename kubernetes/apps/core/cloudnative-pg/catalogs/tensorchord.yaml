@@ -8,5 +8,7 @@ metadata:
     images.freedscript.io/profile: tensorchord
 spec:
   images:
+    - major: 16
+      image: ghcr.io/tensorchord/cloudnative-vectorchord:16.10-0.5.3@sha256:a0776b514bb23858d8aa59b08587223f8b449bba1b278ffbcf85e097d6504eb0
     - major: 18
       image: ghcr.io/tensorchord/cloudnative-vectorchord:18.3-1.1.1@sha256:392b53675b403d6a2c72b673cc488a7c272514755dd818c622fb9ce4665193c4
