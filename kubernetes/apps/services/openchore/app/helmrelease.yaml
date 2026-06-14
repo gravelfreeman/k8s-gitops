@@ -58,17 +58,18 @@ spec:
               XDG_CACHE_HOME: /app/model/.cache
               PYTHONDONTWRITEBYTECODE: "1"
             probes:
-              liveness: &litertProbes
+              liveness:
+                enabled: true
+              readiness:
                 enabled: true
                 type: HTTP
                 path: /health
-              readiness: *litertProbes
             resources:
               requests:
                 cpu: 500m
-                memory: 2Gi
-              limits:
                 memory: 4Gi
+              limits:
+                memory: 8Gi
             securityContext: *securityContext
     defaultPodOptions:
       securityContext:
