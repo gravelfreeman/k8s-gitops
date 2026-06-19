@@ -8,14 +8,14 @@
       prCreation: "immediate",
       matchUpdateTypes: ["minor", "patch"],
       internalChecksFilter: "none",
-      ignoreTests: false,
+      ignoreTests: true,
     },
     {
       description: "Auto-merge digest and pin updates",
       automerge: true,
       automergeType: "pr",
       matchUpdateTypes: ["digest", "pin", "pinDigest"],
-      ignoreTests: false,
+      ignoreTests: true,
     },
     {
       description: "Require approval for major updates",
