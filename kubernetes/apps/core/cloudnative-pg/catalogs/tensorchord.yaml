@@ -11,6 +11,6 @@ spec:
     - major: 16
       image: ghcr.io/immich-app/postgres:16-vectorchord0.5.3-pgvector0.8.1@sha256:a78f575728d425890acb326ee963bf831ad6eb6a031e8c33ac745139d6a26a49
     - major: 17
-      image: ghcr.io/immich-app/postgres:17-vectorchord0.5.3-pgvector0.8.1@sha256:ea1b08c5f5be1a94cca24ad8337ad71cb978f364b36a31c30b489305424607e1
+      image: ghcr.io/immich-app/postgres:17-vectorchord0.5.3-pgvector0.8.1@sha256:76c23f5eb749fcf3bffcb77cbedf26ee90c44dd1910608dde16b0d8c8ca8db62
     - major: 18
       image: ghcr.io/immich-app/postgres:18-vectorchord0.5.3-pgvector0.8.1@sha256:65538806314b93e2a8efea4acd78d2b348606eb2bd921b1494ce5b241f6ffbdf
