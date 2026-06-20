@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/base:ubuntu@sha256:bb779775cfc7d2e65f9b0f80f17770878f5a50c00d15cc873b627c5c214ce37e
+FROM mcr.microsoft.com/devcontainers/base:ubuntu@sha256:d1fc409bd576f7b6f81c5cfd7399ac8b26d0fd80ba0d2eb269b1e6e1f151d22b
 
 ARG USERNAME=zed
 
