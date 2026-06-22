@@ -49,10 +49,11 @@ _devcontainer_tab_completion() {
   if [[ -z "$BUFFER" ]]; then
     BUFFER="task "
     CURSOR=${#BUFFER}
-    zle expand-or-complete
-  else
-    zle expand-or-complete
+    zle list-choices
+    return
   fi
+
+  zle expand-or-complete
 }
 
 zle -N _devcontainer_tab_completion
