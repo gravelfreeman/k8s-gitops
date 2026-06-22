@@ -9,6 +9,7 @@ spec:
   chartRef:
     kind: OCIRepository
     name: *app
+  timeout: 15m
   values:
     cephImage:
       repository: quay.io/ceph/ceph
