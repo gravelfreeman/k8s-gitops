@@ -7,12 +7,26 @@ cache_dir="$HOME/.cache/k8s-gitops"
 install -d -m 0700 "$cache_dir/ssh" "$cache_dir/talos"
 
 rm -f "$cache_dir/ssh-agent.sock"
-if [ -n "${SSH_AUTH_SOCK:-}" ]; then
-  ln -s "$SSH_AUTH_SOCK" "$cache_dir/ssh-agent.sock"
-elif [ -S /tmp/1password-ssh-agent.sock ]; then
-  ln -s /tmp/1password-ssh-agent.sock "$cache_dir/ssh-agent.sock"
+agent_socket=""
+for candidate in \
+  "${SSH_AUTH_SOCK:-}" \
+  "$HOME/.1password/agent.sock" \
+  /tmp/1password-ssh-agent.sock
+do
+  [ -n "$candidate" ] || continue
+  [ -S "$candidate" ] || continue
+
+  if SSH_AUTH_SOCK="$candidate" ssh-add -l >/dev/null 2>&1; then
+    agent_socket="$candidate"
+    break
+  fi
+done
+
+if [ -n "$agent_socket" ]; then
+  ln -s "$agent_socket" "$cache_dir/ssh-agent.sock"
 else
-  ln -s "$HOME/.1password/agent.sock" "$cache_dir/ssh-agent.sock"
+  echo "Unable to find a working SSH agent socket" >&2
+  exit 1
 fi
 
 if command -v docker >/dev/null 2>&1 \
