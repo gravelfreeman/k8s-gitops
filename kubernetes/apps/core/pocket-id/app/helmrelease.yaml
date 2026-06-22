@@ -37,7 +37,7 @@ spec:
               HOME_PAGE_URL: /settings/apps
               APP_URL: https://id.${DOMAIN_0}
               TRUST_PROXY: true
-              TRUSTED_PLATFORM: CF-Connecting-IP
+              # TRUSTED_PLATFORM: CF-Connecting-IP
               FILE_BACKEND: database
               ANALYTICS_DISABLED: true
               VERSION_CHECK_DISABLED: true
