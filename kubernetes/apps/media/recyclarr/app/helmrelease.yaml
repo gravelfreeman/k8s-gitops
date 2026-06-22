@@ -47,11 +47,17 @@ spec:
         accessMode: ReadWriteOnce
         size: 2Gi
         storageClass: ceph-block
-      resources:
+      recyclarr-config:
+        type: configMap
+        name: recyclarr-config
+        globalMounts:
+          - path: /config/recyclarr.yml
+            subPath: recyclarr.yml
+      recyclarr-resources:
         type: configMap
         name: recyclarr-resources
         globalMounts:
-          - path: /config
+          - path: /config/includes
       secrets:
         type: secret
         name: recyclarr-app-secret

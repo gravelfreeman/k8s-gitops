@@ -4,6 +4,8 @@ kind: Kustomization
 configMapGenerator:
   - files:
       - recyclarr.yml=./resources/recyclarr.yml
+    name: recyclarr-config
+  - files:
       - radarr-encode.yml=./resources/includes/radarr-encode.yml
       - radarr-french.yml=./resources/includes/radarr-french.yml
       - radarr-original.yml=./resources/includes/radarr-original.yml
