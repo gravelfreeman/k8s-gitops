@@ -5,12 +5,12 @@ kind: Gateway
 metadata:
   name: envoy-internal
   annotations:
-    external-dns.alpha.kubernetes.io/target: &internalHostname internal.${DOMAIN_0}
+    external-dns.alpha.kubernetes.io/target: 10.0.20.80
 spec:
   gatewayClassName: envoy-internal
   infrastructure:
     annotations:
-      external-dns.alpha.kubernetes.io/hostname: *internalHostname
+      external-dns.alpha.kubernetes.io/hostname: internal.${DOMAIN_0}
       lbipam.cilium.io/ips: 10.0.20.80
     labels:
       io.cilium/bgp-advertise: "true"
