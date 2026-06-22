@@ -1,5 +1,5 @@
 .DS_Store
-/templates
+/restore
 /kubernetes/apps/services/homepage/app/config/bookmarks.yaml
 /kubernetes/apps/media/torrent/qbitmanage/app/resources/config_qb1.yml
 /kubernetes/apps/media/torrent/qbitmanage/app/resources/config_qb2.yml
