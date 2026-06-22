@@ -15,6 +15,7 @@ labels:
       domain: media
 resources:
   - autobrr/ks.yaml
+  - bazarr/ks.yaml
   - grimmory/ks.yaml
   - maintainerr/ks.yaml
   - plex/ks.yaml
@@ -23,10 +24,15 @@ resources:
   - plex/plex/ks.yaml
   - plex/plex-auto-languages/ks.yaml
   - prowlarr/ks.yaml
+  - radarr/ks.yaml
+  - recyclarr/ks.yaml
+  - romm/ks.yaml
+  - seerr/ks.yaml
+  - sonarr/ks.yaml
   - torrent/ks.yaml
+  - torrent/qbitmanage/ks.yaml
   - torrent/qbittorrent-1/ks.yaml
   - torrent/qbittorrent-2/ks.yaml
   - torrent/qbittorrent-3/ks.yaml
   - torrent/qbittorrent-4/ks.yaml
   - torrent/qui/ks.yaml
-  - romm/ks.yaml
