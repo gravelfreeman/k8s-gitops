@@ -11,7 +11,6 @@ spec:
     - ../../../../components/common/app
     - ../../../../components/cnpg
     - ../../../../components/dragonfly
-    - ../../../../components/dragonfly/tls
     - ../../../../components/volsync
   dependsOn:
     - name: cloudnative-pg
@@ -30,7 +29,6 @@ spec:
       CNPG_POSTGRES_GID: "999"
       CNPG_POSTGRES_UID: "999"
       CNPG_SHARED_PRELOAD_LIBRARIES: '[vchord.so]'
-      DRAGONFLY_CLIENT_COMMON_NAME: immich-server
       VOLSYNC_CAPACITY: 20Gi
   prune: true
   sourceRef:

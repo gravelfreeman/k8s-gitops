@@ -24,7 +24,7 @@ spec:
               DB_USER: *app
               DB_PASSWD_FILE: /secrets/cnpg/password
               REDIS_HOST: romm-dragonfly
-              REDIS_PASSWORD_FILE: /secrets/dragonfly/password
+              REDIS_PASSWORD_FILE: /dragonfly/password
               ROMM_DB_DRIVER: postgresql
               ROMM_AUTH_SECRET_KEY_FILE: /secrets/ROMM_AUTH_SECRET_KEY
               ENABLE_SCHEDULED_CONVERT_IMAGES_TO_WEBP: true
@@ -119,11 +119,6 @@ spec:
                   items:
                     - key: password
                       path: cnpg/password
-              - secret:
-                  name: romm-dragonfly-secret
-                  items:
-                    - key: password
-                      path: dragonfly/password
               - secret:
                   name: romm-app-secret
       nginx:

@@ -19,7 +19,7 @@ spec:
               repository: ghcr.io/immich-app/immich-server
               tag: v2.7.5@sha256:c15bff75068effb03f4355997d03dc7e0fc58720c2b54ad6f7f10d1bc57efaa5
             command: ["tini", "--", "/bin/bash", "-ec"]
-            args: [. /dragonfly/init.sh && bash /scripts/init-storage.sh && exec start.sh]
+            args: ["bash /scripts/init-storage.sh && exec start.sh"]
             env:
               DB_HOSTNAME: immich-cnpg-rw
               DB_USERNAME: *app
@@ -28,6 +28,9 @@ spec:
                   secretKeyRef:
                     name: immich-cnpg-app
                     key: password
+              REDIS_HOSTNAME: immich-dragonfly
+              REDIS_PORT: 6379
+              REDIS_PASSWORD_FILE: /dragonfly/password
             probes:
               liveness: &serverProbe
                 enabled: true

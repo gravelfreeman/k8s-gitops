@@ -11,7 +11,6 @@ spec:
     - ../../../../components/common/app
     - ../../../../components/cnpg
     - ../../../../components/dragonfly
-    - ../../../../components/dragonfly/auth
     - ../../../../components/volsync
   dependsOn:
     - name: cloudnative-pg

@@ -18,10 +18,9 @@ spec:
             image:
               repository: ghcr.io/connorgallopo/tracearr
               tag: 1.4.28@sha256:ca93988326c26597e0d9c91d69c0f97e7ed23c517cf327c22bc7f188002af998
-            args: [". /dragonfly/init.sh && exec /entrypoint.sh node apps/server/dist/index.js"]
-            command: ["/bin/sh", "-ec"]
             env:
               NODE_ENV: production
+              REDIS_URL_FILE: /dragonfly/REDIS_URL
               DATABASE_URL:
                 valueFrom:
                   secretKeyRef:

@@ -11,10 +11,8 @@ spec:
     - ../../../../components/common/app
     - ../../../../components/cnpg
     - ../../../../components/dragonfly
-    - ../../../../components/dragonfly/tls
   dependsOn:
     - name: cloudnative-pg
-    - name: cert-manager
     - name: dragonfly-operator
     - name: envoy-gateway-config
     - name: external-secrets-store
@@ -30,14 +28,3 @@ spec:
   targetNamespace: *app
   timeout: 10m
   wait: true
-  patches:
-    - patch: |-
-        - op: replace
-          path: /spec/bootstrap
-          value:
-            initdb:
-              database: tracearr
-              owner: tracearr
-      target:
-        group: postgresql.cnpg.io
-        kind: Cluster
