@@ -2,9 +2,31 @@ apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
 resources:
   - certificate.yaml
+  - scripts.yaml
 patches:
   - path: dragonfly.yaml
     target:
       group: dragonflydb.io
       version: v1alpha1
       kind: Dragonfly
+  - patch: |-
+      apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      metadata:
+        name: _
+      spec:
+        values:
+          persistence:
+            dragonfly-init:
+              type: configMap
+              name: dragonfly-init
+              globalMounts:
+                - path: /dragonfly
+            dragonfly-client-tls:
+              type: secret
+              name: ${DRAGONFLY_CLIENT_TLS_SECRET_NAME:=${APP}-dragonfly-client-tls}
+              globalMounts:
+                - path: /certs/dragonfly
+    target:
+      group: helm.toolkit.fluxcd.io
+      kind: HelmRelease

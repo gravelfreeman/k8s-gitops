@@ -22,6 +22,14 @@ components:
   - ../../../../components/dragonfly/tls
 ```
 
+### TLS only
+
+For apps that use TLS/mTLS, add the init script in the app container args:
+
+```yaml
+args: [". /dragonfly/init.sh && exec ..."]
+```
+
 ## Variables
 
 | Name | Default | Description |
