@@ -1,6 +1,6 @@
 services:
   mergerfs-all-rw:
-    image: ghcr.io/hotio/mergerfs:release-v2.42.0@sha256:bab99bd24e0378e2f8b97c2c5dd1a2f413cf6a17c696ab3412a54c0af2bf2ed3
+    image: ghcr.io/hotio/mergerfs:release-v2.42.0@sha256:7db1e081671668df773aa1f4da0c296bd4ca4bc05cc157f31232c7e408d1f1c2
     container_name: mergerfs-all-rw
     restart: unless-stopped
     cap_add:
@@ -43,7 +43,7 @@ services:
       start_period: 10s
       timeout: 3s
   mergerfs-mfs-nc:
-    image: ghcr.io/hotio/mergerfs:release-v2.42.0@sha256:bab99bd24e0378e2f8b97c2c5dd1a2f413cf6a17c696ab3412a54c0af2bf2ed3
+    image: ghcr.io/hotio/mergerfs:release-v2.42.0@sha256:7db1e081671668df773aa1f4da0c296bd4ca4bc05cc157f31232c7e408d1f1c2
     container_name: mergerfs-mfs-nc
     restart: unless-stopped
     cap_add:
