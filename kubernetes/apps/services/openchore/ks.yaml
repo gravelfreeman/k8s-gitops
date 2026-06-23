@@ -22,6 +22,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      ENVOY_OIDC_FORWARD_ACCESS_TOKEN: "false"
       ENVOY_OIDC_GROUP: user
   prune: true
   sourceRef:
