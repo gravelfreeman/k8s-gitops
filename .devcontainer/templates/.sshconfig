@@ -7,3 +7,7 @@ Host github.com
   PreferredAuthentications publickey
   StrictHostKeyChecking accept-new
   UserKnownHostsFile ~/.ssh/known_hosts
+
+Host localhost 127.0.0.1 ::1
+  IdentitiesOnly yes
+  PreferredAuthentications publickey
