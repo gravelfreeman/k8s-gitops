@@ -19,7 +19,7 @@ spec:
               repository: ghcr.io/immich-app/immich-server
               tag: v2.7.5@sha256:c15bff75068effb03f4355997d03dc7e0fc58720c2b54ad6f7f10d1bc57efaa5
             command: ["tini", "--", "/bin/bash", "-ec"]
-            args: [. /scripts/init-cache.sh && bash /scripts/init-storage.sh && exec start.sh]
+            args: [. /dragonfly/init.sh && bash /scripts/init-storage.sh && exec start.sh]
             env:
               DB_HOSTNAME: immich-cnpg-rw
               DB_USERNAME: *app
@@ -116,13 +116,6 @@ spec:
           server:
             app:
               - path: /scripts
-      dragonfly-client-tls:
-        type: secret
-        name: immich-dragonfly-client-tls
-        advancedMounts:
-          server:
-            app:
-              - path: /certs/dragonfly
       upload:
         type: emptyDir
         advancedMounts:

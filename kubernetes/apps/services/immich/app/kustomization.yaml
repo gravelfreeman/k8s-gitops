@@ -4,8 +4,6 @@ resources:
   - helmrelease.yaml
 configMapGenerator:
   - name: scripts
-    files:
-      - init-cache.sh=./scripts/init-cache.sh
-      - init-storage.sh=./scripts/init-storage.sh
+    files: ['init-storage.sh=./scripts/init-storage.sh']
 generatorOptions:
   disableNameSuffixHash: true
