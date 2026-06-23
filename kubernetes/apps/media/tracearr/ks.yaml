@@ -1,0 +1,32 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app tracearr
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/common/app
+    - ../../../../components/cnpg
+    - ../../../../components/dragonfly
+    - ../../../../components/dragonfly/tls
+  dependsOn:
+    - name: cloudnative-pg
+    - name: cert-manager
+    - name: dragonfly-operator
+    - name: envoy-gateway-config
+    - name: external-secrets-store
+  interval: 1h
+  path: kubernetes/apps/media/tracearr/app
+  postBuild:
+    substitute:
+      APP: *app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: *app
+  timeout: 10m
+  wait: true

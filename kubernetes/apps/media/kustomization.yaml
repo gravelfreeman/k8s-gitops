@@ -37,3 +37,4 @@ resources:
   - torrent/qbittorrent-3/ks.yaml
   - torrent/qbittorrent-4/ks.yaml
   - torrent/qui/ks.yaml
+  - tracearr/ks.yaml

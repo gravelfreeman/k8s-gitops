@@ -1,0 +1,33 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dragonfly-init
+data:
+  init.sh: |
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    export REDIS_URL="$(node <<'NODE'
+    const fs = require("fs");
+
+    const app = "${APP}";
+    const host = app + "-dragonfly." + app + ".svc.cluster.local";
+
+    const certDir = process.env.DRAGONFLY_CERT_DIR || "/certs/dragonfly";
+    const readCert = (name) => fs.readFileSync(certDir + "/" + name, "utf8");
+
+    const options = {
+      host,
+      port: Number(process.env.DRAGONFLY_PORT || 6379),
+      db: Number(process.env.DRAGONFLY_DB || 0),
+      tls: {
+        ca: readCert("ca.crt"),
+        cert: readCert("tls.crt"),
+        key: readCert("tls.key"),
+      },
+    };
+
+    process.stdout.write("ioredis://" + Buffer.from(JSON.stringify(options)).toString("base64"));
+    NODE
+    )"
