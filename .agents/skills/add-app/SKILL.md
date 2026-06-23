@@ -55,7 +55,6 @@ spec:
     - ../../../../components/common/app
     # - ../../../../components/cnpg
     # - ../../../../components/dragonfly
-    # - ../../../../components/dragonfly/tls
     # - ../../../../components/envoy-oidc
     # - ../../../../components/volsync
     # - ../../../../components/vpn
@@ -79,7 +78,6 @@ spec:
 
 - Keep `dependsOn` minimal and app-level; avoid bootstrap/platform dependencies and transitive duplicates.
 - Do not set *component* defaults explicitly; override only when the app requires a different non-sensitive value.
-- Prefer `components/dragonfly/tls`; use `components/dragonfly/auth` only when the app cannot use TLS or mTLS.
 
 ---
 
