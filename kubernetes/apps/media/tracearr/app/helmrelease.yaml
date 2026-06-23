@@ -27,6 +27,9 @@ spec:
                   secretKeyRef:
                     name: tracearr-cnpg-app
                     key: fqdn-uri
+            envFrom:
+              - secretRef:
+                  name: tracearr-app-secret
             probes:
               liveness: &probes
                 enabled: true
