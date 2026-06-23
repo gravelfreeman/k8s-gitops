@@ -20,7 +20,7 @@ spec:
       name: ${APP}-oidc-secret
     forwardAccessToken: ${ENVOY_OIDC_FORWARD_ACCESS_TOKEN:=true}
     cookieNames:
-      idToken: pocketid-token
+      idToken: ${APP}-oidc-token
     scopes: [profile,email,groups]
     redirectURL: https://oidc-placeholder.invalid/oauth2/callback
   jwt:
@@ -30,7 +30,7 @@ spec:
         remoteJWKS:
           uri: https://id.${DOMAIN_0}/.well-known/jwks.json
         extractFrom:
-          cookies: [pocketid-token]
+          cookies: ['${APP}-oidc-token']
   authorization:
     defaultAction: Deny
     rules:
