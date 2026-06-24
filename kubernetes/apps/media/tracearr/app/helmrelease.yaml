@@ -21,6 +21,7 @@ spec:
             env:
               NODE_ENV: production
               REDIS_URL_FILE: /dragonfly/REDIS_URL
+              TRUST_PROXY: true
               DATABASE_URL:
                 valueFrom:
                   secretKeyRef:
