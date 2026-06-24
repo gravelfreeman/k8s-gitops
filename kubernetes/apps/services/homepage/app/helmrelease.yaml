@@ -40,7 +40,7 @@ spec:
               HOMEPAGE_FILE_SCALE_02_KEY: /secrets/SCALE_02_KEY
               HOMEPAGE_FILE_SEERR_KEY: /secrets/SEERR_KEY
               HOMEPAGE_FILE_SONARR_KEY: /secrets/SONARR_KEY
-              HOMEPAGE_FILE_TAUTULLI_KEY: /secrets/TAUTULLI_KEY
+              HOMEPAGE_FILE_TRACEARR_KEY: /secrets/TRACEARR_KEY
               HOMEPAGE_FILE_UCG_KEY: /secrets/UCG_KEY
               HOMEPAGE_FILE_UDM_KEY: /secrets/UDM_KEY
               HOMEPAGE_FILE_WEATHERAPI_KEY: /secrets/WEATHERAPI_KEY
