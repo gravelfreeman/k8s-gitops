@@ -30,6 +30,7 @@ resources:
   - sabnzbd/ks.yaml
   - seerr/ks.yaml
   - sonarr/ks.yaml
+  - tautulli/ks.yaml
   - torrent/ks.yaml
   # - torrent/qbitmanage/ks.yaml
   - torrent/qbittorrent-1/ks.yaml
