@@ -16,7 +16,7 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/home-operations/radarr
+              repository: ghcr.io/gravelfreeman/radarr
               tag: 6.2.1.10461-bin1@sha256:2bd92d974e6cf1eab0efd91245cebf47e8db82121056c1c7e63721db11c3c2da
             env:
               RADARR__AUTH__METHOD: External
