@@ -21,8 +21,6 @@ spec:
             envFrom:
               - secretRef:
                   name: idrac-fan-controller-app-secret
-            env:
-              FAN_SPEED: "100"
             probes:
               liveness: &probes
                 custom: true
