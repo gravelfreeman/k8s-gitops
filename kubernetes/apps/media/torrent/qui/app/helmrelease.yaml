@@ -60,8 +60,16 @@ spec:
           csi:
             driver: nfs.csi.k8s.io
             volumeAttributes:
-              server: 10.0.10.11
-              share: /media-rw
+              server: 10.0.10.10
+              share: /mnt/eden/media
+      requests:
+        type: custom
+        volumeSpec:
+          csi:
+            driver: nfs.csi.k8s.io
+            volumeAttributes:
+              server: 10.0.10.10
+              share: /mnt/ungava/media
       secrets:
         type: secret
         name: qui-app-secret

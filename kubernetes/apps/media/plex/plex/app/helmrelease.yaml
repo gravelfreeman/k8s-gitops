@@ -136,8 +136,8 @@ spec:
           csi:
             driver: nfs.csi.k8s.io
             volumeAttributes:
-              server: 10.0.10.11
-              share: /media-rw
+              server: 10.0.10.10
+              share: /mnt/eden/media
         advancedMounts:
           plex:
             plex:
@@ -146,6 +146,23 @@ spec:
           worker:
             worker:
               - path: /media
+                readOnly: true
+      requests:
+        type: custom
+        volumeSpec:
+          csi:
+            driver: nfs.csi.k8s.io
+            volumeAttributes:
+              server: 10.0.10.10
+              share: /mnt/ungava/media
+        advancedMounts:
+          plex:
+            plex:
+              - path: /requests
+                readOnly: true
+          worker:
+            worker:
+              - path: /requests
                 readOnly: true
       runtime:
         suffix: runtime
