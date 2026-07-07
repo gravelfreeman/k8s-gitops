@@ -2,7 +2,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app sabnzbd
+  name: &app sabnzbd-2
 spec:
   commonMetadata:
     labels:
@@ -20,7 +20,7 @@ spec:
     - name: rook-ceph-cluster
     - name: volsync
   interval: 1h
-  path: kubernetes/apps/media/sabnzbd/app
+  path: kubernetes/apps/media/nzb/sabnzbd-2/app
   postBuild:
     substitute:
       APP: *app
