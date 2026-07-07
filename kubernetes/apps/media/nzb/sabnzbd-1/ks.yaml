@@ -1,0 +1,35 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app sabnzbd-1
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/common/app
+    - ../../../../components/envoy-oidc
+    - ../../../../components/volsync
+    - ../../../../components/vpn
+  dependsOn:
+    - name: envoy-gateway-config
+    - name: external-secrets-store
+    - name: gluetun-delta
+    - name: openebs
+    - name: rook-ceph-cluster
+    - name: volsync
+  interval: 1h
+  path: kubernetes/apps/media/nzb/sabnzbd-1/app
+  postBuild:
+    substitute:
+      APP: *app
+      VPN_GATEWAY_NAME: gluetun-delta
+      VPN_GATEWAY_ID: "4"
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: nzb
+  timeout: 5m
+  wait: true

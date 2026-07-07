@@ -30,6 +30,6 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  targetNamespace: *app
+  targetNamespace: nzb
   timeout: 5m
   wait: true
