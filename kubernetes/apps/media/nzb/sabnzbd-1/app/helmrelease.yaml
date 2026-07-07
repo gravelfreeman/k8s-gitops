@@ -58,7 +58,7 @@ spec:
               server: 10.0.10.10
               share: /mnt/eden/media
         globalMounts:
-          - path: /downloads
+          - path: /media/temp/downloads
             subPath: temp/downloads
       logs:
         type: emptyDir
