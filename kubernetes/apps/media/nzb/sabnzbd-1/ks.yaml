@@ -16,6 +16,7 @@ spec:
     - name: envoy-gateway-config
     - name: external-secrets-store
     - name: gluetun-delta
+    - name: nzb
     - name: openebs
     - name: rook-ceph-cluster
     - name: volsync

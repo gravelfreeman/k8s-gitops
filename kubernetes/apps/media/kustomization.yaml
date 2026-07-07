@@ -18,6 +18,7 @@ resources:
   - bazarr/ks.yaml
   - grimmory/ks.yaml
   - maintainerr/ks.yaml
+  - nzb/ks.yaml
   - nzb/sabnzbd-1/ks.yaml
   - nzb/sabnzbd-2/ks.yaml
   - plex/ks.yaml
