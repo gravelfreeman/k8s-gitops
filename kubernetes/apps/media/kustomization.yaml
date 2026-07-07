@@ -20,7 +20,6 @@ resources:
   - maintainerr/ks.yaml
   - nzb/sabnzbd-1/ks.yaml
   - nzb/sabnzbd-2/ks.yaml
-  - torrent/qbittorrent-2/ks.yaml
   - plex/ks.yaml
   - plex/imagemaid/ks.yaml
   - plex/kometa/ks.yaml
