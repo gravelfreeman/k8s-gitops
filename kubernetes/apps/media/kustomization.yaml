@@ -32,7 +32,6 @@ resources:
   - romm/ks.yaml
   - seerr/ks.yaml
   - sonarr/ks.yaml
-  - tautulli/ks.yaml
   - torrent/ks.yaml
   - torrent/qbittorrent-1/ks.yaml
   - torrent/qbittorrent-2/ks.yaml
