@@ -59,8 +59,8 @@ spec:
               server: 10.0.10.10
               share: /mnt/ungava/media
         globalMounts:
-          - path: /media/share/qb2
-            subPath: share/qb2
+          - path: /media/qbittorrent
+            subPath: qbittorrent
     route:
       app:
         hostnames: ['qb2.${DOMAIN_1}']
