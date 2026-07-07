@@ -59,7 +59,7 @@ spec:
               server: 10.0.10.10
               share: /mnt/ungava/media
         globalMounts:
-          - path: /media/qbittorrent
+          - path: /requests/qbittorrent
             subPath: qbittorrent
     route:
       app:
