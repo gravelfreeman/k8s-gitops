@@ -8,10 +8,10 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   components:
-    - ../../../../components/common/app
-    - ../../../../components/envoy-oidc
-    - ../../../../components/volsync
-    - ../../../../components/vpn
+    - ../../../../../components/common/app/shared
+    - ../../../../../components/envoy-oidc
+    - ../../../../../components/volsync
+    - ../../../../../components/vpn
   dependsOn:
     - name: envoy-gateway-config
     - name: external-secrets-store
