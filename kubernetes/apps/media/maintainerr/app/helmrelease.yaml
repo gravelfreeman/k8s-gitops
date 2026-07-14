@@ -13,34 +13,20 @@ spec:
   values:
     controllers:
       maintainerr:
-        initContainers:
-          copy-ui:
-            image:
-              repository: ghcr.io/maintainerr/maintainerr
-              tag: 3.17.1@sha256:95e429451ea45380430d260450ab301eed9ce91fbcba5f94cf8507bd0bac0d08
-            command: ["/bin/sh", "-ec"]
-            args:
-              - |
-                mkdir -p /ui/ui
-                find /ui/ui -type f -not -path '*/node_modules/*' -print0 | xargs -0 sed -i "s,/__PATH_PREFIX__,,g"
-                cp -R /opt/app/apps/server/dist/ui/. /ui/ui/
-            securityContext:
-              readOnlyRootFilesystem: true
-              allowPrivilegeEscalation: false
-              capabilities:
-                drop: ["ALL"]
         containers:
           app:
             image:
               repository: ghcr.io/maintainerr/maintainerr
               tag: 3.17.1@sha256:95e429451ea45380430d260450ab301eed9ce91fbcba5f94cf8507bd0bac0d08
-            command: ["/bin/sh", "-ec"]
-            args: [exec npm run --prefix /opt/app/apps/server start]
             probes:
               liveness:
                 enabled: true
+                type: HTTP
+                path: /api/health/live
               readiness:
                 enabled: true
+                type: HTTP
+                path: /api/health/ready
             resources:
               requests:
                 cpu: 25m
@@ -55,9 +41,9 @@ spec:
         pod:
           securityContext:
             runAsNonRoot: true
-            runAsUser: 568
-            runAsGroup: 568
-            fsGroup: 568
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
             fsGroupChangePolicy: OnRootMismatch
             seccompProfile:
               type: RuntimeDefault
@@ -66,17 +52,10 @@ spec:
         existingClaim: maintainerr-data
         globalMounts:
           - path: /opt/data
-      workdir:
+      logs:
         type: emptyDir
-        advancedMounts:
-          maintainerr:
-            copy-ui:
-              - path: /ui
-            app:
-              - path: /opt/app/apps/server/dist/ui
-                subPath: ui
-              - path: /opt/data/logs
-                subPath: logs
+        globalMounts:
+          - path: /opt/data/logs
     route:
       app:
         hostnames: ['maintainerr.${DOMAIN_1}']
