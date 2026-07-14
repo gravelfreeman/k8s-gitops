@@ -5,16 +5,16 @@ radarr:
     base_url: http://radarr.radarr.svc.cluster.local:7878
     api_key: !file /secrets/RADARR_API_KEY
     include:
-      - config: includes/radarr-original.yml
-      - config: includes/radarr-french.yml
-      - config: includes/radarr-encode.yml
+      - config: radarr-original.yml
+      - config: radarr-french.yml
+      - config: radarr-encode.yml
     delete_old_custom_formats: true
 sonarr:
   series:
     base_url: http://sonarr.sonarr.svc.cluster.local:8989
     api_key: !file /secrets/SONARR_API_KEY
     include:
-      - config: includes/sonarr-original.yml
-      - config: includes/sonarr-french.yml
-      - config: includes/sonarr-anime.yml
+      - config: sonarr-original.yml
+      - config: sonarr-french.yml
+      - config: sonarr-anime.yml
     delete_old_custom_formats: true
