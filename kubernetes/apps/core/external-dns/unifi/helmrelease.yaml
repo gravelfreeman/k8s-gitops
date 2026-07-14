@@ -16,14 +16,11 @@ spec:
       - ${DOMAIN_1}
       - ${DOMAIN_2}
     fullnameOverride: *app
-    logLevel: &logLevel info
     policy: sync
     provider:
       name: webhook
       webhook:
         env:
-          - name: LOG_LEVEL
-            value: *logLevel
           - name: UNIFI_HOST
             value: https://10.0.20.1
           - name: UNIFI_API_KEY
