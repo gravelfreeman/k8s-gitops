@@ -71,11 +71,26 @@ spec:
           - path: /config/logs
     route:
       app:
+        forceRename: sonarr
         hostnames: ['sonarr.${DOMAIN_1}']
         parentRefs:
           - name: envoy-internal
             namespace: envoy-gateway
             sectionName: https
+      api:
+        hostnames: ['sonarr.${DOMAIN_1}']
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy-gateway
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: 8989
+            matches:
+              - path:
+                  type: PathPrefix
+                  value: /api
     service:
       app:
         ports:
