@@ -17,7 +17,7 @@ spec:
           app:
             image:
               repository: ghcr.io/gravelfreeman/radarr
-              tag: 6.2.1.10461-bin1@sha256:2bd92d974e6cf1eab0efd91245cebf47e8db82121056c1c7e63721db11c3c2da
+              tag: 6.3.0.10514-bin1.2@sha256:9acbb26021a8805b851c93852d8a4115ee17f8226f6462f52dc5477cb177a5d6
             env:
               RADARR__AUTH__METHOD: External
               RADARR__LOG__LEVEL: info
