@@ -30,7 +30,7 @@ spec:
           ip-forward:
             image: &gluetunImage
               repository: ghcr.io/qdm12/gluetun
-              tag: latest@sha256:85bfa74b8307456424131e418a9a0a3fe8c7fa4bbe06a133e8ee6558cc307306
+              tag: latest@sha256:ad6b604e0cecc917a5cb6a8de55cd167ba415da8b7ec13456abb871a84be3c30
             command: ["/bin/sh", "-ec"]
             args: ["sysctl -w net.ipv4.ip_forward=1"]
             securityContext:
