@@ -6,9 +6,7 @@ configMapGenerator:
       - recyclarr.yml=./resources/recyclarr.yml
     name: recyclarr-config
   - files:
-      - radarr-encode.yml=./resources/includes/radarr-encode.yml
-      - radarr-french.yml=./resources/includes/radarr-french.yml
-      - radarr-original.yml=./resources/includes/radarr-original.yml
+      - radarr.yml=./resources/includes/radarr.yml
       - sonarr-anime.yml=./resources/includes/sonarr-anime.yml
       - sonarr-french.yml=./resources/includes/sonarr-french.yml
       - sonarr-original.yml=./resources/includes/sonarr-original.yml
