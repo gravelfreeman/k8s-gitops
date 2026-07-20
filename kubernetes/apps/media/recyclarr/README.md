@@ -25,7 +25,7 @@ Scores are kept as low as practical so the profile remains easy to reason about.
 
 `Maximum Score` would include the best theoretical Radarr remux path:
 
-- Quality: Remux (+410)
+- Remux Source (+410)
 - Remux Tier 01 (+225)
 - Special Edition (+100)
 - Hybrid (+50)

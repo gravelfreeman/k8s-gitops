@@ -25,7 +25,7 @@
           - b3fb499641d7b3c2006be1d9eb014cb3 # VFB
           - 9172b2f683f6223e3a1846427b417a3d # VOSTFR
     # Remux Source
-      - trash_ids: [d86f96f0d2c04df98b8f8d44f624d2ff] # Quality: Remux
+      - trash_ids: [local-radarr-remux-source] # Remux Source
         assign_scores_to:
           - name: Remux
             score: 410

@@ -1,5 +1,5 @@
 resource_providers:
   - name: local-radarr-custom-formats
     type: custom-formats
-    path: /config/custom-formats/radarr
+    path: /config/includes
     service: radarr

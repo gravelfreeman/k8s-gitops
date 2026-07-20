@@ -8,11 +8,9 @@ configMapGenerator:
     name: recyclarr-config
   - files:
       - radarr.yml=./resources/includes/radarr.yml
+      - remux-source.json=./resources/includes/remux-source.json
       - sonarr.yml=./resources/includes/sonarr.yml
     name: recyclarr-resources
-  - files:
-      - remux-source.json=./resources/custom-formats/radarr/remux-source.json
-    name: recyclarr-radarr-custom-formats
 generatorOptions:
   disableNameSuffixHash: true
 resources:

@@ -1,6 +1,6 @@
 {
-  "trash_id": "d86f96f0d2c04df98b8f8d44f624d2ff",
-  "name": "Quality: Remux",
+  "trash_id": "local-radarr-remux-source",
+  "name": "Remux Source",
   "includeCustomFormatWhenRenaming": false,
   "specifications": [
     {
