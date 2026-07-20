@@ -180,7 +180,7 @@
       - trash_ids:
           - d6e9318c875905d6cfb5bee961afcea9 # Not Original Audio
           - 7357cf5161efbf8c4d5d0c30b4815ee2 # Obfuscated
-          - local-radarr-custom-blacklist # Custom Blacklist
+          - local-radarr-blacklist # Blacklist
           - eecf3a857724171f968a66cb5719e152 # IMAX
           - 9f6cbff8cfe4ebbc1bde14c7b7bec0de # IMAX Enhanced
           - 09d9dd29a0fc958f9796e65c2a8864b4 # Open Matte

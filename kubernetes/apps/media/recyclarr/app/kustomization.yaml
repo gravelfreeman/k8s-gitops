@@ -7,6 +7,7 @@ configMapGenerator:
       - settings.yml=./resources/settings.yml
     name: recyclarr-config
   - files:
+      - blacklist.json=./resources/includes/blacklist.json
       - radarr.yml=./resources/includes/radarr.yml
       - remux-source.json=./resources/includes/remux-source.json
       - sonarr.yml=./resources/includes/sonarr.yml
