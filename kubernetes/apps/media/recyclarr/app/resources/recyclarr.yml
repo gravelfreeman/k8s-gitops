@@ -12,7 +12,5 @@ sonarr:
     base_url: http://sonarr.sonarr.svc.cluster.local:8989
     api_key: !file /secrets/SONARR_API_KEY
     include:
-      - config: sonarr-original.yml
-      - config: sonarr-french.yml
-      - config: sonarr-anime.yml
+      - config: sonarr.yml
     delete_old_custom_formats: true

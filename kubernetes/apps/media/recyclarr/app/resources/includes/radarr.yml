@@ -138,9 +138,17 @@
           - name: Encode
             score: 5
       - trash_ids:
+          - 3bf143ecd06f66ed88da4c704350af1d # AUBC
+          - d9058beaae2e147183870304dd526761 # CBC
+          - 1f9dfb4b8d9cae1f6dc0099547d53513 # CNLP
           - f6ff65b3f4b464a79dcc75950fe20382 # CRAV
-          - bf7e73dd1d85b12cc527dc619761c840 # Pathe
+          - 6185878161f1e2eef9cd0641a0d09eae # iP
+          - c3492a26af412e385404eade438ec51c # ITVX
+          - eacd2cb6c6d4a93e459df2cec6d7b97a # MY5
+          - 3dce1fce9ac06d1349dfbd9186289385 # NOW
           - fbca986396c5e695ef7b2def3c755d01 # OViD
+          - bf7e73dd1d85b12cc527dc619761c840 # Pathe
+          - ab56ccdc473a1f2897c76187ea365be2 # STRP
         assign_scores_to:
           - name: Remux
             score: 0

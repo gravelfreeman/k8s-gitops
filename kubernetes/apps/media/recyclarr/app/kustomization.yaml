@@ -7,9 +7,7 @@ configMapGenerator:
     name: recyclarr-config
   - files:
       - radarr.yml=./resources/includes/radarr.yml
-      - sonarr-anime.yml=./resources/includes/sonarr-anime.yml
-      - sonarr-french.yml=./resources/includes/sonarr-french.yml
-      - sonarr-original.yml=./resources/includes/sonarr-original.yml
+      - sonarr.yml=./resources/includes/sonarr.yml
     name: recyclarr-resources
 generatorOptions:
   disableNameSuffixHash: true
