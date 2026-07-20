@@ -1,0 +1,16 @@
+{
+  "trash_id": "local-radarr-custom-blacklist",
+  "name": "Custom Blacklist",
+  "includeCustomFormatWhenRenaming": false,
+  "specifications": [
+    {
+      "name": "HDLight",
+      "implementation": "ReleaseTitleSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": "\\b(HD[ ._-]?Light)\\b"
+      }
+    }
+  ]
+}
