@@ -1,9 +1,9 @@
     custom_formats:
     # Language Profiles
-      - trash_ids: [0542a48746585dc4444bbbb8a6bdf6ea] # Language: Original + French
+      - trash_ids: [0542a48746585dc4444bbbb8a6bdf6ea] # Original + French
         assign_scores_to:
           - name: Remux
-            score: 500
+            score: 850
           - name: Encode
             score: 500
       - trash_ids:
@@ -12,7 +12,7 @@
           - 95aa50f71a01c82354a7a2b385f1c4d8 # VQ
         assign_scores_to:
           - name: Remux
-            score: 450
+            score: 850
           - name: Encode
             score: 450
       - trash_ids:
@@ -24,6 +24,11 @@
           - 404c08fd0bd67f39b4d8e5709319094e # VFF
           - b3fb499641d7b3c2006be1d9eb014cb3 # VFB
           - 9172b2f683f6223e3a1846427b417a3d # VOSTFR
+    # Remux Source
+      - trash_ids: [d86f96f0d2c04df98b8f8d44f624d2ff] # Quality: Remux
+        assign_scores_to:
+          - name: Remux
+            score: 410
     # Release Groups
       - trash_ids:
           - 5583260016e0b9f683f53af41fb42e4a # FR Remux Tier 01
@@ -138,17 +143,9 @@
           - name: Encode
             score: 5
       - trash_ids:
-          - 3bf143ecd06f66ed88da4c704350af1d # AUBC
-          - d9058beaae2e147183870304dd526761 # CBC
-          - 1f9dfb4b8d9cae1f6dc0099547d53513 # CNLP
           - f6ff65b3f4b464a79dcc75950fe20382 # CRAV
-          - 6185878161f1e2eef9cd0641a0d09eae # iP
-          - c3492a26af412e385404eade438ec51c # ITVX
-          - eacd2cb6c6d4a93e459df2cec6d7b97a # MY5
-          - 3dce1fce9ac06d1349dfbd9186289385 # NOW
-          - fbca986396c5e695ef7b2def3c755d01 # OViD
           - bf7e73dd1d85b12cc527dc619761c840 # Pathe
-          - ab56ccdc473a1f2897c76187ea365be2 # STRP
+          - fbca986396c5e695ef7b2def3c755d01 # OViD
         assign_scores_to:
           - name: Remux
             score: 0
@@ -181,7 +178,7 @@
             score: 1
     # Unwanted
       - trash_ids:
-          - d6e9318c875905d6cfb5bee961afcea9 # Language: Not Original
+          - d6e9318c875905d6cfb5bee961afcea9 # Not Original Audio
           - 7357cf5161efbf8c4d5d0c30b4815ee2 # Obfuscated
           - eecf3a857724171f968a66cb5719e152 # IMAX
           - 9f6cbff8cfe4ebbc1bde14c7b7bec0de # IMAX Enhanced

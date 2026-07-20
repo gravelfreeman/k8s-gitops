@@ -4,11 +4,15 @@ kind: Kustomization
 configMapGenerator:
   - files:
       - recyclarr.yml=./resources/recyclarr.yml
+      - settings.yml=./resources/settings.yml
     name: recyclarr-config
   - files:
       - radarr.yml=./resources/includes/radarr.yml
       - sonarr.yml=./resources/includes/sonarr.yml
     name: recyclarr-resources
+  - files:
+      - remux-source.json=./resources/custom-formats/radarr/remux-source.json
+    name: recyclarr-radarr-custom-formats
 generatorOptions:
   disableNameSuffixHash: true
 resources:

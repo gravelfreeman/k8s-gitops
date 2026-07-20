@@ -53,11 +53,18 @@ spec:
         globalMounts:
           - path: /config/recyclarr.yml
             subPath: recyclarr.yml
+          - path: /config/settings.yml
+            subPath: settings.yml
       recyclarr-resources:
         type: configMap
         name: recyclarr-resources
         globalMounts:
           - path: /config/includes
+      recyclarr-radarr-custom-formats:
+        type: configMap
+        name: recyclarr-radarr-custom-formats
+        globalMounts:
+          - path: /config/custom-formats/radarr
       secrets:
         type: secret
         name: recyclarr-app-secret
