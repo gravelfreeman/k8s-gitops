@@ -7,5 +7,5 @@ spec:
   interval: 5m
   provider: generic
   ref:
-    tag: 1.10.1
+    tag: 1.11.0
   url: oci://ghcr.io/home-operations/charts-mirror/alloy
