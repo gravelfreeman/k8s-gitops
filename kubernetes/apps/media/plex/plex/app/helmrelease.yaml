@@ -44,7 +44,7 @@ spec:
           plex:
             image:
               repository: lscr.io/linuxserver/plex
-              tag: 1.43.3@sha256:59c671e182563040092a2d0901e429dc15e0aba9883acd13ef97857372b79b21
+              tag: 1.43.3@sha256:507713a14f9586f827d00c81381ecdcd438009172342b322b62a0e2b65081fdf
             env:
               PGID: "568"
               PUID: "568"
@@ -94,7 +94,7 @@ spec:
           worker:
             image:
               repository: lscr.io/linuxserver/plex
-              tag: 1.43.3@sha256:59c671e182563040092a2d0901e429dc15e0aba9883acd13ef97857372b79b21
+              tag: 1.43.3@sha256:507713a14f9586f827d00c81381ecdcd438009172342b322b62a0e2b65081fdf
             env:
               PGID: "568"
               PUID: "568"
