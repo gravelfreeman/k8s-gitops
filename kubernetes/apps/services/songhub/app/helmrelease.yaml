@@ -17,7 +17,7 @@ spec:
           app:
             image:
               repository: ghcr.io/gravelfreeman/songhub
-              tag: v1.7.0@sha256:7c7f3937a58b0af41afcb4a6b9fd657114bb3fe2c6ddda80fb38050b9aaada5e
+              tag: dev-5e24085@sha256:70e937fe9d0ec0dc5711d51e1afedaa468dab2e3552ff761f08f0d59a4b5d23f
             envFrom:
               - secretRef:
                   name: songhub-app-secret
