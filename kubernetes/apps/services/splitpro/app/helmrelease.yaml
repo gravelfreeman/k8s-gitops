@@ -29,7 +29,7 @@ spec:
           app:
             image:
               repository: ossapps/splitpro
-              tag: v2.1.4@sha256:25897807deb136c5b75ed6243594da4641e4a7d98de8b45a516e2c2c92e00cdf
+              tag: v2.1.5@sha256:efaa52b30d009573c4bf70e5711d6447536914469420db58680e1e6779acde6e
             env:
               PORT: &httpPort 3000
               DATABASE_URL:
