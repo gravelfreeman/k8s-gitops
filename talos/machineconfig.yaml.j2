@@ -62,7 +62,7 @@ machine:
       rotate-server-certificates: true
     extraConfig:
       serializeImagePulls: false
-    image: ghcr.io/siderolabs/kubelet:v1.36.1
+    image: ghcr.io/siderolabs/kubelet:v1.36.3
     nodeIP:
       validSubnets: [10.0.10.0/24]
   nodeLabels:
@@ -127,11 +127,11 @@ cluster:
     extraArgs:
       enable-aggregator-routing: true
       enable-admission-plugins: NodeRestriction,MutatingAdmissionPolicy
-    image: registry.k8s.io/kube-apiserver:v1.36.1
+    image: registry.k8s.io/kube-apiserver:v1.36.3
   controllerManager:
     extraArgs:
       bind-address: 0.0.0.0
-    image: registry.k8s.io/kube-controller-manager:v1.36.1
+    image: registry.k8s.io/kube-controller-manager:v1.36.3
   etcd:
     advertisedSubnets: [10.0.10.0/24]
     ca:
@@ -141,7 +141,7 @@ cluster:
       listen-metrics-urls: http://0.0.0.0:2381
   proxy:
     disabled: true
-    image: registry.k8s.io/kube-proxy:v1.36.1
+    image: registry.k8s.io/kube-proxy:v1.36.3
   scheduler:
     config:
       apiVersion: kubescheduler.config.k8s.io/v1
@@ -162,7 +162,7 @@ cluster:
                     whenUnsatisfiable: ScheduleAnyway
     extraArgs:
       bind-address: 0.0.0.0
-    image: registry.k8s.io/kube-scheduler:v1.36.1
+    image: registry.k8s.io/kube-scheduler:v1.36.3
   secretboxEncryptionSecret: op://${OP_VAULT}/talos/CLUSTER_SECRETBOXENCRYPTIONSECRET
   serviceAccount:
     key: op://${OP_VAULT}/talos/CLUSTER_SERVICEACCOUNT_KEY
