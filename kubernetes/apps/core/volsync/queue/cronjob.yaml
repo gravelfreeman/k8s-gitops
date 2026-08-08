@@ -27,7 +27,7 @@ spec:
                 defaultMode: 0555
           containers:
             - name: queue
-              image: bitnami/kubectl@sha256:db43efeaf097c669c10808d601b52b8dc6545561c06ee48fbe22fb07b6fb3894
+              image: bitnami/kubectl@sha256:1a86ba502f618724fd493f6a2b129f060454db04f06faa58d8ed94510280b17f
               # env:
               #   - name: VOLSYNC_QUEUE_EXCLUDE_TARGETS
               #     value: plex/plex-data
