@@ -6,5 +6,5 @@ spec:
   interval: 5m
   provider: generic
   ref:
-    tag: 2.2.15
+    tag: 2.2.16
   url: oci://ghcr.io/stakater/charts/reloader
