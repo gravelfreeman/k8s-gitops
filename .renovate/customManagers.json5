@@ -6,7 +6,7 @@
       description: "Process annotated dependencies",
       managerFilePatterns: ["/\\.yaml(?:\\.j2)?$/"],
       matchStrings: [
-        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n.+ (?<currentValue>[v|\\d]\\S+)"
+        "datasource=(?<datasource>docker) depName=(?<depName>\\S+)\\n.+ (?<currentValue>[v|\\d]\\S+)"
       ],
       datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
     },
