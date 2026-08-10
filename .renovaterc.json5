@@ -18,7 +18,18 @@
     ":timezone(America/Montreal)",
   ],
   dependencyDashboardTitle: "Renovate Dashboard",
-  ignorePaths: ["**/resources/**"],
+  // Renovate currently updates dependencies only from these repository roots.
+  // Keep local tooling, vendored skills, and infrastructure sources out of scans.
+  ignorePaths: [
+    "**/resources/**",
+    ".agents/**",
+    ".devcontainer/**",
+    ".githooks/**",
+    ".taskfiles/**",
+    "infrastructure/**",
+    "Taskfile.yaml",
+    ".renovaterc.json5",
+  ],
   flux: {
     managerFilePatterns: ["/\\.yaml(?:\\.j2)?$/"],
   },
