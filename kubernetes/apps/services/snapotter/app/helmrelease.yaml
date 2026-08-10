@@ -19,9 +19,7 @@ spec:
               repository: snapotter/snapotter
               tag: 2.2.0@sha256:2e11b4fa9138fa93e0fdfde5da3a2d042eebcfa81dd51286488872a3eb8086c8
             env:
-              DATA_DIR: /data
               EXTERNAL_URL: https://snapotter.${DOMAIN_0}
-              FILES_STORAGE_PATH: /data/files
               OIDC_ENABLED: true
               OIDC_PROVIDER_NAME: Freeman ID
               OIDC_ISSUER_URL: https://id.${DOMAIN_0}
@@ -48,8 +46,8 @@ spec:
               readiness: *probes
             resources:
               requests:
-                cpu: 1
-                memory: 2Gi
+                cpu: 4
+                memory: 4Gi
               limits:
                 memory: 8Gi
             securityContext:
@@ -68,11 +66,10 @@ spec:
               type: RuntimeDefault
     persistence:
       data:
-        existingClaim: snapotter-data
-      workdir:
-        type: emptyDir
-        globalMounts:
-          - path: /tmp/workspace
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 100Gi
+        storageClass: openebs-lvm
     route:
       app:
         hostnames: ['snapotter.${DOMAIN_0}']
