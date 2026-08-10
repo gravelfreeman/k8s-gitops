@@ -28,7 +28,7 @@ data:
     # renovate: datasource=custom.alpine-apk depName=main/libgcc packageName=libgcc registryUrl=https://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/
     fetch_pkg main libgcc-15.2.0-r8.apk
     # renovate: datasource=custom.alpine-apk depName=main/libstdc++ packageName=libstdc%2B%2B registryUrl=https://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/
-    fetch_pkg main libstdc++-15.2.0-r5.apk
+    fetch_pkg main libstdc++-15.2.0-r8.apk
     # renovate: datasource=custom.alpine-apk depName=main/libdrm packageName=libdrm registryUrl=https://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/
     fetch_pkg main libdrm-2.4.134-r0.apk
     # renovate: datasource=custom.alpine-apk depName=main/libva packageName=libva registryUrl=https://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/
