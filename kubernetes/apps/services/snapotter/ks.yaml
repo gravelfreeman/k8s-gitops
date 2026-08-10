@@ -1,0 +1,45 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app snapotter
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/common/app
+    - ../../../../components/cnpg
+    - ../../../../components/dragonfly
+    - ../../../../components/volsync
+  dependsOn:
+    - name: cloudnative-pg
+    - name: dragonfly-operator
+    - name: envoy-gateway-config
+    - name: external-secrets-store
+    - name: openebs
+    - name: rook-ceph-cluster
+    - name: volsync
+  interval: 1h
+  path: kubernetes/apps/services/snapotter/app
+  patches:
+    - patch: |-
+        - op: replace
+          path: /spec/bootstrap
+          value:
+            initdb:
+              database: snapotter
+              owner: snapotter
+      target:
+        group: postgresql.cnpg.io
+        kind: Cluster
+  postBuild:
+    substitute:
+      APP: *app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: *app
+  timeout: 10m
+  wait: true
