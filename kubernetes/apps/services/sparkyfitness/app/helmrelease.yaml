@@ -111,6 +111,7 @@ spec:
           sparkyfitness:
             server:
               - path: /app/SparkyFitnessServer/backup
+              - path: /app/SparkyFitnessServer/temp_uploads
             frontend:
               - path: /var/run/nginx
               - path: /var/cache/nginx
