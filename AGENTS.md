@@ -31,6 +31,9 @@ k8s-gitops
 
 - Do not print secrets in clear text.
 - Do not run Git operations.
+
+Without the user's explicit authorization;
+
 - Do not run Flux operations that modify live cluster state.
 - Do not modify generated or sensitive artifacts.
 - Do not run destructive operations or alter persistent state, versions, storage, ingress, or backups.
