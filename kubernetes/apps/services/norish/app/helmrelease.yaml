@@ -57,6 +57,9 @@ spec:
             image:
               repository: zenika/alpine-chrome
               tag: "124@sha256:8ff273195ae2d040b72b3da1199821f32ac07f5ca52b878eb5078be1d0c3488d"
+            env:
+              HOME: /tmp
+              XDG_CACHE_HOME: /tmp/cache
             args:
               - --no-sandbox
               - --disable-gpu

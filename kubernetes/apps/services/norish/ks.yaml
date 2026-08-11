@@ -22,17 +22,6 @@ spec:
     - name: volsync
   interval: 1h
   path: kubernetes/apps/services/norish/app
-  patches:
-    - patch: |-
-        - op: replace
-          path: /spec/bootstrap
-          value:
-            initdb:
-              database: norish
-              owner: norish
-      target:
-        group: postgresql.cnpg.io
-        kind: Cluster
   postBuild:
     substitute:
       APP: *app
