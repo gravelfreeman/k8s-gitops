@@ -64,6 +64,7 @@ spec:
           - path: /data/uploads
           - path: /data/outputs
           - path: /data/tmp
+          - path: /.cache
     route:
         app:
           hostnames: ['transmute.${DOMAIN_0}']
