@@ -44,7 +44,7 @@ spec:
               repository: codewithcj/sparkyfitness_server
               tag: v1.6.1@sha256:d37fcac4d0d44c212b9bfacabaf53f502adda7c9a28a2c4941c066df7a0778e7
             env:
-              SPARKY_FITNESS_ADMIN_EMAIL: "maryleerod@icloud.com"
+              SPARKY_FITNESS_ADMIN_EMAIL: "id@{DOMAIN_0}"
               BETTER_AUTH_SECRET_FILE: /secrets/app/BETTER_AUTH_SECRET
               SPARKY_FITNESS_API_ENCRYPTION_KEY_FILE: /secrets/app/SPARKY_FITNESS_API_ENCRYPTION_KEY
               SPARKY_FITNESS_DISABLE_EMAIL_LOGIN: true
