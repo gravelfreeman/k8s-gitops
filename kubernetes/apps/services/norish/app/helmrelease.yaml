@@ -19,9 +19,6 @@ spec:
               repository: norishapp/norish
               tag: v0.20.0-beta@sha256:a289b81273dac3b7e7a17fd2a8a2c313d5edc673e5ba42781dc155196b38b6e8
             env:
-              AI_ENABLED: true
-              AI_MODEL: gpt-5-mini
-              AI_PROVIDER: openai
               AUTH_URL: https://norish.${DOMAIN_0}
               CHROME_WS_ENDPOINT: ws://localhost:3003
               OIDC_CLIENT_ID: f6ffdb53-2c12-4161-9e3c-843f7e51620b
