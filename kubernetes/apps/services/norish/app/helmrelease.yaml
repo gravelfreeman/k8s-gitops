@@ -24,7 +24,6 @@ spec:
               AI_PROVIDER: openai
               AUTH_URL: https://norish.${DOMAIN_0}
               CHROME_WS_ENDPOINT: ws://localhost:3003
-              ENABLE_REGISTRATION: true
               OIDC_CLIENT_ID: f6ffdb53-2c12-4161-9e3c-843f7e51620b
               OIDC_WELLKNOWN: https://id.${DOMAIN_0}/.well-known/openid-configuration
               OIDC_ISSUER: https://id.${DOMAIN_0}
