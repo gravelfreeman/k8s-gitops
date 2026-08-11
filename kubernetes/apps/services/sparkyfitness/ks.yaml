@@ -19,17 +19,6 @@ spec:
     - name: rook-ceph-cluster
     - name: volsync
   interval: 1h
-  patches:
-    - patch: |-
-        - op: replace
-          path: /spec/bootstrap
-          value:
-            initdb:
-              database: sparkyfitness
-              owner: sparkyfitness
-      target:
-        group: postgresql.cnpg.io
-        kind: Cluster
   path: kubernetes/apps/services/sparkyfitness/app
   postBuild:
     substitute:

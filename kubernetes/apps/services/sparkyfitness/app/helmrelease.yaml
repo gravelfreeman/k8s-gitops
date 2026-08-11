@@ -113,7 +113,7 @@ spec:
               - path: /app/SparkyFitnessServer/backup
               - path: /app/SparkyFitnessServer/temp_uploads
             frontend:
-              - path: /var/run/nginx
+              - path: /run
               - path: /var/cache/nginx
               - path: /etc/nginx/conf.d
     route:
