@@ -47,6 +47,7 @@ spec:
               SPARKY_FITNESS_ADMIN_EMAIL: "id@{DOMAIN_0}"
               BETTER_AUTH_SECRET_FILE: /secrets/app/BETTER_AUTH_SECRET
               SPARKY_FITNESS_API_ENCRYPTION_KEY_FILE: /secrets/app/SPARKY_FITNESS_API_ENCRYPTION_KEY
+              SPARKY_FITNESS_APP_DB_USER: sparkyapp
               SPARKY_FITNESS_DISABLE_EMAIL_LOGIN: true
               SPARKY_FITNESS_FRONTEND_URL: https://sparkyfitness.${DOMAIN_0}
               SPARKY_FITNESS_OIDC_AUTO_REDIRECT: true
@@ -97,12 +98,6 @@ spec:
           sparkyfitness:
             server:
               - path: /app/SparkyFitnessServer/uploads
-      backups:
-        type: emptyDir
-        advancedMounts:
-          sparkyfitness:
-            server:
-              - path: /app/SparkyFitnessServer/backup
       secrets:
         name: sparkyfitness-app-secret
         type: secret
@@ -110,6 +105,16 @@ spec:
           sparkyfitness:
             server:
               - path: /secrets/app
+      workdir:
+        type: emptyDir
+        advancedMounts:
+          sparkyfitness:
+            server:
+              - path: /app/SparkyFitnessServer/backup
+            frontend:
+              - path: /var/run/nginx
+              - path: /var/cache/nginx
+              - path: /etc/nginx/conf.d
     route:
       app:
         hostnames: ['sparkyfitness.${DOMAIN_0}']
@@ -121,4 +126,4 @@ spec:
       app:
         ports:
           http:
-            port: 80
+            port: 8080
