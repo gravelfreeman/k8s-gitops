@@ -17,6 +17,7 @@ resources:
   - homepage/ks.yaml
   - immich/ks.yaml
   - mealie/ks.yaml
+  - norish/ks.yaml
   - openchore/ks.yaml
   - songhub/ks.yaml
   - snapotter/ks.yaml
