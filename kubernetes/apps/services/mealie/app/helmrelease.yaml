@@ -17,7 +17,7 @@ spec:
           app:
             image:
               repository: ghcr.io/mealie-recipes/mealie
-              tag: v3.23.0@sha256:543be0394a94c4a8cb7cd53d30b1305c1596539d141cc9d434beec972f7a0e1b
+              tag: v3.23.1@sha256:5fc5cebedddb3952c1ee78f20faf42ab7e49986813fd314745aa97978a4a13eb
             env:
               PUID: 568
               PGID: 568
