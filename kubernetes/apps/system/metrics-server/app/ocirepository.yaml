@@ -6,5 +6,5 @@ spec:
   interval: 5m
   provider: generic
   ref:
-    tag: 3.13.1
+    tag: 3.14.0
   url: oci://ghcr.io/home-operations/charts-mirror/metrics-server
