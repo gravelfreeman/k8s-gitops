@@ -28,6 +28,7 @@
         "kubernetes/apps/system/cert-manager/**",
         "kubernetes/apps/system/cilium/**",
         "kubernetes/apps/system/csi-driver-nfs/**",
+        "kubernetes/apps/core/envoy-gateway/**",
         "kubernetes/apps/system/flux-system/**",
         "kubernetes/apps/system/kubelet-csr-approver/**",
         "kubernetes/apps/system/multus/**",
