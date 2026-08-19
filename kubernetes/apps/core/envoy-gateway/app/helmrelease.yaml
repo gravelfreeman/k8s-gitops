@@ -11,6 +11,8 @@ spec:
   values:
     config:
       envoyGateway:
+        extensionApis:
+          enableLua: true
         provider:
           type: Kubernetes
           kubernetes:
