@@ -12,17 +12,17 @@
           key: '{{HOMEPAGE_FILE_SCALE_01_KEY}}'
           enablePools: 'true'
           nasType: 'scale'
-  - Scale-2:
-      icon: 'sh-truenas.svg'
-      href: 'http://10.1.10.15'
-      siteMonitor: 'http://10.1.10.15'
-      widgets:
-        - type: 'truenas'
-          url: 'http://10.1.10.15'
-          version: 2
-          key: '{{HOMEPAGE_FILE_SCALE_02_KEY}}'
-          enablePools: 'true'
-          nasType: 'scale'
+  # - Scale-2:
+  #     icon: 'sh-truenas.svg'
+  #     href: 'http://10.1.10.15'
+  #     siteMonitor: 'http://10.1.10.15'
+  #     widgets:
+  #       - type: 'truenas'
+  #         url: 'http://10.1.10.15'
+  #         version: 2
+  #         key: '{{HOMEPAGE_FILE_SCALE_02_KEY}}'
+  #         enablePools: 'true'
+  #         nasType: 'scale'
   - Plex:
       icon: 'sh-plex.svg'
       href: 'https://plex.${DOMAIN_1}'
