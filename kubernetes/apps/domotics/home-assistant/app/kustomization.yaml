@@ -3,3 +3,10 @@ kind: Kustomization
 resources:
   - externalsecret.yaml
   - helmrelease.yaml
+configMapGenerator:
+  - name: git-sync-config
+    files:
+      - exechook.sh=./resources/exechook.sh
+      - sparse-checkout=./resources/sparse-checkout
+generatorOptions:
+  disableNameSuffixHash: true
