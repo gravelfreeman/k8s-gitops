@@ -49,6 +49,7 @@ spec:
               - --root=/config/.git-sync
               - --sparse-checkout-file=/etc/git-sync/sparse-checkout
               - --exechook-command=/etc/git-sync/exechook.sh
+              - --verbose=6
             resources:
               requests:
                 cpu: 10m

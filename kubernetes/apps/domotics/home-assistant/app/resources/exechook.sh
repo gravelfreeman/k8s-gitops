@@ -5,7 +5,8 @@ set -eu
 shopt -s nullglob dotglob globstar
 
 root=/config
-checkout=$root/.git-sync/ha-gitops
+git_sync_root=$root/.git-sync
+checkout=$git_sync_root/ha-gitops
 source_root=$checkout/app
 token_file=/run/secrets/git-sync-secret/HOME_ASSISTANT_API_TOKEN_GIT_SYNC
 ha_url=http://127.0.0.1:8123
@@ -29,23 +30,26 @@ remove_empty_parents() {
 }
 
 remove_stale_file_links() {
-  local link source
-  for link in "$root"/**; do
-    if [[ "$link" == "$root/.git-sync"* ]]; then
+  local directory link source
+  for directory in "$root"/*; do
+    [ -e "$directory" ] || [ -L "$directory" ] || continue
+    if [ "$directory" = "$git_sync_root" ]; then
       continue
     fi
 
-    [ -L "$link" ] || continue
-    source=$(readlink "$link")
-    [[ "$source" == "$source_root/"* ]] || continue
-    [ -e "$source" ] && continue
+    for link in "$directory" "$directory"/**; do
+      [ -L "$link" ] || continue
+      source=$(readlink "$link")
+      [[ "$source" == "$source_root/"* ]] || continue
+      [ -e "$source" ] && continue
 
-    if (( dry_run )); then
-      log_message "dry-run: remove $link"
-    else
-      rm -f "$link"
-      remove_empty_parents "$link"
-    fi
+      if (( dry_run )); then
+        log_message "dry-run: remove $link"
+      else
+        rm -f "$link"
+        remove_empty_parents "$link"
+      fi
+    done
   done
 }
 
