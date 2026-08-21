@@ -1,6 +1,7 @@
-#!/bin/sh
+#!/usr/bin/bash
 # Links Git-managed files and reloads valid Home Assistant configuration.
 set -eu
+shopt -s nullglob dotglob globstar
 
 root=/config
 checkout=$root/.git-sync/ha-gitops
@@ -8,13 +9,11 @@ source_root=$checkout/app
 token_file=/run/secrets/git-sync-secret/HOME_ASSISTANT_API_TOKEN_GIT_SYNC
 ha_url=http://127.0.0.1:8123
 commit=${GITSYNC_HASH:-unknown}
-dry_run=${HA_GITOPS_DRY_RUN:-}
+dry_run=${HA_GITOPS_DRY_RUN:-0}
 
 for argument in "$@"; do
-  case "$argument" in
-    --dry-run) dry_run=1 ;;
-    *) exit 2 ;;
-  esac
+  [ "$argument" = --dry-run ] || exit 2
+  dry_run=1
 done
 
 log_message() {
@@ -22,26 +21,31 @@ log_message() {
 }
 
 remove_empty_parents() {
-  directory=${1%/*}
-
+  local directory=${1%/*}
   while [ "$directory" != "$root" ] && rmdir "$directory" 2>/dev/null; do
     directory=${directory%/*}
   done
 }
 
 remove_stale_file_links() {
-  find "$root" -type l -lname "$source_root/*" -print |
-    while IFS= read -r link; do
-      source=$(readlink "$link")
-      if [ ! -e "$source" ]; then
-        if [ -n "$dry_run" ]; then
-          log_message "dry-run: remove $link"
-        else
-          rm -f "$link"
-          remove_empty_parents "$link"
-        fi
-      fi
-    done
+  local link source
+  for link in "$root"/**; do
+    if [[ "$link" == "$root/.git-sync"* ]]; then
+      continue
+    fi
+
+    [ -L "$link" ] || continue
+    source=$(readlink "$link")
+    [[ "$source" == "$source_root/"* ]] || continue
+    [ -e "$source" ] && continue
+
+    if (( dry_run )); then
+      log_message "dry-run: remove $link"
+    else
+      rm -f "$link"
+      remove_empty_parents "$link"
+    fi
+  done
 }
 
 call_ha_api() {
@@ -51,44 +55,47 @@ call_ha_api() {
 }
 
 publish_git_file() {
-  source=$1
-  target=$2
+  local source=$1 target=$2
 
   if [ -d "$target" ] && [ ! -L "$target" ]; then
-    if [ -n "$dry_run" ]; then
+    if (( dry_run )); then
       log_message "dry-run: blocked by directory $target"
-      find "$target" -mindepth 1 -print |
-        sed 's|^|ha-gitops: dry-run: keep |' >&2
+      for entry in "$target"/**; do
+        log_message "dry-run: keep $entry"
+      done
       return 0
     fi
     log_message "cannot publish $source: directory exists at $target"
     exit 1
   fi
 
-  if [ -n "$dry_run" ]; then
+  if (( dry_run )); then
     if [ -e "$target" ] || [ -L "$target" ]; then
       log_message "dry-run: replace $target -> $source"
-    else
-      log_message "dry-run: create $target -> $source"
     fi
-  elif [ ! -L "$target" ] || [ "$(readlink "$target")" != "$source" ]; then
-    rm -rf "$target"
-    ln -s "$source" "$target"
+    return 0
   fi
+
+  if [ -L "$target" ] && [ "$(readlink "$target")" = "$source" ]; then
+    return 0
+  fi
+
+  rm -f "$target"
+  ln -s "$source" "$target"
 }
 
 [ -d "$source_root" ] || exit 0
 
 remove_stale_file_links
 
-find "$source_root" -type f -print |
-  while IFS= read -r source; do
-    target=$root/${source#"$source_root/"}
-    [ -n "$dry_run" ] || mkdir -p "${target%/*}"
-    publish_git_file "$source" "$target"
-  done
+for source in "$source_root"/**; do
+  [ -f "$source" ] || continue
+  target=$root/${source#"$source_root/"}
+  (( dry_run )) || mkdir -p "${target%/*}"
+  publish_git_file "$source" "$target"
+done
 
-if [ -n "$dry_run" ]; then
+if (( dry_run )); then
   log_message "dry-run complete: commit=$commit"
   exit 0
 fi
