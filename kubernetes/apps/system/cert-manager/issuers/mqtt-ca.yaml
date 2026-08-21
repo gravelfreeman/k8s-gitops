@@ -15,6 +15,7 @@ metadata:
   name: mqtt-ca
 spec:
   commonName: mqtt-ca
+  duration: 87600h
   isCA: true
   issuerRef:
     group: cert-manager.io
@@ -24,5 +25,6 @@ spec:
     algorithm: ECDSA
     rotationPolicy: Always
     size: 256
+  renewBefore: 1h
   secretName: mqtt-ca
   usages: [cert sign, crl sign]
