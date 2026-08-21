@@ -1,6 +1,5 @@
 #!/usr/bin/bash
 # Publishes Git-managed files and reloads valid Home Assistant configuration.
-# Parameter expansions use doubled '$' to survive Flux substitution.
 set -eu
 shopt -s nullglob dotglob globstar
 
