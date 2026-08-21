@@ -16,6 +16,7 @@ labels:
 resources:
   - autobrr/ks.yaml
   - bazarr/ks.yaml
+  # - deleterr/ks.yaml
   - grimmory/ks.yaml
   - nzb/ks.yaml
   - nzb/sabnzbd-1/ks.yaml

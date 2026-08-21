@@ -1,0 +1,23 @@
+---
+collections:
+  Films bientôt indisponibles:
+    file_poster: /config/assets/movies-leaving-soon.png
+    plex_search:
+      all:
+        label: leaving-soon
+    summary: Les films de cette collection seront bientôt retirés. Déjà visionnés ou inactifs depuis longtemps, c'est votre dernière occasion d'en profiter!
+    sync_mode: sync
+  Meilleurs films récents:
+    collection_order: custom
+    file_poster: /config/assets/movies-best-recent.png
+    mdblist_list: https://mdblist.com/lists/freeman/meilleurs-films-r%C3%A9cents
+    radarr_taglist: best-recent
+    summary: Films les plus populaires, avec un score global ≥ 8, sortis au cours de la dernière année en salle ou sur les plateformes numériques.
+    sync_mode: sync
+  Nouveautés films québécois:
+    collection_order: custom
+    file_poster: /config/assets/movies-quebec-recent.png
+    mdblist_list: https://mdblist.com/lists/freeman/nouveaut%C3%A9s-des-films-qu%C3%A9b%C3%A9cois
+    radarr_taglist: quebec-recent
+    summary: Films québécois récents, sortis au cours de la dernière année en salle ou sur les plateformes numériques.
+    sync_mode: sync

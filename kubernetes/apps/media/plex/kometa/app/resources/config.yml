@@ -6,6 +6,8 @@ libraries:
         mass_critic_rating_update: imdb
       remove_overlays: false
       reapply_overlays: false
+    collection_files:
+      - file: /config/series.yml
     overlay_files:
       - &overlayMediaInfo
         file: /config/media_info.yml
@@ -15,34 +17,43 @@ libraries:
         file: /config/french_flag.yml
       - &overlaySeriesStatus
         file: /config/series_status.yml
-  Séries sur demande:
-    <<: *libraryBase
-    overlay_files:
-      - *overlayMediaInfo
-      - *overlayAudienceRating
-      - *overlayFrenchFlag
-      - *overlaySeriesStatus
+      - file: /config/leaving_soon.yml
   Films:
     <<: *libraryBase
+    collection_files:
+      - file: /config/movies.yml
     overlay_files:
       - *overlayMediaInfo
       - *overlayAudienceRating
       - *overlayFrenchFlag
   Films sur demande:
     <<: *libraryBase
+    collection_files:
+      - file: /config/movies.yml
     overlay_files:
       - *overlayMediaInfo
       - *overlayAudienceRating
       - *overlayFrenchFlag
+      - file: /config/leaving_soon.yml
   Films québécois: &defaultTemplate
     <<: *libraryBase
+    collection_files:
+      - file: /config/movies.yml
     overlay_files:
       - *overlayMediaInfo
       - *overlayAudienceRating
   Films jeunesse: *defaultTemplate
   Séries comédie: *defaultTemplate
   Séries documentaires: *defaultTemplate
-  Séries québécoises: *defaultTemplate
+  Séries québécoises:
+    <<: *libraryBase
+    collection_files:
+      - file: /config/series.yml
+    overlay_files:
+      - *overlayMediaInfo
+      - *overlayAudienceRating
+      - *overlayFrenchFlag
+      - *overlaySeriesStatus
   Séries jeunesse: *defaultTemplate
   Spectacles musique: *defaultTemplate
   Louis de Funès: *defaultTemplate
@@ -56,3 +67,9 @@ plex:
 tmdb:
   apikey: <<tmdbapikey>>
   language: fr
+radarr:
+  url: http://radarr.radarr.svc.cluster.local:7878
+  token: <<radarrapikey>>
+sonarr:
+  url: http://sonarr.sonarr.svc.cluster.local:8989
+  token: <<sonarrapikey>>

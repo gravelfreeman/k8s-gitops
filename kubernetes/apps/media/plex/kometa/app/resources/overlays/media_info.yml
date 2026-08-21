@@ -186,6 +186,7 @@ templates:
     ignore_blank_results: true
     plex_all: true
     filters:
+      label.not: leaving-soon
       filepath.regex: <<regex>>
   resolution_info:
     conditionals:

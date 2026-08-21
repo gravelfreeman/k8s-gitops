@@ -8,8 +8,17 @@ configMapGenerator:
   - name: kometa-config
     files:
       - config.yml=./resources/config.yml
+      - movies-best-recent.png=./resources/assets/movies-best-recent.png
+      - movies-leaving-soon.png=./resources/assets/movies-leaving-soon.png
+      - movies-quebec-recent.png=./resources/assets/movies-quebec-recent.png
+      - series-best-recent.png=./resources/assets/series-best-recent.png
+      - series-leaving-soon.png=./resources/assets/series-leaving-soon.png
+      - series-quebec-recent.png=./resources/assets/series-quebec-recent.png
+      - movies.yml=./resources/collections/movies.yml
+      - series.yml=./resources/collections/series.yml
       - audience_rating.yml=./resources/overlays/audience_rating.yml
       - french_flag.yml=./resources/overlays/french_flag.yml
+      - leaving_soon.yml=./resources/overlays/leaving_soon.yml
       - media_info.yml=./resources/overlays/media_info.yml
       - series_status.yml=./resources/overlays/series_status.yml
       - AvenirNextLTPro-Bold.ttf=./resources/fonts/AvenirNextLTPro-Bold.ttf

@@ -1,0 +1,107 @@
+---
+dry_run: false
+scheduler:
+  enabled: false
+action_delay: 5
+plex:
+  url: http://plex.plex.svc.cluster.local:32400
+  token: !env PLEX_TOKEN
+radarr:
+  - name: Radarr
+    url: http://radarr.radarr.svc.cluster.local:7878
+    api_key: !env RADARR_API_KEY
+sonarr:
+  - name: Sonarr
+    url: http://sonarr.sonarr.svc.cluster.local:8989
+    api_key: !env SONARR_API_KEY
+seerr:
+  url: http://seerr.seerr.svc.cluster.local:5055
+  api_key: !env SEERR_API_KEY
+libraries:
+  # Disk-pressure pass for seerr requested media.
+  #
+  # This pass runs when the disk is roughly above 80% used. It protects media
+  # watched by any Plex user in the last 30 days. Requests younger than 30 days
+  # are ignored. After 30 days, requester-watch protection keeps the media unless
+  # the requester has watched it through Plex. After 90 days, protection expires
+  # and deletion is allowed even if the requester never watched it.
+  - &diskRequestPolicy
+    name: Films
+    radarr: Radarr
+    action_mode: delete
+    added_at_threshold: 30
+    last_watched_threshold: 30
+    disk_size_threshold: &diskSizeThreshold
+      - path: /requests
+        threshold: 1.672TB
+    exclude:
+      radarr: &excludePaths
+        paths: [/media/]
+      seerr: &excludeRequested
+        mode: include_only
+        request_status: [approved]
+        protect_unwatched_requesters:
+          max_protection_days: 60
+    leaving_soon: &leavingSoon
+      duration: 30d
+      labels:
+        name: leaving-soon
+  - <<: *diskRequestPolicy
+    name: Séries
+    sonarr: Sonarr
+    radarr: null
+    exclude:
+      sonarr: *excludePaths
+      seerr: *excludeRequested
+  # Disk-pressure pass for non requested media.
+  #
+  # This pass runs when the disk is roughly above 80% used. It protects media
+  # watched by any Plex user in the last 30 days. Requests younger than 30 days
+  # are ignored. After 30 days, requester-watch protection keeps the media unless
+  # the requester has watched it through Plex. After 90 days, protection expires
+  # and deletion is allowed even if the requester never watched it.
+  - &diskGenericPolicy
+    name: Films
+    radarr: Radarr
+    action_mode: delete
+    added_at_threshold: 30
+    last_watched_threshold: 30
+    disk_size_threshold: *diskSizeThreshold
+    exclude:
+      radarr: *excludePaths
+      seerr: &excludeSeerr
+        mode: exclude
+    leaving_soon: *leavingSoon
+  - <<: *diskGenericPolicy
+    name: Séries
+    sonarr: Sonarr
+    radarr: null
+    exclude:
+      sonarr: *excludePaths
+      seerr: *excludeSeerr
+  # Stale-request pass for all media.
+  #
+  # This pass has no disk threshold, so it can run even when free space is OK.
+  # It only allows Seerr requests older than 365 days, while still protecting
+  # media watched by any Plex user in the last 30 days.
+  - &staleMediaPolicy
+    name: Films
+    radarr: Radarr
+    action_mode: delete
+    added_at_threshold: 335
+    last_watched_threshold: 30
+    exclude:
+      radarr: *excludePaths
+    leaving_soon: *leavingSoon
+  - <<: *staleMediaPolicy
+    name: Séries
+    sonarr: Sonarr
+    radarr: null
+    exclude:
+      sonarr: *excludePaths
+  - <<: *staleMediaPolicy
+    name: Séries québécoises
+    sonarr: Sonarr
+    radarr: null
+    exclude:
+      sonarr: *excludePaths

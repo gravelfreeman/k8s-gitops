@@ -16,7 +16,7 @@ spec:
         type: cronjob
         cronjob:
           backoffLimit: 0
-          schedule: "0 2 * * *"
+          schedule: "0 3 * * *"
         containers:
           app:
             image:
@@ -60,12 +60,30 @@ spec:
             app:
               - path: /config/config.yml
                 subPath: config.yml
+              - path: /config/assets/movies-best-recent.png
+                subPath: movies-best-recent.png
+              - path: /config/assets/movies-leaving-soon.png
+                subPath: movies-leaving-soon.png
+              - path: /config/assets/movies-quebec-recent.png
+                subPath: movies-quebec-recent.png
+              - path: /config/assets/series-best-recent.png
+                subPath: series-best-recent.png
+              - path: /config/assets/series-leaving-soon.png
+                subPath: series-leaving-soon.png
+              - path: /config/assets/series-quebec-recent.png
+                subPath: series-quebec-recent.png
+              - path: /config/movies.yml
+                subPath: movies.yml
+              - path: /config/series.yml
+                subPath: series.yml
               - path: /config/AvenirNextLTPro-Bold.ttf
                 subPath: AvenirNextLTPro-Bold.ttf
               - path: /config/audience_rating.yml
                 subPath: audience_rating.yml
               - path: /config/french_flag.yml
                 subPath: french_flag.yml
+              - path: /config/leaving_soon.yml
+                subPath: leaving_soon.yml
               - path: /config/media_info.yml
                 subPath: media_info.yml
               - path: /config/series_status.yml

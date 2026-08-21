@@ -1,0 +1,23 @@
+---
+collections:
+  Séries bientôt indisponibles:
+    file_poster: /config/assets/series-leaving-soon.png
+    plex_search:
+      all:
+        label: leaving-soon
+    summary: Les séries de cette collection seront bientôt retirées. Déjà visionnées ou inactives depuis longtemps, c'est votre dernière occasion d'en profiter!
+    sync_mode: sync
+  Meilleures séries récentes:
+    collection_order: custom
+    file_poster: /config/assets/series-best-recent.png
+    mdblist_list: https://mdblist.com/lists/freeman/meilleures-s%C3%A9ries-r%C3%A9centes
+    sonarr_taglist: best-recent
+    summary: Séries de fiction les plus populaires, avec un score global ≥ 8, sorties au cours de la dernière année sur Netflix, Prime Video, Disney+, Apple TV, Paramount+ et d’autres plateformes de streaming.
+    sync_mode: sync
+  Nouveautés séries québécoises:
+    collection_order: custom
+    file_poster: /config/assets/series-quebec-recent.png
+    mdblist_list: https://mdblist.com/lists/freeman/nouveaut%C3%A9s-s%C3%A9ries-qu%C3%A9b%C3%A9coises
+    sonarr_taglist: quebec-recent
+    summary: Séries de fiction québécoises récentes, sorties au cours de la dernière année sur ICI TOU.TV, Crave, illico+, TVA+, Télé-Québec et d’autres plateformes de streaming.
+    sync_mode: sync
