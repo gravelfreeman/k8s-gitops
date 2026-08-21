@@ -1,6 +1,6 @@
 #!/usr/bin/bash
-# Links Git-managed files and reloads valid Home Assistant configuration.
-# Shell expansions use a doubled '$' to survive Flux substitution.
+# Publishes Git-managed files and reloads valid Home Assistant configuration.
+# Parameter expansions use doubled '$' to survive Flux substitution.
 set -eu
 shopt -s nullglob dotglob globstar
 
@@ -18,108 +18,137 @@ for argument in "$@"; do
   dry_run=1
 done
 
-log_message() {
+log() {
   printf '%s\n' "ha-gitops: $*" >&2
 }
 
-remove_empty_parents() {
-  local directory=$${1%/*}
-  while [ "$directory" != "$root" ] && rmdir "$directory" 2>/dev/null; do
-    directory=$${directory%/*}
-  done
+is_managed_file() {
+  grep -qE '^(//|#) ha-gitops$' "$1"
 }
 
-remove_stale_file_links() {
-  local directory link source
+remove_path() {
+  if (( dry_run )); then
+    log "dry-run: remove $1"
+  else
+    rm -f "$1"
+    local directory=$${1%/*}
+    while [ "$directory" != "$root" ] && rmdir "$directory" 2>/dev/null; do
+      directory=$${directory%/*}
+    done
+  fi
+}
+
+remove_stale_paths() {
+  local directory path source relative
   for directory in "$root"/*; do
+    [ "$directory" = "$git_sync_root" ] && continue
     [ -e "$directory" ] || [ -L "$directory" ] || continue
-    if [ "$directory" = "$git_sync_root" ]; then
-      continue
-    fi
 
-    for link in "$directory" "$directory"/**; do
-      [ -L "$link" ] || continue
-      source=$(readlink "$link")
-      [[ "$source" == "$source_root/"* ]] || continue
-      [ -e "$source" ] && continue
-
-      if (( dry_run )); then
-        log_message "dry-run: remove $link"
-      else
-        rm -f "$link"
-        remove_empty_parents "$link"
+    for path in "$directory" "$directory"/**; do
+      if [ -L "$path" ]; then
+        source=$(readlink "$path")
+        [[ "$source" == "$source_root/"* ]] || continue
+        [ -e "$source" ] || remove_path "$path"
+        continue
       fi
+
+      case "$path" in
+        "$root/www"/*)
+          [ -f "$path" ] || continue
+          is_managed_file "$path" || continue
+          relative=$${path#"$root/"}
+          source=$source_root/$relative
+          if [ -f "$source" ] && is_managed_file "$source"; then
+            continue
+          fi
+          remove_path "$path"
+          ;;
+      esac
     done
   done
 }
 
-call_ha_api() {
+ha_api() {
   curl -fsS --connect-timeout 5 --max-time 60 \
     -H "Authorization: Bearer $token" \
-    -H 'Content-Type: application/json' -d '{}' "$1"
+    -H 'Content-Type: application/json' \
+    -d '{}' "$1"
 }
 
-publish_git_file() {
-  local source=$1 target=$2
+publish_file() {
+  local source=$1 target=$2 copy=$3 entry
 
   if [ -d "$target" ] && [ ! -L "$target" ]; then
     if (( dry_run )); then
-      log_message "dry-run: blocked by directory $target"
+      log "dry-run: blocked by directory $target"
       for entry in "$target"/**; do
-        log_message "dry-run: keep $entry"
+        log "dry-run: keep $entry"
       done
       return 0
     fi
-    log_message "cannot publish $source: directory exists at $target"
+    log "cannot publish $source: directory exists at $target"
     exit 1
   fi
 
   if (( dry_run )); then
     if [ -e "$target" ] || [ -L "$target" ]; then
-      log_message "dry-run: replace $target -> $source"
+      log "dry-run: replace $target -> $source"
     fi
+    return 0
+  fi
+
+  if (( copy )); then
+    rm -f "$target"
+    cp "$source" "$target"
     return 0
   fi
 
   if [ -L "$target" ] && [ "$(readlink "$target")" = "$source" ]; then
     return 0
   fi
-
   rm -f "$target"
   ln -s "$source" "$target"
 }
 
 [ -d "$source_root" ] || exit 0
-
-remove_stale_file_links
+remove_stale_paths
 
 for source in "$source_root"/**; do
   [ -f "$source" ] || continue
-  target=$root/$${source#"$source_root/"}
+  relative=$${source#"$source_root/"}
+  target=$root/$relative
+  copy=0
+
+  case "$relative" in
+    www/*)
+      is_managed_file "$source" || continue
+      copy=1
+      ;;
+  esac
+
   (( dry_run )) || mkdir -p "$${target%/*}"
-  publish_git_file "$source" "$target"
+  publish_file "$source" "$target" "$copy"
 done
 
 if (( dry_run )); then
-  log_message "dry-run complete: commit=$commit"
+  log "dry-run complete: commit=$commit"
   exit 0
 fi
 
 token=$(cat "$token_file")
-
-check=$(call_ha_api "$ha_url/api/config/core/check_config" 2>&1) || {
-  log_message "configuration check failed: commit=$commit error=$check"
+check=$(ha_api "$ha_url/api/config/core/check_config" 2>&1) || {
+  log "configuration check failed: commit=$commit error=$check"
   exit 1
 }
 
 printf '%s' "$check" | grep -Eq '"result"[[:space:]]*:[[:space:]]*"valid"' || {
-  log_message "configuration rejected: commit=$commit response=$check"
+  log "configuration rejected: commit=$commit response=$check"
   exit 1
 }
 
-reload=$(call_ha_api "$ha_url/api/services/homeassistant/reload_all" 2>&1) || {
-  log_message "configuration reload failed: commit=$commit error=$reload"
+reload=$(ha_api "$ha_url/api/services/homeassistant/reload_all" 2>&1) || {
+  log "configuration reload failed: commit=$commit error=$reload"
   exit 1
 }
 
-log_message "configuration applied: commit=$commit"
+log "configuration applied: commit=$commit"
