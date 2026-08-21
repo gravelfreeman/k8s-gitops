@@ -109,17 +109,17 @@ token=$(cat "$token_file")
 
 check=$(call_ha_api "$ha_url/api/config/core/check_config" 2>&1) || {
   log_message "configuration check failed: commit=$commit error=$check"
-  exit 0
+  exit 1
 }
 
 printf '%s' "$check" | grep -Eq '"result"[[:space:]]*:[[:space:]]*"valid"' || {
   log_message "configuration rejected: commit=$commit response=$check"
-  exit 0
+  exit 1
 }
 
 reload=$(call_ha_api "$ha_url/api/services/homeassistant/reload_all" 2>&1) || {
   log_message "configuration reload failed: commit=$commit error=$reload"
-  exit 0
+  exit 1
 }
 
 log_message "configuration applied: commit=$commit"
