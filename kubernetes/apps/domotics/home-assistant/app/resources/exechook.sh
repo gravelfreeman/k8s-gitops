@@ -8,7 +8,7 @@ source_root=$checkout/app
 token_file=/run/secrets/git-sync-secret/HOME_ASSISTANT_API_TOKEN_GIT_SYNC
 ha_url=http://127.0.0.1:8123
 commit=${GITSYNC_HASH:-unknown}
-dry_run=
+dry_run=${HA_GITOPS_DRY_RUN:-}
 
 for argument in "$@"; do
   case "$argument" in

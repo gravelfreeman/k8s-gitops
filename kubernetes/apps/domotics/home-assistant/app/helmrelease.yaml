@@ -41,12 +41,14 @@ spec:
             image:
               repository: registry.k8s.io/git-sync/git-sync
               tag: v4.7.1@sha256:c5e1976da735bf0b53979f079a07475d77174c51863cd084e928ff6074480717
+            env:
+              HA_GITOPS_DRY_RUN: '1'
             args:
               - --repo=https://github.com/gravelfreeman/ha-gitops
               - --ref=main
               - --root=/config/.git-sync
               - --sparse-checkout-file=/etc/git-sync/sparse-checkout
-              - --exechook-command=/bin/sh /etc/git-sync/exechook.sh --dry-run
+              - --exechook-command=/etc/git-sync/exechook.sh
             resources:
               requests:
                 cpu: 10m
@@ -88,6 +90,7 @@ spec:
       git-sync-config:
         type: configMap
         name: git-sync-config
+        defaultMode: 0555
         advancedMounts:
           home-assistant:
             git-sync:
