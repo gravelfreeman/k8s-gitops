@@ -1,5 +1,6 @@
 #!/usr/bin/bash
 # Links Git-managed files and reloads valid Home Assistant configuration.
+# Shell expansions use a doubled '$' to survive Flux substitution.
 set -eu
 shopt -s nullglob dotglob globstar
 
@@ -8,8 +9,8 @@ checkout=$root/.git-sync/ha-gitops
 source_root=$checkout/app
 token_file=/run/secrets/git-sync-secret/HOME_ASSISTANT_API_TOKEN_GIT_SYNC
 ha_url=http://127.0.0.1:8123
-commit=${GITSYNC_HASH:-unknown}
-dry_run=${HA_GITOPS_DRY_RUN:-0}
+commit=$${GITSYNC_HASH:-unknown}
+dry_run=$${HA_GITOPS_DRY_RUN:-0}
 
 for argument in "$@"; do
   [ "$argument" = --dry-run ] || exit 2
@@ -21,9 +22,9 @@ log_message() {
 }
 
 remove_empty_parents() {
-  local directory=${1%/*}
+  local directory=$${1%/*}
   while [ "$directory" != "$root" ] && rmdir "$directory" 2>/dev/null; do
-    directory=${directory%/*}
+    directory=$${directory%/*}
   done
 }
 
@@ -90,8 +91,8 @@ remove_stale_file_links
 
 for source in "$source_root"/**; do
   [ -f "$source" ] || continue
-  target=$root/${source#"$source_root/"}
-  (( dry_run )) || mkdir -p "${target%/*}"
+  target=$root/$${source#"$source_root/"}
+  (( dry_run )) || mkdir -p "$${target%/*}"
   publish_git_file "$source" "$target"
 done
 
