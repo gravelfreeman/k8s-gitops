@@ -17,7 +17,7 @@ spec:
           app:
             image:
               repository: ghcr.io/tigerblue77/dell_idrac_fan_controller
-              tag: v1.91@sha256:420c21bd796d28932603a1bf041317f821a15e4a29191dec2de26f391ba02995
+              tag: v1.94@sha256:362f6f19aa942159fa5f4331b528186b9ab2a6b4e482daa3a896ec9cdbc0eaec
             envFrom:
               - secretRef:
                   name: idrac-fan-controller-app-secret
