@@ -20,7 +20,7 @@ spec:
               tag: v0.21.0-beta@sha256:6e5d9b59c88ec8890b7dbb49a38aca7b327caa55687183d158f09970ad1a30b7
             env:
               AUTH_URL: https://norish.${DOMAIN_0}
-              CHROME_WS_ENDPOINT: ws://localhost:3003
+              OBSCURA_ENDPOINT: ws://localhost:9222
               OIDC_CLIENT_ID: f6ffdb53-2c12-4161-9e3c-843f7e51620b
               OIDC_WELLKNOWN: https://id.${DOMAIN_0}/.well-known/openid-configuration
               OIDC_ISSUER: https://id.${DOMAIN_0}
@@ -50,22 +50,10 @@ spec:
                 memory: 512Mi
               limits:
                 memory: 1Gi
-          chrome:
+          obscura:
             image:
-              repository: zenika/alpine-chrome
-              tag: "124@sha256:47da877e5622528039625218d15d7e1ccae4e426c6cc7671d165837ea98aacc8"
-            env:
-              HOME: /tmp
-              XDG_CACHE_HOME: /tmp/cache
-            args:
-              - --no-sandbox
-              - --disable-gpu
-              - --disable-dev-shm-usage
-              - --disable-features=dbus
-              - --user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.6367.78 Safari/537.36
-              - --remote-debugging-address=0.0.0.0
-              - --remote-debugging-port=3003
-              - --user-data-dir=/tmp/chrome
+              repository: norishapp/obscura
+              tag: 0.2.0-norish.1@sha256:5aa2f9d2e58e655b18dac0844b031fa095041febeca3882d663e0d36f95fcf23
             resources:
               requests:
                 cpu: 50m
