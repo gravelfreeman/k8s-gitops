@@ -69,9 +69,6 @@ spec:
                     name: poznote-app-secret
               POZNOTE_OIDC_DISABLE_NORMAL_LOGIN: false
               SQLITE_DATABASE: /var/www/html/data/database/poznote.db
-            envFrom:
-              - secretRef:
-                  name: poznote-app-secret
             probes:
               liveness: &probes
                 enabled: true
@@ -100,6 +97,15 @@ spec:
               type: RuntimeDefault
           automountServiceAccountToken: false
     persistence:
+      app-secret:
+        type: secret
+        name: poznote-app-secret
+        advancedMounts:
+          poznote:
+            app:
+              - path: /var/www/html/data/.app_secret
+                readOnly: true
+                subPath: POZNOTE_APP_SECRET
       data:
         existingClaim: poznote-data
         advancedMounts:
