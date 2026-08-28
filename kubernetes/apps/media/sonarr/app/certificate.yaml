@@ -6,6 +6,7 @@ metadata:
   name: glossarr-ca
 spec:
   commonName: Glossarr CA
+  duration: 87600h
   isCA: true
   issuerRef:
     group: cert-manager.io
@@ -15,7 +16,9 @@ spec:
     algorithm: ECDSA
     rotationPolicy: Always
     size: 256
+  renewBefore: 1h
   secretName: glossarr-ca
+  usages: [cert sign, crl sign]
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/cert-manager.io/issuer_v1.json
 apiVersion: cert-manager.io/v1

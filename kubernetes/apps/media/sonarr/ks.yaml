@@ -30,3 +30,20 @@ spec:
   targetNamespace: *app
   timeout: 5m
   wait: true
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: glossarr
+spec:
+  dependsOn:
+    - name: sonarr
+  interval: 1h
+  path: kubernetes/apps/media/sonarr/glossarr
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: sonarr
+  timeout: 5m
+  wait: true
