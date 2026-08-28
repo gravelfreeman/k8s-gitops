@@ -32,8 +32,15 @@ spec:
             probes:
               liveness: &sonarrProbes
                 enabled: true
-                type: HTTP
-                path: /ping
+                custom: true
+                spec:
+                  httpGet:
+                    httpHeaders:
+                      - name: Host
+                        value: 'sonarr.${DOMAIN_1}'
+                    path: /ping
+                    port: 8989
+                    scheme: HTTP
               readiness: *sonarrProbes
             resources:
               requests:
@@ -48,6 +55,7 @@ spec:
             env:
               CERT_DIR: /certs
               LANGUAGE: fra
+              SECONDARY_TRANSLATION_SOURCE: tmdb
             envFrom:
               - secretRef:
                   name: glossarr-app-secret
