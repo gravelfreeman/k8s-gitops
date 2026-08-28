@@ -46,8 +46,8 @@ spec:
               requests:
                 cpu: 100m
                 memory: 2Gi
-            limits:
-              memory: 8Gi
+              limits:
+                memory: 8Gi
         defaultContainerOptions:
           securityContext:
             allowPrivilegeEscalation: false
