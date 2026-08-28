@@ -13,6 +13,13 @@ spec:
   values:
     controllers:
       sonarr:
+        initContainers:
+          ca-bundle:
+            image:
+              repository: ghcr.io/home-operations/sonarr
+              tag: 4.0.19@sha256:57ddf9972fa347a025504135bf73f5c84e4b67d33285b43f170a501145d8c43b
+            args: [cat /etc/ssl/certs/ca-certificates.crt /glossarr-ca/ca.crt > /ca-bundle/ca-certificates.crt]
+            command: [/bin/sh, -c]
         containers:
           app:
             image:
@@ -21,34 +28,60 @@ spec:
             env:
               SONARR__AUTH__METHOD: External
               SONARR__LOG__LEVEL: info
+              SSL_CERT_FILE: /etc/ssl/certs/ca-certificates.crt
             probes:
-              liveness: &probes
+              liveness: &sonarrProbes
                 enabled: true
                 type: HTTP
                 path: /ping
-              readiness: *probes
+              readiness: *sonarrProbes
             resources:
               requests:
                 cpu: 100m
                 memory: 2Gi
               limits:
                 memory: 8Gi
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities:
-                drop: ["ALL"]
-        pod:
+          glossarr:
+            image:
+              repository: ghcr.io/matt-rgx/glossarr
+              tag: v1.3.0@sha256:ebd319d8a0caa37cf1c3a1751cfc19458431ab9f70043cd1b6c27f645ea1ee18
+            env:
+              CERT_DIR: /certs
+              LANGUAGE: fra
+            envFrom:
+              - secretRef:
+                  name: glossarr-app-secret
+            probes:
+              liveness: &glossarrProbes
+                enabled: true
+                type: HTTP
+                path: /health
+                port: 3000
+              readiness: *glossarrProbes
+        defaultContainerOptions:
           securityContext:
-            runAsNonRoot: true
-            runAsUser: 568
-            fsGroup: 568
-            fsGroupChangePolicy: OnRootMismatch
-            seccompProfile:
-              type: RuntimeDefault
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+    defaultPodOptions:
+      hostAliases:
+        - hostnames: [skyhook.sonarr.tv]
+          ip: 127.0.0.1
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
     persistence:
       config:
         existingClaim: sonarr-data
+        advancedMounts:
+          sonarr:
+            app:
+              - path: /config
       media:
         type: custom
         volumeSpec:
@@ -57,6 +90,10 @@ spec:
             volumeAttributes:
               server: 10.0.10.10
               share: /mnt/eden/media
+        advancedMounts:
+          sonarr:
+            app:
+              - path: /media
       requests:
         type: custom
         volumeSpec:
@@ -65,10 +102,41 @@ spec:
             volumeAttributes:
               server: 10.0.10.10
               share: /mnt/ungava/media
-      logs:
+        advancedMounts:
+          sonarr:
+            app:
+              - path: /requests
+      glossarr-ca:
+        type: secret
+        name: glossarr-ca
+        items:
+          - key: tls.crt
+            path: ca.crt
+        advancedMounts:
+          sonarr:
+            ca-bundle:
+              - path: /glossarr-ca
+      glossarr-tls:
+        type: secret
+        name: glossarr-tls
+        items:
+          - key: tls.crt
+            path: server.crt
+          - key: tls.key
+            path: server.key
+        advancedMounts:
+          sonarr:
+            glossarr:
+              - path: /certs
+      workdir:
         type: emptyDir
-        globalMounts:
-          - path: /config/logs
+        advancedMounts:
+          sonarr:
+            app:
+              - path: /config/logs
+              - path: /etc/ssl/certs
+            ca-bundle:
+              - path: /ca-bundle
     route:
       app:
         forceRename: sonarr
