@@ -32,14 +32,12 @@ spec:
                 memory: 256Mi
               limits:
                 memory: 1Gi
-      poznote-mcp:
-        containers:
-          app:
+          mcp:
             image:
               repository: ghcr.io/timothepoznanski/poznote-mcp
               tag: 6@sha256:00cd113b17f4836dc1dfa7a4b96f270b254cbfa0c7e6a82e13d2b6de34c44ef8
             env:
-              POZNOTE_API_URL: http://poznote-app.poznote.svc.cluster.local:8080/api/v1
+              POZNOTE_API_URL: http://localhost:8080/api/v1
             probes:
               liveness: &probesMcp
                 enabled: true
@@ -52,12 +50,11 @@ spec:
                 memory: 64Mi
               limits:
                 memory: 256Mi
-        defaultContainerOptions:
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop: ["ALL"]
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: ["ALL"]
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -74,10 +71,9 @@ spec:
           poznote:
             app:
               - path: /var/www/html/data
-          poznote-mcp:
-            app:
-              - path: /var/www/html/data #/.mcp_token
-                # subPath: .mcp_token
+            mcp:
+              - path: /var/www/html/data
+                readOnly: true
       runtime:
         type: emptyDir
         advancedMounts:
@@ -102,7 +98,7 @@ spec:
                   type: PathPrefix
                   value: /mcp
             backendRefs:
-              - identifier: mcp
+              - identifier: app
                 port: 8045
     service:
       app:
@@ -110,8 +106,5 @@ spec:
         ports:
           http:
             port: 8080
-      mcp:
-        controller: poznote-mcp
-        ports:
-          http:
+          mcp:
             port: 8045
