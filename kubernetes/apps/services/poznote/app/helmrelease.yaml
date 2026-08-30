@@ -82,7 +82,7 @@ spec:
             app:
               - path: /run
               - path: /var/lib/nginx
-              - path: /var/log
+              - path: /var/log/supervisor
     route:
       app:
         hostnames: ['poznote.${DOMAIN_0}']
