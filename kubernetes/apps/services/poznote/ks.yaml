@@ -20,7 +20,6 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      POD_SECURITY_ENFORCE: baseline
       VOLSYNC_UID: "1000"
   prune: true
   sourceRef:

@@ -2,10 +2,7 @@
 
 Poznote's official rootless image runs as UID/GID `1000`. The data PVC must be owned by `1000:1000`; newly provisioned or restored volumes may require a one-time permission fix with `chown -R 1000:1000 /data`. The namespace normally uses Pod Security `restricted`; temporarily switch it to `baseline` for the maintenance pod.
 
-Runtime storage is mounted at `/run`, `/run/nginx`, `/var/lib/nginx/logs`, `/var/lib/nginx/tmp`, and `/var/log/supervisor`. Mounting over `/run` or `/var/lib/nginx` without the nested mounts hides directories required by the image.
-
-## Error
-
+**Error before the fix:**
 ```text
 Poznote Initialization Script - Setting up data directory...
 ERROR: /var/www/html/data is owned by uid 0, but this container is running as uid 1000 (non-root).
