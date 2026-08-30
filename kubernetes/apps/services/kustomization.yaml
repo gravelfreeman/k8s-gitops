@@ -19,6 +19,7 @@ resources:
   - mealie/ks.yaml
   - norish/ks.yaml
   - openchore/ks.yaml
+  - poznote/ks.yaml
   - songhub/ks.yaml
   - snapotter/ks.yaml
   - sparkyfitness/ks.yaml
