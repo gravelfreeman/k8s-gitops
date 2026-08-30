@@ -20,7 +20,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      VOLSYNC_UID: "1000"
+      POD_SECURITY_ENFORCE: baseline
   prune: true
   sourceRef:
     kind: GitRepository
