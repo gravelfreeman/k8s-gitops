@@ -20,7 +20,6 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      POD_SECURITY_ENFORCE: baseline
   prune: true
   sourceRef:
     kind: GitRepository

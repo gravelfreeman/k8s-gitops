@@ -81,7 +81,8 @@ spec:
           poznote:
             app:
               - path: /run
-              - path: /var/lib/nginx
+              - path: /var/lib/nginx/logs
+              - path: /var/lib/nginx/tmp
               - path: /var/log/supervisor
     route:
       app:
