@@ -30,9 +30,10 @@ postBuild:
 
 | Name | Default | Description |
 | ---- | ------- | ----------- |
-| `VOLSYNC_PUID` | `568` | Restic mover user. |
-| `VOLSYNC_PGID` | `568` | Restic mover group. |
-| `VOLSYNC_FS_GROUP` | `568` | Restic mover fsGroup. |
+| `VOLSYNC_UID` | `568` | Default value for the Restic mover user, group, and fsGroup. |
+| `VOLSYNC_PUID` | `${VOLSYNC_UID}` | Override for the Restic mover user. |
+| `VOLSYNC_PGID` | `${VOLSYNC_UID}` | Override for the Restic mover group. |
+| `VOLSYNC_FS_GROUP` | `${VOLSYNC_UID}` | Override for the Restic mover fsGroup. |
 | `VOLSYNC_FS_GROUP_CHANGE_POLICY` | `OnRootMismatch` | fsGroup change policy. |
 | `VOLSYNC_RUN_AS_NON_ROOT` | `true` | Restic mover non-root setting. |
 

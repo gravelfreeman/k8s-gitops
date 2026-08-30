@@ -21,9 +21,9 @@ spec:
       seccompProfile:
         type: RuntimeDefault
       runAsNonRoot: ${VOLSYNC_RUN_AS_NON_ROOT:=true}
-      runAsUser: ${VOLSYNC_PUID:=568}
-      runAsGroup: ${VOLSYNC_PGID:=568}
-      fsGroup: ${VOLSYNC_FS_GROUP:=568}
+      runAsUser: ${VOLSYNC_PUID:=${VOLSYNC_UID:=568}}
+      runAsGroup: ${VOLSYNC_PGID:=${VOLSYNC_UID:=568}}
+      fsGroup: ${VOLSYNC_FS_GROUP:=${VOLSYNC_UID:=568}}
       fsGroupChangePolicy: ${VOLSYNC_FS_GROUP_CHANGE_POLICY:=OnRootMismatch}
   trigger:
     manual: restore-once
