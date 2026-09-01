@@ -17,7 +17,7 @@ spec:
           app:
             image:
               repository: ghcr.io/timothepoznanski/poznote
-              tag: 6-rootless@sha256:5b70cb6f6843ee82cf29e7728d470a471e70b7a0498606309afb657f34c2c3ce
+              tag: 6-rootless@sha256:420ca8598fd92d96b87b87869b54048624bc47a7d930ce1ed33d4ed19bdb2934
             env:
               POZNOTE_OIDC_CLIENT_ID: b969fd3f-be82-42ba-8515-c090896f600b
               POZNOTE_OIDC_DISABLE_NORMAL_LOGIN: true
