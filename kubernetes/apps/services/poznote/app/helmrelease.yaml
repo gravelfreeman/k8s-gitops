@@ -79,6 +79,13 @@ spec:
             mcp:
               - path: /var/www/html/data
                 readOnly: true
+      css:
+        type: configMap
+        name: poznote-css
+        advancedMounts:
+          poznote:
+            app:
+              - path: /var/www/html/data/css
       runtime:
         type: emptyDir
         advancedMounts:

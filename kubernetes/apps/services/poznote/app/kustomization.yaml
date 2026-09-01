@@ -3,3 +3,9 @@ kind: Kustomization
 resources:
   - externalsecret.yaml
   - helmrelease.yaml
+configMapGenerator:
+  - name: poznote-css
+    files:
+      - custom.css=./resources/custom.css
+generatorOptions:
+  disableNameSuffixHash: true
