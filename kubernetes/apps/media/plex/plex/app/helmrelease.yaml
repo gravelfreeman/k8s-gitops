@@ -49,7 +49,7 @@ spec:
               PGID: "568"
               PUID: "568"
               VERSION: docker
-              DOCKER_MODS: ghcr.io/pabloromeo/clusterplex_dockermod:1.4.16@sha256:4cc23e80b6e126ac4b839672945b4a4c153f74215536e85e6309f8592b49f8e7
+              DOCKER_MODS: ghcr.io/gravelfreeman/clusterplex_dockermod:sha-10dd681@sha256:ad87ec8cdfe3e93b4846089b45cbe72de2f6fa41eeea1a56f120030f90c7c329
               ORCHESTRATOR_URL: http://plex-orchestrator:3500
               ADVERTISE_IP: http://10.0.20.240:32400,https://plex.${DOMAIN_1}
               TRANSCODE_OPERATING_MODE: both
