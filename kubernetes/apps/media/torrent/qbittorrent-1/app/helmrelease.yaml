@@ -62,11 +62,6 @@ spec:
             volumeAttributes:
               server: 10.0.10.10
               share: /mnt/eden/media
-        globalMounts:
-          - path: /media/share/qb1
-            subPath: share/qb1
-          - path: /media/temp/downloads
-            subPath: temp/downloads
       qbit-hardlinker:
         type: configMap
         name: qbit-hardlinker

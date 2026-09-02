@@ -15,7 +15,7 @@ log() {
   printf '[qbit-hardlinker] %s\n' "$1" >> "$log_file"
 }
 
-if [[ ",$excluded_categories," == *",$torrent_category,"* ]]; then
+if [[ -n "$excluded_categories" && -n "$torrent_category" && ",$excluded_categories," == *",$torrent_category,"* ]]; then
   log "[!] Skipped \"${torrent_name}\" has excluded \"${torrent_category}\" category set"
   exit 0
 fi
