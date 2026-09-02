@@ -18,6 +18,10 @@ spec:
             image:
               repository: ghcr.io/home-operations/qbittorrent
               tag: 5.2.3@sha256:4fcf15b7f265c2c8d7bc2a7e13240a07e0593c326f3cf3b5b9bb69eec5b79299
+            env:
+              QBIT_HARDLINKER_DEST_DIR: /media/temp/downloads
+              QBIT_HARDLINKER_SOURCE_DIR: /media/share/qb1
+              QBIT_HARDLINKER_EXCLUDED_CATEGORIES: radarr,sonarr
             probes:
               liveness:
                 enabled: true
@@ -61,6 +65,14 @@ spec:
         globalMounts:
           - path: /media/share/qb1
             subPath: share/qb1
+          - path: /media/temp/downloads
+            subPath: temp/downloads
+      qbit-hardlinker:
+        type: configMap
+        name: qbit-hardlinker
+        defaultMode: 0555
+        globalMounts:
+          - path: /config/qbit-hardlinker
     route:
       app:
         hostnames: ['qb1.${DOMAIN_1}']
