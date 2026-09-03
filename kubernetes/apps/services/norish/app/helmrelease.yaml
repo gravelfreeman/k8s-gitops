@@ -17,7 +17,7 @@ spec:
           app:
             image:
               repository: norishapp/norish
-              tag: v0.21.0-beta@sha256:6e5d9b59c88ec8890b7dbb49a38aca7b327caa55687183d158f09970ad1a30b7
+              tag: v0.21.0-beta@sha256:f12c05cb4e46ca7acd4c2671fcba5b50ca25d0bbd1625fb2ee666b870659cb18
             env:
               AUTH_URL: https://norish.${DOMAIN_0}
               OBSCURA_ENDPOINT: ws://localhost:9222
