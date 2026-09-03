@@ -52,7 +52,8 @@ spec:
               DOCKER_MODS: ghcr.io/gravelfreeman/clusterplex_dockermod:sha-81d8cb0@sha256:ba6b744d6ca05246dbea5d97dedee961ed0be9814e3f9f12cd7a6d076696ba56
               ORCHESTRATOR_URL: http://plex-orchestrator:3500
               ADVERTISE_IP: http://10.0.20.240:32400,https://plex.${DOMAIN_1}
-              TRANSCODE_OPERATING_MODE: both
+              TRANSCODE_OPERATING_MODE: local
+              # TRANSCODE_OPERATING_MODE: both
               PMS_SERVICE: *app
               PMS_PORT: "32400"
               LOCAL_RELAY_PORT: "32499"
@@ -176,8 +177,8 @@ spec:
                 subPath: cache
               - path: /config/Library/Application Support/Plex Media Server/Drivers
                 subPath: drivers
-              - path: /transcode
-                subPath: transcode
+              # - path: /transcode
+              #   subPath: transcode
           worker:
             worker:
               - path: /codecs
@@ -188,6 +189,13 @@ spec:
                 subPath: drivers
               - path: /transcode
                 subPath: transcode
+      # TEMP TEST
+      transcode-local:
+        type: emptyDir
+        advancedMounts:
+          plex:
+            plex:
+              - path: /transcode
       worker-init:
         type: configMap
         name: plex-worker-init
