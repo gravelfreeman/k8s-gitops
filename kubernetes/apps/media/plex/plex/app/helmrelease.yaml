@@ -49,7 +49,7 @@ spec:
               PGID: "568"
               PUID: "568"
               VERSION: docker
-              DOCKER_MODS: ghcr.io/gravelfreeman/clusterplex_dockermod:sha-10dd681@sha256:ad87ec8cdfe3e93b4846089b45cbe72de2f6fa41eeea1a56f120030f90c7c329
+              DOCKER_MODS: ghcr.io/gravelfreeman/clusterplex_dockermod:sha-81d8cb0@sha256:ba6b744d6ca05246dbea5d97dedee961ed0be9814e3f9f12cd7a6d076696ba56
               ORCHESTRATOR_URL: http://plex-orchestrator:3500
               ADVERTISE_IP: http://10.0.20.240:32400,https://plex.${DOMAIN_1}
               TRANSCODE_OPERATING_MODE: both
@@ -99,7 +99,7 @@ spec:
               PGID: "568"
               PUID: "568"
               VERSION: docker
-              DOCKER_MODS: ghcr.io/pabloromeo/clusterplex_worker_dockermod:1.4.16@sha256:be639d9631fb3beb8d86a26ac924bf532a829def21b02929b97379d714acf252
+              DOCKER_MODS: ghcr.io/gravelfreeman/clusterplex_worker_dockermod:sha-81d8cb0@sha256:174b5db49660ec14ab08eae04145e139006ec64adc89ca203fb9f3645abc29a5
               ORCHESTRATOR_URL: http://plex-orchestrator:3500
               STAT_CPU_INTERVAL: "2000"
               FFMPEG_HWACCEL: vaapi
