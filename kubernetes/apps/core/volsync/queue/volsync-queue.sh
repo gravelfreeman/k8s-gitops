@@ -2,7 +2,7 @@ RESULT_TIMEOUT=1
 RESULT_API_ERROR=2
 RESULT_SKIPPED=3
 RESULT_FAILED=4
-DEBUG="${DEBUG:-0}"
+VOLSYNC_QUEUE_DEBUG="${VOLSYNC_QUEUE_DEBUG:-0}"
 TAB="$(printf '\t')"
 FIELD_SEPARATOR='|'
 
@@ -12,9 +12,9 @@ RS_MOVER_RESULT_SUCCESSFUL='Successful'
 RS_MOVER_RESULT_FAILED='Failed'
 RS_SYNC_STATUS_TRUE='True'
 
-VOLSYNC_IDLE_TIMEOUT_SECONDS="${VOLSYNC_IDLE_TIMEOUT_SECONDS:-600}"
-VOLSYNC_RUN_TIMEOUT_SECONDS="${VOLSYNC_RUN_TIMEOUT_SECONDS:-7200}"
-VOLSYNC_POLL_INTERVAL_SECONDS="${VOLSYNC_POLL_INTERVAL_SECONDS:-10}"
+VOLSYNC_QUEUE_IDLE_TIMEOUT_SECONDS="${VOLSYNC_QUEUE_IDLE_TIMEOUT_SECONDS:-600}"
+VOLSYNC_QUEUE_RUN_TIMEOUT_SECONDS="${VOLSYNC_QUEUE_RUN_TIMEOUT_SECONDS:-7200}"
+VOLSYNC_QUEUE_POLL_INTERVAL_SECONDS="${VOLSYNC_QUEUE_POLL_INTERVAL_SECONDS:-10}"
 VOLSYNC_QUEUE_EXCLUDE_TARGETS="${VOLSYNC_QUEUE_EXCLUDE_TARGETS:-}"
 
 PVC_STATE_TEMPLATE='{{with index .metadata.annotations "volsync.backube/use-copy-trigger"}}{{.}}{{end}}|{{with index .metadata.annotations "volsync.backube/latest-copy-trigger"}}{{.}}{{end}}|{{with index .metadata.annotations "volsync.backube/latest-copy-status"}}{{.}}{{end}}'
@@ -39,7 +39,7 @@ log_with_level() {
   printf '%s: [volsync-queue][%s] %s\n' "$level" "$timestamp" "$*" >&2
 }
 
-log_debug() { [ "$DEBUG" = "1" ] || return 0; log_with_level DEBUG "$*"; }
+log_debug() { [ "$VOLSYNC_QUEUE_DEBUG" = "1" ] || return 0; log_with_level DEBUG "$*"; }
 
 target_excluded() {
   target="$1"
@@ -56,14 +56,14 @@ target_excluded() {
 
 log_debug_pvc_state() {
   target="$1"; pvc_state_line="$2"
-  [ "$DEBUG" = "1" ] && [ -n "$pvc_state_line" ] || return 0
+  [ "$VOLSYNC_QUEUE_DEBUG" = "1" ] && [ -n "$pvc_state_line" ] || return 0
   decode_pvc_state "$pvc_state_line"
   log_with_level DEBUG "${target} use_copy_trigger=${pvc_use_copy_trigger:-} latest_copy_trigger=${pvc_latest_copy_trigger:-} latest_copy_status=${pvc_latest_copy_status:-}"
 }
 
 log_debug_replicationsource_state() {
   target="$1"; replicationsource_state_line="$2"
-  [ "$DEBUG" = "1" ] && [ -n "$replicationsource_state_line" ] || return 0
+  [ "$VOLSYNC_QUEUE_DEBUG" = "1" ] && [ -n "$replicationsource_state_line" ] || return 0
   decode_replicationsource_state "$replicationsource_state_line"
   log_with_level DEBUG "${target} last_sync_time=${replicationsource_last_sync_time:-} latest_mover_result=${replicationsource_latest_mover_result:-} sync_status=${replicationsource_sync_status:-} sync_reason=${replicationsource_sync_reason:-}"
 }
@@ -287,7 +287,7 @@ trigger_and_wait() {
     pvc_waiting_for_trigger \
     pvc \
     "copy-trigger gate" \
-    "$VOLSYNC_IDLE_TIMEOUT_SECONDS" \
+    "$VOLSYNC_QUEUE_IDLE_TIMEOUT_SECONDS" \
     "$PVC_GATE_POLL_INTERVAL_SECONDS" >/dev/null; then
     :
   else
@@ -322,8 +322,8 @@ trigger_and_wait() {
     replicationsource_completion_reached \
     replicationsource \
     completion \
-    "$VOLSYNC_RUN_TIMEOUT_SECONDS" \
-    "$VOLSYNC_POLL_INTERVAL_SECONDS" \
+    "$VOLSYNC_QUEUE_RUN_TIMEOUT_SECONDS" \
+    "$VOLSYNC_QUEUE_POLL_INTERVAL_SECONDS" \
     "$initial_last_sync_time" \
     "$initial_replicationsource_state_line" >/dev/null; then
     log "(${target}) completed"
@@ -350,9 +350,9 @@ validate_environment() {
   done
 
   for setting in \
-    "VOLSYNC_IDLE_TIMEOUT_SECONDS:${VOLSYNC_IDLE_TIMEOUT_SECONDS}" \
-    "VOLSYNC_RUN_TIMEOUT_SECONDS:${VOLSYNC_RUN_TIMEOUT_SECONDS}" \
-    "VOLSYNC_POLL_INTERVAL_SECONDS:${VOLSYNC_POLL_INTERVAL_SECONDS}"; do
+    "VOLSYNC_QUEUE_IDLE_TIMEOUT_SECONDS:${VOLSYNC_QUEUE_IDLE_TIMEOUT_SECONDS}" \
+    "VOLSYNC_QUEUE_RUN_TIMEOUT_SECONDS:${VOLSYNC_QUEUE_RUN_TIMEOUT_SECONDS}" \
+    "VOLSYNC_QUEUE_POLL_INTERVAL_SECONDS:${VOLSYNC_QUEUE_POLL_INTERVAL_SECONDS}"; do
     variable_name="${setting%%:*}"
     variable_value="${setting#*:}"
     case "$variable_value" in
@@ -407,7 +407,7 @@ validate_environment() {
     return 1
   fi
 
-  log_debug "bootstrap debug=${DEBUG} idle_timeout=${VOLSYNC_IDLE_TIMEOUT_SECONDS} run_timeout=${VOLSYNC_RUN_TIMEOUT_SECONDS} poll_interval=${VOLSYNC_POLL_INTERVAL_SECONDS}"
+  log_debug "bootstrap debug=${VOLSYNC_QUEUE_DEBUG} idle_timeout=${VOLSYNC_QUEUE_IDLE_TIMEOUT_SECONDS} run_timeout=${VOLSYNC_QUEUE_RUN_TIMEOUT_SECONDS} poll_interval=${VOLSYNC_QUEUE_POLL_INTERVAL_SECONDS}"
   return 0
 }
 
