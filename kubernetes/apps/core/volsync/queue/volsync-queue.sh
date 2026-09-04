@@ -18,7 +18,7 @@ VOLSYNC_POLL_INTERVAL_SECONDS="${VOLSYNC_POLL_INTERVAL_SECONDS:-10}"
 VOLSYNC_QUEUE_EXCLUDE_TARGETS="${VOLSYNC_QUEUE_EXCLUDE_TARGETS:-}"
 
 PVC_STATE_TEMPLATE='{{with index .metadata.annotations "volsync.backube/use-copy-trigger"}}{{.}}{{end}}|{{with index .metadata.annotations "volsync.backube/latest-copy-trigger"}}{{.}}{{end}}|{{with index .metadata.annotations "volsync.backube/latest-copy-status"}}{{.}}{{end}}'
-PVC_QUEUE_TEMPLATE='{{range .items}}{{.metadata.namespace}}{{"\t"}}{{.metadata.name}}{{"\t"}}{{with index .metadata.annotations "volsync.backube/use-copy-trigger"}}{{.}}{{end}}{{"\n"}}{{end}}'
+RS_QUEUE_TEMPLATE='{{range .items}}{{.metadata.namespace}}{{"\t"}}{{.metadata.name}}{{"\t"}}{{.spec.sourcePVC}}{{"\n"}}{{end}}'
 RS_STATE_TEMPLATE='{{.status.lastSyncTime}}|{{if .status.latestMoverStatus}}{{.status.latestMoverStatus.result}}{{end}}|{{range .status.conditions}}{{if eq .type "Synchronizing"}}{{.status}}|{{.reason}}{{end}}{{end}}'
 
 log_event() {
@@ -276,11 +276,12 @@ start_run() {
 
 trigger_and_wait() {
   namespace="$1"
-  name="$2"
-  trigger_id="$3"
-  target="${namespace}/${name}"
+  pvc_name="$2"
+  replicationsource_name="$3"
+  trigger_id="$4"
+  target="${namespace}/${pvc_name}"
 
-  if poll_until_state "$namespace" "$name" \
+  if poll_until_state "$namespace" "$pvc_name" \
     fetch_pvc_state \
     log_debug_pvc_state \
     pvc_waiting_for_trigger \
@@ -294,13 +295,13 @@ trigger_and_wait() {
     return "$idle_status"
   fi
 
-  if ! replicationsource_state_line="$(fetch_replicationsource_state "$namespace" "$name")"; then
+  if ! replicationsource_state_line="$(fetch_replicationsource_state "$namespace" "$replicationsource_name")"; then
     log_event fail "$target" "api state could not be read before replication"
     return "$RESULT_API_ERROR"
   fi
 
   if [ -z "$replicationsource_state_line" ]; then
-    log_event skip "$target" "skipped: replicationsource no longer exists before replication"
+    log_event skip "$target" "skipped: replicationsource ${replicationsource_name} no longer exists before replication"
     return "$RESULT_SKIPPED"
   fi
 
@@ -308,14 +309,14 @@ trigger_and_wait() {
   initial_last_sync_time="$replicationsource_last_sync_time"
   initial_replicationsource_state_line="$replicationsource_state_line"
 
-  if start_run "$namespace" "$name" "$trigger_id"; then
+  if start_run "$namespace" "$pvc_name" "$trigger_id"; then
     :
   else
     start_status="$?"
     return "$start_status"
   fi
 
-  if poll_until_state "$namespace" "$name" \
+  if poll_until_state "$namespace" "$replicationsource_name" \
     fetch_replicationsource_state \
     log_debug_replicationsource_state \
     replicationsource_completion_reached \
@@ -420,26 +421,40 @@ if ! validate_environment; then
   exit 1
 fi
 
-if ! kubectl get persistentvolumeclaim -A -o "go-template=${PVC_QUEUE_TEMPLATE}" > "$raw_queue_file"; then
-  log_event fail queue "could not list source pvcs"
+if ! kubectl get replicationsources.volsync.backube -A -o "go-template=${RS_QUEUE_TEMPLATE}" > "$raw_queue_file"; then
+  log_event fail queue "could not list replicationsources"
   exit 1
 fi
 
-while IFS="$TAB" read -r namespace name use_copy_trigger; do
+while IFS="$TAB" read -r namespace replicationsource_name pvc_name; do
   [ -z "$namespace" ] && continue
-  [ -n "$use_copy_trigger" ] || continue
+  [ -z "$replicationsource_name" ] && continue
 
-  target="${namespace}/${name}"
+  if [ -z "$pvc_name" ]; then
+    log_event skip "${namespace}/${replicationsource_name}" "skipped: replicationsource has no spec.sourcePVC"
+    continue
+  fi
+
+  if ! pvc_state_line="$(fetch_pvc_state "$namespace" "$pvc_name")"; then
+    log_event fail "${namespace}/${pvc_name}" "api state could not be read while building queue"
+    exit 1
+  fi
+
+  [ -n "$pvc_state_line" ] || continue
+  decode_pvc_state "$pvc_state_line"
+  [ -n "$pvc_use_copy_trigger" ] || continue
+
+  target="${namespace}/${pvc_name}"
   if target_excluded "$target"; then
     log_event skip "$target" "skipped: excluded by VOLSYNC_QUEUE_EXCLUDE_TARGETS"
     excluded_count=$((excluded_count + 1))
     continue
   fi
 
-  printf '%s\t%s\n' "$namespace" "$name" >> "$queue_file"
+  printf '%s\t%s\t%s\n' "$namespace" "$pvc_name" "$replicationsource_name" >> "$queue_file"
 done < "$raw_queue_file"
 
-if ! sort -k1,1 -k2,2 -o "$queue_file" "$queue_file"; then
+if ! sort -k1,1 -k2,2 -k3,3 -o "$queue_file" "$queue_file"; then
   log_event fail queue "could not sort pvc queue"
   exit 1
 fi
@@ -461,10 +476,10 @@ skipped_count=0
 failed_count=0
 log_event start queue "processing count=${queue_count}"
 
-while IFS="$TAB" read -r namespace name; do
+while IFS="$TAB" read -r namespace pvc_name replicationsource_name; do
   [ -z "$namespace" ] && continue
 
-  if trigger_and_wait "$namespace" "$name" "${run_id}-${namespace}-${name}"; then
+  if trigger_and_wait "$namespace" "$pvc_name" "$replicationsource_name" "${run_id}-${namespace}-${replicationsource_name}"; then
     success_count=$((success_count + 1))
     continue
   else
