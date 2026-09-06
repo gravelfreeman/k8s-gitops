@@ -1,3 +1,9 @@
+# volsync-queue v.1.11
+# https://github.com/gravelfreeman/k8s-gitops/tree/main/kubernetes/apps/core/volsync/queue
+#
+# Minimal queue using VolSync copy triggers to serialize backups.
+# Credit: gravelfreeman
+
 RESULT_TIMEOUT=1
 RESULT_API_ERROR=2
 RESULT_SKIPPED=3
