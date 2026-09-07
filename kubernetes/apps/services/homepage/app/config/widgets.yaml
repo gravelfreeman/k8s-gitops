@@ -1,11 +1,23 @@
 ---
 - logo:
     icon: '/images/favicon.png'
+- kubernetes:
+    cluster:
+      show: false
+      cpu: false
+      memory: false
+      showLabel: false
+      label: 'cluster'
+    nodes:
+      show: true
+      cpu: true
+      memory: true
+      showLabel: true
 - unifi_console:
     url: 'https://10.0.20.1:443'
     key: '{{HOMEPAGE_FILE_UDM_KEY}}'
 - glances:
-    url: 'http://10.0.10.10:61208'
+    url: 'http://10.0.10.10:30015'
     version: '4'
     cpu: 'true'
     mem: 'false'

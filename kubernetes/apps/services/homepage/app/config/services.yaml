@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
 ---
   # TAB 1 - ROW 1
 - Servers:
@@ -240,12 +241,6 @@
         - type: 'seerr'
           key: '{{HOMEPAGE_FILE_SEERR_KEY}}'
           url: 'http://seerr.seerr.svc.cluster.local:5055'
-  - Maintainerr:
-      icon: 'sh-maintainerr.svg'
-      href: 'https://maintainerr.${DOMAIN_1}'
-      namespace: 'maintainerr'
-      app: 'maintainerr'
-      siteMonitor: 'http://maintainerr.maintainerr.svc.cluster.local:6246'
   - Bazarr:
       icon: 'sh-bazarr.svg'
       href: 'https://bazarr.${DOMAIN_1}'
