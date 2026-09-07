@@ -1,14 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-if ! command -v exiftool >/dev/null 2>&1; then
-  cat >&2 <<'EOF'
-exiftool is required to strip image metadata.
-
-EOF
-  exit 127
-fi
-
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
 
@@ -41,6 +33,14 @@ done <"$staged_paths" >"$existing_images"
 
 if [ ! -s "$existing_images" ]; then
   exit 0
+fi
+
+if ! command -v exiftool >/dev/null 2>&1; then
+  cat >&2 <<'EOF'
+exiftool is required to strip image metadata.
+
+EOF
+  exit 127
 fi
 
 xargs -0 sha256sum -- <"$existing_images" | sort >"$before_hashes"
