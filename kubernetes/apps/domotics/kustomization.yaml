@@ -16,6 +16,7 @@ resources:
   # - bambuddy/ks.yaml
   - esphome/ks.yaml
   - home-assistant/ks.yaml
+  - idrac-fan-controller/ks.yaml
   - mosquitto/ks.yaml
   - zigbee2mqtt/ks.yaml
   - zwave-js-ui/ks.yaml
