@@ -12,6 +12,20 @@ setup_shell_config() {
   ln -sfn "$workspace_dir/.devcontainer/.config/zsh" "$HOME/.config/zsh"
 }
 
+setup_op_environment() {
+  local source_file="/tmp/host-secrets/op-service-account-token"
+  local target_file="$HOME/.config/k8s-gitops/op-service-account-token"
+
+  [ -s "$source_file" ] || {
+    echo "Unable to find the 1Password service account token" >&2
+    return 1
+  }
+
+  install -d -m 700 "$(dirname "$target_file")"
+  cp "$source_file" "$target_file"
+  chmod 600 "$target_file"
+}
+
 setup_ssh_config() {
   install -d -m 700 "$HOME/.ssh"
   touch "$HOME/.ssh/known_hosts"
@@ -21,14 +35,7 @@ setup_ssh_config() {
     chmod 600 "$HOME/.ssh/github-auth.pub"
   fi
 
-  if [ -f /tmp/host-secrets/ssh/github-signing.pub ]; then
-    cp /tmp/host-secrets/ssh/github-signing.pub "$HOME/.ssh/github-signing.pub"
-    chmod 600 "$HOME/.ssh/github-signing.pub"
-  fi
-
-  sed \
-    -e "s|__SSH_AUTH_SOCK__|/tmp/ssh-agent.sock|g" \
-    "$workspace_dir/.devcontainer/templates/.sshconfig" >"$HOME/.ssh/config"
+  cp "$workspace_dir/.devcontainer/templates/.sshconfig" "$HOME/.ssh/config"
 
   chmod 600 "$HOME/.ssh/config" "$HOME/.ssh/known_hosts"
 }
@@ -56,6 +63,7 @@ setup_k9s_config() {
 on_create() {
   mkdir -p "$HOME/.config"
   run_step "Setting up shell config" setup_shell_config
+  run_step "Setting up 1Password environment" setup_op_environment
   run_step "Setting up SSH config" setup_ssh_config
   run_step "Setting up git config" setup_git_config
   run_step "Setting up git hooks" setup_git_hooks

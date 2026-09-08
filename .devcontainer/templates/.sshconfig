@@ -1,7 +1,6 @@
 Host github.com
   HostName github.com
   User git
-  IdentityAgent __SSH_AUTH_SOCK__
   IdentityFile ~/.ssh/github-auth.pub
   IdentitiesOnly yes
   PreferredAuthentications publickey

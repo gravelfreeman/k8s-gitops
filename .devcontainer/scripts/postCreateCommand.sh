@@ -91,9 +91,34 @@ lock_runtime_sudo() {
   sudo rm -f /etc/sudoers.d/zed /etc/sudoers.d/vscode
 }
 
+cleanup_host_service_account_token() {
+  local token_file="/tmp/host-secrets/op-service-account-token"
+
+  if rm -f "$token_file"; then
+    return 0
+  fi
+
+  echo "ERROR: unable to remove host 1Password service account token: $token_file" >&2
+  return 1
+}
+
+cleanup_on_exit() {
+  local exit_status="$?"
+
+  cleanup_host_service_account_token || exit_status=1
+  lock_runtime_sudo || exit_status=1
+
+  return "$exit_status"
+}
+
 post_create() {
   local tmp_dir="$(mktemp -d)" && cd "$tmp_dir"
-  trap lock_runtime_sudo EXIT
+  trap cleanup_on_exit EXIT
+
+  if ! cleanup_host_service_account_token; then
+    echo "Refusing to continue while the host service account token remains" >&2
+    return 1
+  fi
 
   run_step "Installing krew" install_krew
   run_step "Installing krew plugins" install_krew_plugins
