@@ -4,6 +4,7 @@ resources:
   - core
   - domotics
   - media
+  - observability
   - services
   - system
   - utils

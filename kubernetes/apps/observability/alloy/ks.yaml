@@ -12,7 +12,7 @@ spec:
   dependsOn:
     - name: loki
   interval: 1h
-  path: kubernetes/apps/system/alloy/app
+  path: kubernetes/apps/observability/alloy/app
   prune: true
   sourceRef:
     kind: GitRepository

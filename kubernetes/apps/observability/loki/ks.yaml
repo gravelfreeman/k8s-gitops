@@ -13,7 +13,7 @@ spec:
     - name: kube-prometheus-stack
     - name: rook-ceph-cluster
   interval: 1h
-  path: kubernetes/apps/system/loki/app
+  path: kubernetes/apps/observability/loki/app
   prune: true
   sourceRef:
     kind: GitRepository

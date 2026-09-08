@@ -16,7 +16,7 @@ spec:
     - name: rook-ceph-cluster
     - name: volsync
   interval: 1h
-  path: kubernetes/apps/system/kube-prometheus-stack/app
+  path: kubernetes/apps/observability/kube-prometheus-stack/app
   postBuild:
     substitute:
       POD_SECURITY_ENFORCE: privileged
