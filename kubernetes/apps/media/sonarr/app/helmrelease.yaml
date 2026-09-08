@@ -17,14 +17,14 @@ spec:
           ca-bundle:
             image:
               repository: ghcr.io/gravelfreeman/sonarr
-              tag: 4.0.19.3011-bin1.1@sha256:5f6790b4fb2ef5e7c7b6507f74b80fa0d821cf0c2db0d16a6d54d7ad8a023b9a
+              tag: 4.0.19.3011-bin1.2@sha256:ec6748bf8b0a15aeabe535ef26746e359799e5a87f9e87315fa17358202d1d80
             args: [cat /etc/ssl/certs/ca-certificates.crt /glossarr-ca/ca.crt > /ca-bundle/ca-certificates.crt]
             command: [/bin/sh, -c]
         containers:
           app:
             image:
               repository: ghcr.io/gravelfreeman/sonarr
-              tag: 4.0.19.3011-bin1.1@sha256:5f6790b4fb2ef5e7c7b6507f74b80fa0d821cf0c2db0d16a6d54d7ad8a023b9a
+              tag: 4.0.19.3011-bin1.2@sha256:ec6748bf8b0a15aeabe535ef26746e359799e5a87f9e87315fa17358202d1d80
             env:
               SONARR__AUTH__METHOD: External
               SONARR__LOG__LEVEL: info
