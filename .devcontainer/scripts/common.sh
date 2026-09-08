@@ -20,38 +20,6 @@ download_github_release_asset() {
   printf '%s\n' "${download_url##*/}"
 }
 
-extract_archive() {
-  local asset_name="$1"
-
-  case "$asset_name" in
-  *.tar.gz | *.tgz)
-    tar -xzf "$asset_name"
-    ;;
-  *.zip)
-    unzip -o "$asset_name"
-    ;;
-  *)
-    echo "Unsupported archive format: $asset_name" >&2
-    return 1
-    ;;
-  esac
-}
-
-linux_arch() {
-  case "$(uname -m)" in
-  aarch64 | arm64)
-    echo "arm64"
-    ;;
-  x86_64 | amd64)
-    echo "amd64"
-    ;;
-  *)
-    echo "Unsupported architecture: $(uname -m)" >&2
-    exit 1
-    ;;
-  esac
-}
-
 run_step() {
   local label="$1"
   local log_file

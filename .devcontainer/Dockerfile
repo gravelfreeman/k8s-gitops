@@ -17,6 +17,8 @@ RUN install -d -m 0755 /usr/share/postgresql-common/pgdg \
   && apt-get install -y --no-install-recommends barman-cli-cloud \
   && rm -rf /var/lib/apt/lists/*
 
+RUN install -d -m 0700 -o 1000 -g 1000 /run/user/1000
+
 RUN arch="$(uname -m)" \
   && case "$arch" in \
     aarch64|arm64) oh_my_posh_arch="arm64" ;; \

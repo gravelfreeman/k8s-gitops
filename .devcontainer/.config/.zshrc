@@ -4,12 +4,6 @@ export TERM="${TERM:-xterm-256color}"
 export COLORTERM="${COLORTERM:-truecolor}"
 export MICRO_TRUECOLOR=1
 
-op_service_account_token_file="$HOME/.config/k8s-gitops/op-service-account-token"
-if [ -r "$op_service_account_token_file" ]; then
-  export OP_SERVICE_ACCOUNT_TOKEN="$(cat "$op_service_account_token_file")"
-fi
-unset op_service_account_token_file
-
 export FZF_BASE="/usr/share/fzf"
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_CACHE_DIR="$HOME/.cache/oh-my-zsh"

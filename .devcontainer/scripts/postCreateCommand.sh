@@ -7,20 +7,20 @@ workspace_dir="$1"
 . "$workspace_dir/.devcontainer/scripts/common.sh"
 
 install_krew() {
-  local krew="$(download_github_release_asset \
-    "kubernetes-sigs/krew" \
-    '
-      .assets[]
-      | .browser_download_url
-      | select(test("krew-linux"; "i"))
-      | select(test($arch; "i"))
-      | select(test("\\.tar\\.gz$"; "i"))
-    ' \
-    "$(linux_arch)")" || return 1
+  local os
+  local arch
+  local krew
 
-  extract_archive "$krew" || return 1
+  os="$(uname | tr '[:upper:]' '[:lower:]')"
+  arch="$(uname -m | sed \
+    -e 's/x86_64/amd64/' \
+    -e 's/\\(arm\\)\\(64\\)\\?.*/\\1\\2/' \
+    -e 's/aarch64$/arm64/')"
+  krew="krew-${os}_${arch}"
 
-  GIT_CONFIG_GLOBAL=/dev/null "./${krew%.tar.gz}" install krew
+  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${krew}.tar.gz"
+  tar zxvf "${krew}.tar.gz"
+  GIT_CONFIG_GLOBAL=/dev/null "./${krew}" install krew
 }
 
 install_krew_plugins() {
@@ -53,26 +53,19 @@ install_krr() {
 }
 
 process_talosconfig() {
-  local source_file="/tmp/host-secrets/talos/config"
   local target_file="$HOME/.talos/config"
   local tmp_file
 
   install -d -m 0700 "$(dirname "$target_file")"
 
   tmp_file="$(mktemp "${target_file}.tmp.XXXXXX")"
-  if ! base64 --decode "$source_file" >"$tmp_file"; then
+  if ! op read "op://Kubernetes/talos/talosconfig" >"$tmp_file"; then
     rm -f "$tmp_file"
-    echo "Unable to decode talosconfig source: ${source_file}" >&2
+    echo "Unable to read talosconfig from 1Password" >&2
     return 1
   fi
 
   mv "$tmp_file" "$target_file"
-
-  if ! rm -f "$source_file"; then
-    echo "WARNING: unable to remove talosconfig host file: ${source_file}" >&2
-    sleep 60
-  fi
-
   chmod 0600 "$target_file"
 }
 
@@ -91,34 +84,9 @@ lock_runtime_sudo() {
   sudo rm -f /etc/sudoers.d/zed /etc/sudoers.d/vscode
 }
 
-cleanup_host_service_account_token() {
-  local token_file="/tmp/host-secrets/op-service-account-token"
-
-  if rm -f "$token_file"; then
-    return 0
-  fi
-
-  echo "ERROR: unable to remove host 1Password service account token: $token_file" >&2
-  return 1
-}
-
-cleanup_on_exit() {
-  local exit_status="$?"
-
-  cleanup_host_service_account_token || exit_status=1
-  lock_runtime_sudo || exit_status=1
-
-  return "$exit_status"
-}
-
 post_create() {
   local tmp_dir="$(mktemp -d)" && cd "$tmp_dir"
-  trap cleanup_on_exit EXIT
-
-  if ! cleanup_host_service_account_token; then
-    echo "Refusing to continue while the host service account token remains" >&2
-    return 1
-  fi
+  trap lock_runtime_sudo EXIT
 
   run_step "Installing krew" install_krew
   run_step "Installing krew plugins" install_krew_plugins

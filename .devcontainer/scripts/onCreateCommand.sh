@@ -12,28 +12,21 @@ setup_shell_config() {
   ln -sfn "$workspace_dir/.devcontainer/.config/zsh" "$HOME/.config/zsh"
 }
 
-setup_op_environment() {
-  local source_file="/tmp/host-secrets/op-service-account-token"
-  local target_file="$HOME/.config/k8s-gitops/op-service-account-token"
-
-  [ -s "$source_file" ] || {
-    echo "Unable to find the 1Password service account token" >&2
-    return 1
-  }
-
-  install -d -m 700 "$(dirname "$target_file")"
-  cp "$source_file" "$target_file"
-  chmod 600 "$target_file"
-}
-
 setup_ssh_config() {
+  local github_auth_key_file="$HOME/.ssh/github-auth.pub"
+  local github_auth_key_tmp
+
   install -d -m 700 "$HOME/.ssh"
   touch "$HOME/.ssh/known_hosts"
 
-  if [ -f /tmp/host-secrets/ssh/github-auth.pub ]; then
-    cp /tmp/host-secrets/ssh/github-auth.pub "$HOME/.ssh/github-auth.pub"
-    chmod 600 "$HOME/.ssh/github-auth.pub"
+  github_auth_key_tmp="$(mktemp "${github_auth_key_file}.tmp.XXXXXX")"
+  if ! op item get "GitHub Auth Key" --fields "label=public key" --reveal >"$github_auth_key_tmp"; then
+    rm -f "$github_auth_key_tmp"
+    echo "Unable to read the GitHub authentication public key from 1Password" >&2
+    return 1
   fi
+  chmod 600 "$github_auth_key_tmp"
+  mv "$github_auth_key_tmp" "$github_auth_key_file"
 
   cp "$workspace_dir/.devcontainer/templates/.sshconfig" "$HOME/.ssh/config"
 
@@ -63,7 +56,6 @@ setup_k9s_config() {
 on_create() {
   mkdir -p "$HOME/.config"
   run_step "Setting up shell config" setup_shell_config
-  run_step "Setting up 1Password environment" setup_op_environment
   run_step "Setting up SSH config" setup_ssh_config
   run_step "Setting up git config" setup_git_config
   run_step "Setting up git hooks" setup_git_hooks

@@ -1,0 +1,16 @@
+{
+    "id": "op-host-bridge",
+    "version": "1.0.0",
+    "name": "1Password CLI desktop app integration",
+    "description": "Aligns the 1Password CLI group and setgid permissions for desktop app IPC.",
+    "installsAfter": [
+        "ghcr.io/flexwie/devcontainer-features/op"
+    ],
+    "options": {
+        "onePasswordCliGid": {
+            "type": "string",
+            "default": "1002",
+            "description": "Numeric GID used by the host onepassword-cli group."
+        }
+    }
+}
