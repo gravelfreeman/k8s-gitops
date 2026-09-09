@@ -111,6 +111,13 @@ spec:
           uid: loki
           access: proxy
           url: http://loki.loki.svc.cluster.local:3100
+        - name: Alertmanager
+          type: alertmanager
+          uid: alertmanager
+          access: proxy
+          url: http://kps-alertmanager.kube-prometheus-stack.svc.cluster.local:9093
+          jsonData:
+            implementation: prometheus
       resources:
         requests:
           cpu: 50m
@@ -131,8 +138,6 @@ spec:
             allowUiUpdates: true
         datasources:
           enabled: true
-          alertmanager:
-            enabled: true
       deploymentStrategy:
         type: Recreate
         rollingUpdate: null
