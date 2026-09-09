@@ -16,7 +16,24 @@ spec:
     nameOverride: kps
     fullnameOverride: kps
     alertmanager:
-      enabled: false
+      enabled: true
+      route:
+        main:
+          enabled: true
+          hostnames: ["alertmanager.${DOMAIN_0}"]
+          parentRefs:
+            - name: envoy-internal
+              namespace: envoy-gateway
+              sectionName: https
+      alertmanagerSpec:
+        externalUrl: https://alertmanager.${DOMAIN_0}
+        storage:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: ceph-block
+              resources:
+                requests:
+                  storage: 1Gi
     kubeApiServer:
       serviceMonitor:
         metricRelabelings:
@@ -104,7 +121,7 @@ spec:
             allowUiUpdates: true
         datasources:
           alertmanager:
-            enabled: false
+            enabled: true
       deploymentStrategy:
         type: Recreate
         rollingUpdate: null
