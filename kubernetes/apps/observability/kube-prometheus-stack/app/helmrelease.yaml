@@ -27,16 +27,7 @@ spec:
               receiver: default
         receivers:
           - name: default
-      route:
-        main:
-          enabled: true
-          hostnames: ["alertmanager.${DOMAIN_0}"]
-          parentRefs:
-            - name: envoy-internal
-              namespace: envoy-gateway
-              sectionName: https
       alertmanagerSpec:
-        externalUrl: https://alertmanager.${DOMAIN_0}
         storage:
           volumeClaimTemplate:
             spec:
