@@ -17,6 +17,16 @@ spec:
     fullnameOverride: kps
     alertmanager:
       enabled: true
+      config:
+        route:
+          group_by: [alertname, namespace]
+          receiver: default
+          routes:
+            - matchers:
+                - alertname = "Watchdog"
+              receiver: default
+        receivers:
+          - name: default
       route:
         main:
           enabled: true
@@ -26,11 +36,19 @@ spec:
               namespace: envoy-gateway
               sectionName: https
       alertmanagerSpec:
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: alertmanager
+                topologyKey: kubernetes.io/hostname
         externalUrl: https://alertmanager.${DOMAIN_0}
+        replicas: 3
         storage:
           volumeClaimTemplate:
             spec:
-              storageClassName: ceph-block
+              storageClassName: openebs-lvm
               resources:
                 requests:
                   storage: 1Gi
@@ -120,6 +138,7 @@ spec:
           provider:
             allowUiUpdates: true
         datasources:
+          enabled: true
           alertmanager:
             enabled: true
       deploymentStrategy:
