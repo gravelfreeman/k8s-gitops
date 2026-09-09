@@ -13,7 +13,7 @@ spec:
     provider:
       issuer: https://id.${DOMAIN_0}
     clientIDRef:
-      name: 469aa619-ae34-4df8-9a76-ce84ed840c46
+      name: alertmanager-oidc-secret
     clientSecret:
       name: alertmanager-oidc-secret
     cookieNames:
