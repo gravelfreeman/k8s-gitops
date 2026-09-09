@@ -36,19 +36,11 @@ spec:
               namespace: envoy-gateway
               sectionName: https
       alertmanagerSpec:
-        affinity:
-          podAntiAffinity:
-            requiredDuringSchedulingIgnoredDuringExecution:
-              - labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/name: alertmanager
-                topologyKey: kubernetes.io/hostname
         externalUrl: https://alertmanager.${DOMAIN_0}
-        replicas: 3
         storage:
           volumeClaimTemplate:
             spec:
-              storageClassName: openebs-lvm
+              storageClassName: ceph-block
               resources:
                 requests:
                   storage: 1Gi
