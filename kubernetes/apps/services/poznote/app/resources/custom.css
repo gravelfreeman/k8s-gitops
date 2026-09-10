@@ -1,65 +1,77 @@
 /*
- * Catppuccin for Poznote
+ * Catppuccin theme by Gravel Freeman
  *
- * Latte   = light mode
- * Frappé  = dark mode
- * Mocha   = black mode
- *
- * Poznote now exposes the UI palette through design tokens. Keep this file
- * token-only so the same theme follows every page and every component.
+ * Light        = Latte
+ * Dark         = Frappé
+ * Black        = Mocha
+ * Lavender     = Macchiato
+ * Sepia        = Latte warm paper variant
+ * Terminal     = Mocha phosphor variant
  */
 
-/* Catppuccin Latte */
+/* Catppuccin Latte, shared with Sepia variant */
 :root {
-    /* The 24 core palette tokens documented by Poznote. */
-    --pz-bg: #eff1f5;
-    --pz-surface: #e6e9ef;
-    --pz-surface-hover: #ccd0da;
-    --pz-surface-sunken: #dce0e8;
+    --cp-latte-bg: #eff1f5;
+    --cp-latte-surface: #e6e9ef;
+    --cp-latte-surface-hover: #ccd0da;
+    --cp-latte-surface-sunken: #dce0e8;
+    --cp-latte-border-light: #ccd0da;
+    --cp-latte-border: #bcc0cc;
+    --cp-latte-border-strong: #acb0be;
+    --cp-latte-yellow: #df8e1d;
+    --cp-latte-peach: #fe640b;
+    --cp-latte-bg-rgb: 239, 241, 245;
+    --cp-latte-text-rgb: 76, 79, 105;
+    --cp-latte-peach-rgb: 254, 100, 11;
+
+    --pz-bg: var(--cp-latte-bg);
+    --pz-surface: var(--cp-latte-surface);
+    --pz-surface-hover: var(--cp-latte-surface-hover);
+    --pz-surface-sunken: var(--cp-latte-surface-sunken);
 
     --pz-text: #4c4f69;
     --pz-text-secondary: #5c5f77;
     --pz-text-muted: #6c6f85;
     --pz-text-subtle: #9ca0b0;
-    --pz-text-inverse: #eff1f5;
+    --pz-text-inverse: var(--cp-latte-bg);
 
-    --pz-border-light: #ccd0da;
-    --pz-border: #bcc0cc;
-    --pz-border-strong: #acb0be;
+    --pz-border-light: var(--cp-latte-border-light);
+    --pz-border: var(--cp-latte-border);
+    --pz-border-strong: var(--cp-latte-border-strong);
 
     --pz-accent: #1e66f5;
     --pz-accent-hover: #7287fd;
     --pz-accent-rgb: 30, 102, 245;
     --pz-accent-strong: #8839ef;
-    --pz-accent-soft: #ccd0da;
+    --pz-accent-soft: var(--cp-latte-surface-hover);
     --pz-link: #1e66f5;
 
     --pz-danger: #d20f39;
     --pz-success: #40a02b;
-    --pz-warning: #df8e1d;
-    --pz-danger-soft: color-mix(in srgb, #d20f39 18%, #eff1f5);
-    --pz-success-soft: color-mix(in srgb, #40a02b 18%, #eff1f5);
-    --pz-warning-soft: color-mix(in srgb, #df8e1d 18%, #eff1f5);
+    --pz-warning: var(--cp-latte-yellow);
+    --pz-danger-soft: color-mix(in srgb, #d20f39 18%, var(--cp-latte-bg));
+    --pz-success-soft: color-mix(in srgb, #40a02b 18%, var(--cp-latte-bg));
+    --pz-warning-soft: color-mix(in srgb, var(--cp-latte-yellow) 18%, var(--cp-latte-bg));
 
-    /* Tokens added after the original 24-token contract. */
     --pz-danger-hover: #e64553;
-    --pz-danger-strong: #9c2741;
+    --pz-danger-strong: #d20f39;
     --pz-success-hover: #179299;
-    --pz-success-strong: #287522;
-    --pz-warning-hover: #fe640b;
-    --pz-warning-strong: #a76516;
+    --pz-success-strong: #40a02b;
+    --pz-warning-hover: var(--cp-latte-peach);
+    --pz-warning-strong: var(--cp-latte-yellow);
     --pz-icon: #7c7f93;
     --pz-neutral: #6c6f85;
     --pz-neutral-hover: #5c5f77;
     --pz-disabled: #ccd0da;
-    --pz-scrollbar: #bcc0cc;
-    --pz-scrollbar-hover: #acb0be;
-    --pz-shadow-rgb: 76, 79, 105;
-    --pz-highlight-rgb: 255, 255, 255;
-    --pz-mark: #df8e1d;
-    --pz-mark-active: #fe640b;
-    --pz-mark-active-border: #d35400;
+    --pz-scrollbar: var(--cp-latte-border);
+    --pz-scrollbar-hover: var(--cp-latte-border-strong);
+    --pz-shadow-rgb: var(--cp-latte-text-rgb);
+    --pz-highlight-rgb: var(--cp-latte-bg-rgb);
+    --pz-mark: var(--cp-latte-yellow);
+    --pz-mark-active: var(--cp-latte-peach);
+    --pz-mark-active-border: var(--cp-latte-peach);
 }
+
 
 /* Catppuccin Frappé */
 html[data-theme='dark'] {
@@ -109,40 +121,13 @@ html[data-theme='dark'] {
     --dm-tab-hover-bg: #414559;
     --dm-tab-active-bg: #303446;
 
-    /* Some shared dark rules still consume the --pz-* semantic tokens. */
-    --pz-accent: var(--dm-accent);
-    --pz-accent-hover: var(--dm-accent-hover);
-    --pz-accent-rgb: var(--dm-accent-rgb);
-    --pz-accent-strong: var(--dm-accent-hover);
-    --pz-accent-soft: var(--dm-accent-soft);
-    --pz-link: var(--dm-accent-hover);
-    --pz-danger: var(--dm-danger);
-    --pz-danger-hover: var(--dm-danger-hover);
-    --pz-danger-strong: var(--dm-danger-hover);
-    --pz-danger-soft: var(--dm-danger-soft);
-    --pz-success: var(--dm-success);
-    --pz-success-hover: var(--dm-success-hover);
-    --pz-success-strong: var(--dm-success-hover);
-    --pz-success-soft: var(--dm-success-soft);
-    --pz-warning: var(--dm-warning);
-    --pz-warning-hover: var(--dm-warning-hover);
-    --pz-warning-strong: var(--dm-warning-hover);
-    --pz-warning-soft: var(--dm-warning-soft);
-
-    /* Neutral aliases switch automatically in Poznote; these keep the
-       remaining shared neutral values aligned with the dark palette too. */
-    --pz-text-inverse: #303446;
-    --pz-neutral: #b5bfe2;
-    --pz-neutral-hover: #c6d0f5;
-    --pz-shadow-rgb: 17, 18, 27;
-    --pz-highlight-rgb: 255, 255, 255;
-    --pz-mark: var(--dm-warning);
-    --pz-mark-active: var(--dm-warning-hover);
-    --pz-mark-active-border: var(--dm-warning-hover);
+    --pz-shadow-rgb: 35, 38, 52;
+    --pz-highlight-rgb: 198, 208, 245;
 }
 
-/* Catppuccin Mocha */
-html.theme-black[data-theme='dark'] {
+/* Catppuccin Mocha, shared with Terminal variant */
+html.theme-black[data-theme='dark'],
+html.theme-terminal[data-theme='dark'] {
     --dm-bg: #181825;
     --dm-content-bg: #1e1e2e;
     --dm-sidebar-bg: #181825;
@@ -170,6 +155,7 @@ html.theme-black[data-theme='dark'] {
     --dm-danger-hover: #eba0ac;
     --dm-danger-soft: color-mix(in srgb, #f38ba8 18%, #1e1e2e);
     --dm-success: #a6e3a1;
+    --dm-success-rgb: 166, 227, 161;
     --dm-success-hover: #94e2d5;
     --dm-success-soft: color-mix(in srgb, #a6e3a1 18%, #1e1e2e);
     --dm-warning: #f9e2af;
@@ -189,6 +175,112 @@ html.theme-black[data-theme='dark'] {
     --dm-tab-hover-bg: #313244;
     --dm-tab-active-bg: #1e1e2e;
 
+    --pz-shadow-rgb: 17, 17, 27;
+    --pz-highlight-rgb: 205, 214, 244;
+}
+
+/* Catppuccin Macchiato */
+html.theme-lavender {
+    --pz-bg: #24273a;
+    --pz-surface: #1e2030;
+    --pz-surface-hover: #363a4f;
+    --pz-surface-sunken: #181926;
+
+    --pz-text: #cad3f5;
+    --pz-text-secondary: #b8c0e0;
+    --pz-text-muted: #a5adcb;
+    --pz-text-subtle: #6e738d;
+    --pz-text-inverse: #24273a;
+
+    --pz-border-light: #363a4f;
+    --pz-border: #494d64;
+    --pz-border-strong: #5b6078;
+
+    --pz-accent: #8aadf4;
+    --pz-accent-hover: #b7bdf8;
+    --pz-accent-rgb: 138, 173, 244;
+    --pz-accent-strong: #c6a0f6;
+    --pz-accent-soft: #363a4f;
+    --pz-link: #8aadf4;
+
+    --pz-danger: #ed8796;
+    --pz-success: #a6da95;
+    --pz-warning: #eed49f;
+    --pz-danger-soft: color-mix(in srgb, #ed8796 18%, #24273a);
+    --pz-success-soft: color-mix(in srgb, #a6da95 18%, #24273a);
+    --pz-warning-soft: color-mix(in srgb, #eed49f 18%, #24273a);
+
+    --pz-danger-hover: #ee99a0;
+    --pz-danger-strong: #ed8796;
+    --pz-success-hover: #8bd5ca;
+    --pz-success-strong: #a6da95;
+    --pz-warning-hover: #f5a97f;
+    --pz-warning-strong: #eed49f;
+    --pz-icon: #939ab7;
+    --pz-neutral: #a5adcb;
+    --pz-neutral-hover: #b8c0e0;
+    --pz-disabled: #363a4f;
+    --pz-scrollbar: #494d64;
+    --pz-scrollbar-hover: #5b6078;
+    --pz-shadow-rgb: 24, 25, 38;
+    --pz-highlight-rgb: 202, 211, 245;
+    --pz-mark: #eed49f;
+    --pz-mark-active: #f5a97f;
+    --pz-mark-active-border: #f5a97f;
+}
+
+/* Catppuccin Sepia: warm paper variant of Latte */
+html.theme-sepia {
+    --pz-bg: color-mix(in srgb, var(--cp-latte-yellow) 8%, var(--cp-latte-bg));
+    --pz-surface: color-mix(in srgb, var(--cp-latte-yellow) 13%, var(--cp-latte-surface));
+    --pz-surface-hover: color-mix(in srgb, var(--cp-latte-peach) 14%, var(--cp-latte-surface-hover));
+    --pz-surface-sunken: color-mix(in srgb, var(--cp-latte-yellow) 18%, var(--cp-latte-surface-sunken));
+
+    --pz-text-subtle: var(--pz-icon);
+
+    --pz-border-light: color-mix(in srgb, var(--cp-latte-yellow) 12%, var(--cp-latte-border-light));
+    --pz-border: color-mix(in srgb, var(--cp-latte-yellow) 18%, var(--cp-latte-border));
+    --pz-border-strong: color-mix(in srgb, var(--cp-latte-peach) 16%, var(--cp-latte-border-strong));
+
+    --pz-accent: var(--pz-warning-hover);
+    --pz-accent-hover: var(--pz-warning);
+    --pz-accent-rgb: var(--cp-latte-peach-rgb);
+    --pz-accent-soft: color-mix(in srgb, var(--pz-accent) 12%, var(--pz-bg));
+    --pz-link: var(--pz-accent);
+
+    --pz-danger-soft: color-mix(in srgb, var(--pz-danger) 16%, var(--pz-bg));
+    --pz-success-soft: color-mix(in srgb, var(--pz-success) 16%, var(--pz-bg));
+    --pz-warning-soft: color-mix(in srgb, var(--pz-warning) 16%, var(--pz-bg));
+
+    --pz-disabled: color-mix(in srgb, var(--cp-latte-yellow) 18%, var(--cp-latte-border-light));
+    --pz-scrollbar: color-mix(in srgb, var(--cp-latte-yellow) 22%, var(--cp-latte-border));
+    --pz-scrollbar-hover: color-mix(in srgb, var(--cp-latte-peach) 22%, var(--cp-latte-border-strong));
+}
+
+/* Catppuccin Terminal: Mocha surfaces with phosphor accents */
+html.theme-terminal[data-theme='dark'] {
+    --dm-text-bright: var(--dm-success);
+    --dm-text: var(--dm-success);
+    --dm-text-muted: var(--dm-success-hover);
+    --dm-text-subtle: var(--dm-success-hover);
+
+    --dm-bg: var(--dm-code-bg);
+    --dm-sidebar-bg: var(--dm-code-bg);
+
+    --dm-accent: var(--dm-success);
+    --dm-accent-rgb: var(--dm-success-rgb);
+    --dm-accent-hover: var(--dm-success-hover);
+    --dm-accent-soft: color-mix(in srgb, var(--dm-accent) 18%, var(--dm-surface));
+
+    --dm-icon: var(--dm-success-hover);
+    --dm-icon-hover: var(--dm-success);
+    --dm-tab-active-bg: var(--dm-surface-hover);
+
+    --pz-highlight-rgb: var(--dm-success-rgb);
+}
+
+/* Shared semantic aliases for every dark Catppuccin variant */
+html[data-theme='dark'] {
     --pz-accent: var(--dm-accent);
     --pz-accent-hover: var(--dm-accent-hover);
     --pz-accent-rgb: var(--dm-accent-rgb);
@@ -207,13 +299,7 @@ html.theme-black[data-theme='dark'] {
     --pz-warning-hover: var(--dm-warning-hover);
     --pz-warning-strong: var(--dm-warning-hover);
     --pz-warning-soft: var(--dm-warning-soft);
-
-    --pz-text-inverse: #1e1e2e;
-    --pz-neutral: #bac2de;
-    --pz-neutral-hover: #cdd6f4;
-    --pz-shadow-rgb: 17, 17, 27;
-    --pz-highlight-rgb: 255, 255, 255;
-    --pz-mark: var(--dm-warning);
-    --pz-mark-active: var(--dm-warning-hover);
-    --pz-mark-active-border: var(--dm-warning-hover);
+    --pz-text-inverse: var(--dm-content-bg);
+    --pz-neutral: var(--dm-text-muted);
+    --pz-neutral-hover: var(--dm-text-bright);
 }
