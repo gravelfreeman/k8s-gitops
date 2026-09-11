@@ -36,7 +36,7 @@ data:
     # renovate: datasource=custom.alpine-apk depName=main/libpciaccess packageName=libpciaccess registryUrl=https://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/
     fetch_pkg main libpciaccess-0.19-r0.apk
     # renovate: datasource=custom.alpine-apk depName=community/intel-gmmlib packageName=intel-gmmlib registryUrl=https://dl-cdn.alpinelinux.org/alpine/edge/community/x86_64/
-    fetch_pkg community intel-gmmlib-22.10.0-r0.apk
+    fetch_pkg community intel-gmmlib-22.10.1-r0.apk
     # renovate: datasource=custom.alpine-apk depName=community/intel-media-driver packageName=intel-media-driver registryUrl=https://dl-cdn.alpinelinux.org/alpine/edge/community/x86_64/
     fetch_pkg community intel-media-driver-26.2.1-r0.apk
 
