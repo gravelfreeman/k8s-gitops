@@ -39,7 +39,7 @@ spec:
           mcp:
             image:
               repository: ghcr.io/timothepoznanski/poznote-mcp
-              tag: 6@sha256:443a2c8ab5da8abd63a71ffbcb0794dd88a73274814d43088104a1ae1e65a0f1
+              tag: 6@sha256:bf5e6fbd3ea3a9c959e57602184c90aeb90f3ec9f9d40adce1eab2d5ebc0b6d4
             env:
               POZNOTE_API_URL: http://localhost:8080/api/v1
             probes:
