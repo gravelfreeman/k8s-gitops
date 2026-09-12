@@ -48,6 +48,7 @@ spec:
                 exec /gluetun-entrypoint
             env:
               FIREWALL_INPUT_PORTS: '{{- $ports := list "9000" -}}{{- if eq "${VPN_HTTPPROXY_ENABLED:=${VPN_PROXIES_ENABLED:=false}}" "true" -}}{{- $ports = append $ports "8888" -}}{{- end -}}{{- if eq "${VPN_SHADOWSOCKS_ENABLED:=${VPN_PROXIES_ENABLED:=false}}" "true" -}}{{- $ports = append $ports "8388" -}}{{- end -}}{{- if eq "${VPN_SOCKS5_ENABLED:=${VPN_PROXIES_ENABLED:=false}}" "true" -}}{{- $ports = append $ports "1080" -}}{{- end -}}{{ join "," $ports }}'
+              FIREWALL_OUTBOUND_SUBNETS: '{{ if eq "${VPN_CLUSTER_DNS_ENABLED:=false}" "true" }}${VPN_DNS_SERVICE_IP:=172.30.0.10}/32{{ end }}'
               HTTP_CONTROL_SERVER_ADDRESS: 127.0.0.1:8000
               HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: /run/secrets/gluetun/config.toml
               HTTP_CONTROL_SERVER_LOG: off
@@ -162,7 +163,6 @@ spec:
           ${APP}:
             agent:
               - path: /agent
-                readOnly: true
       device:
         type: hostPath
         hostPath: /dev/net/tun
@@ -171,6 +171,15 @@ spec:
           ${APP}:
             gluetun:
               - path: /dev/net/tun
+      iptables:
+        type: configMap
+        name: ${APP}-iptables
+        advancedMounts:
+          ${APP}:
+            gluetun:
+              - path: /iptables/post-rules.txt
+                readOnly: true
+                subPath: post-rules.txt
       secrets:
         type: secret
         name: ${APP}-secret
@@ -178,7 +187,6 @@ spec:
           ${APP}:
             gluetun:
               - path: /run/secrets/gluetun
-                readOnly: true
       tmpfs:
         type: emptyDir
         globalMounts:

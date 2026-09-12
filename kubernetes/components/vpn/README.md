@@ -26,7 +26,7 @@ The router/agent split became the smallest clean design that still preserves lea
 
 ## Method Comparison
 
-| Method | This | [solidDoWant](https://github.com/angelnu/pod-gateway) | [angelnu](https://github.com/angelnu/pod-gateway) | Sidecar |
+| Method | This | [solidDoWant](https://github.com/solidDoWant/infra-mk3/tree/master/cluster/gitops/networking/vpn) | [angelnu](https://github.com/angelnu/pod-gateway) | Sidecar |
 | :----- | :--: | :---------: | :----: | :-----: |
 | Reusable GitOps component | ✅ | ❌ | ❌ | ❌ |
 | Dynamic port-forward automation | ✅ | ❌ | ❌ | ❌ |
@@ -36,6 +36,7 @@ The router/agent split became the smallest clean design that still preserves lea
 | Privacy | Strong | Superior | Strong | Strong |
 | Security | Strong | Strong | Basic | Basic |
 | Client traffic through VPN | ✅ | ✅ | ✅ | ✅  |
+| Cluster-Local Traffic | ✅ | ✅ | ✅ | ✅ |
 | Inbound port forwarding | ✅ | ✅ | ✅ | ✅  |
 | Shared VPN gateway | ✅ | ✅ | ✅ | ❌ |
 | Node-independent clients | ✅ | ✅ | ✅ | ❌ |
@@ -170,6 +171,8 @@ service:
 | `VPN_HTTPPROXY_ENABLED` | `false` | Enables only the HTTP proxy listener and LoadBalancer port. |
 | `VPN_SHADOWSOCKS_ENABLED` | `false` | Enables only the Shadowsocks listener and LoadBalancer port. |
 | `VPN_SOCKS5_ENABLED` | `false` | Enables only the SOCKS5 sidecar and LoadBalancer port. |
+| `VPN_DNS_SERVICE_IP` | `172.30.0.10` | CoreDNS Service IP override for clusters using a different `kube-dns` Service IP. |
+| `VPN_CLUSTER_DNS_ENABLED` | `false` | Allows this gateway to reach CoreDNS on UDP/TCP port 53. |
 
 ### Instance secrets
 
@@ -184,6 +187,52 @@ The instance component reads these fields from the `gluetun` 1Password item.
 | `<INSTANCE>_WIREGUARD_PRIVATE_KEY` | WireGuard private key. |
 | `<INSTANCE>_WIREGUARD_PUBLIC_KEY` | WireGuard peer public key. |
 
+## Cluster-Local Traffic
+
+VPN apps can use selected cluster-local services, but these dependencies are declared by each app rather than by the shared VPN component.
+
+### Enable cluster DNS
+
+Cluster DNS is denied by default. Enable it for a gateway in its `ks.yaml`:
+
+```yaml
+postBuild:
+  substitute:
+    VPN_CLUSTER_DNS_ENABLED: "true"
+```
+
+This uses `172.30.0.10` by default. Set `VPN_DNS_SERVICE_IP` as well when the cluster uses a different `kube-dns` Service IP. Gluetun then permits only UDP/TCP `53` to that address.
+
+> [!IMPORTANT]
+> This setting applies to every app sharing the gateway.
+
+### Allow local dependencies
+
+Create a separate `CiliumNetworkPolicy` in the app directory and allow only the required destination and port. For example, an app using CNPG can use:
+
+```yaml
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: ${APP}-local-egress
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: ${APP}
+      gluetun.k8s-gitops.io/client-gateway: ${VPN_GATEWAY_NAME}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            cnpg.io/cluster: ${APP}-cnpg
+            k8s:io.kubernetes.pod.namespace: ${APP}
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+```
+
+Add the file to the app's `app/kustomization.yaml`.
+
 ## Traffic Flow
 
 ### Outbound traffic from a VPN client app:
@@ -191,9 +240,12 @@ The instance component reads these fields from the `gluetun` 1Password item.
 1. The app opts in from its `ks.yaml` with `VPN_GATEWAY` and `VPN_INSTANCE`.
 2. The VPN component attaches the app to `gluetun/<gateway>-client@vpn`.
 3. Whereabouts gives the app a dynamic `100.100.<instance>.x` address.
-4. Internet-bound traffic is routed to the Gluetun gateway at `100.100.<instance>.1`.
-5. The Gluetun agent keeps the forwarding and masquerade rules active from `vpn` to `tun0`.
-6. Gluetun sends the traffic through the VPN tunnel.
+4. The app sends all DNS queries to `100.100.<instance>.1`:
+   - Kubernetes service names are resolved through CoreDNS on the cluster network.
+   - Public names are resolved by Gluetun's encrypted DNS resolver through the VPN tunnel.
+5. Internet-bound traffic is routed to the Gluetun gateway at `100.100.<instance>.1`.
+6. The Gluetun agent keeps the forwarding and masquerade rules active from `vpn` to `tun0`.
+7. Gluetun sends the traffic through the VPN tunnel.
 
 ### Inbound traffic from an internet peer:
 

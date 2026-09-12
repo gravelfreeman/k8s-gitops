@@ -15,6 +15,7 @@ spec:
     substitute:
       APP: *app
       VPN_GATEWAY_ID: "5"
+      VPN_CLUSTER_DNS_ENABLED: "true"
       VPN_PROXIES_ENABLED: "true"
   prune: true
   sourceRef:
