@@ -12,7 +12,7 @@ spec:
   dependsOn:
     - name: external-secrets-store
   interval: 1h
-  path: kubernetes/apps/utils/idrac-fan-controller/app
+  path: kubernetes/apps/domotics/idrac-fan-controller/app
   prune: true
   sourceRef:
     kind: GitRepository
