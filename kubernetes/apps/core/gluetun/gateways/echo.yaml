@@ -10,13 +10,13 @@ spec:
   dependsOn:
     - name: gluetun-router
   interval: 1h
-  path: kubernetes/components/vpn/gateway
+  path: kubernetes/components/gluetun/gateway
   postBuild:
     substitute:
       APP: *app
-      VPN_GATEWAY_ID: "5"
-      VPN_CLUSTER_DNS_ENABLED: "true"
-      VPN_PROXIES_ENABLED: "true"
+      GLUETUN_GATEWAY_ID: "5"
+      GLUETUN_CLUSTER_DNS_ENABLED: "true"
+      GLUETUN_PROXIES_ENABLED: "true"
   prune: true
   sourceRef:
     kind: GitRepository

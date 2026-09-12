@@ -5,5 +5,5 @@ kind: GluetunClient
 metadata:
   name: ${APP}
 spec:
-  gateway: ${VPN_GATEWAY_NAME}
-  service: ${VPN_SERVICE:=${APP}}
+  gateway: ${GLUETUN_GATEWAY_NAME}
+  service: ${GLUETUN_SERVICE:=${APP}}

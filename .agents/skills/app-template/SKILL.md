@@ -145,7 +145,7 @@ Common examples are under:
 ```text
 kubernetes/apps/*/*/app/helmrelease.yaml
 kubernetes/apps/media/torrent/*/app/helmrelease.yaml
-kubernetes/components/vpn/gateway/helmrelease.yaml
+kubernetes/components/gluetun/gateway/helmrelease.yaml
 ```
 
 ## Repo Rules

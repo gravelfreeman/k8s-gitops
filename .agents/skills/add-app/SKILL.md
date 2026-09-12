@@ -57,7 +57,7 @@ spec:
     # - ../../../../components/dragonfly
     # - ../../../../components/envoy-oidc
     # - ../../../../components/volsync
-    # - ../../../../components/vpn
+    # - ../../../../components/gluetun
  # dependsOn:
     # - name: cloudnative-pg
     # - name: dragonfly-operator

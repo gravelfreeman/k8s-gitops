@@ -11,7 +11,7 @@ spec:
     - ../../../../../components/common/app/shared
     - ../../../../../components/envoy-oidc
     - ../../../../../components/volsync
-    - ../../../../../components/vpn
+    - ../../../../../components/gluetun
   dependsOn:
     - name: envoy-gateway-config
     - name: external-secrets-store
@@ -25,8 +25,8 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      VPN_GATEWAY_NAME: gluetun-delta
-      VPN_GATEWAY_ID: "4"
+      GLUETUN_GATEWAY_NAME: gluetun-delta
+      GLUETUN_GATEWAY_ID: "4"
   prune: true
   sourceRef:
     kind: GitRepository

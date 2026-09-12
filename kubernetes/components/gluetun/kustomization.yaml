@@ -18,16 +18,16 @@ patches:
                 requiredDuringSchedulingIgnoredDuringExecution:
                   - labelSelector:
                       matchLabels:
-                        gluetun.k8s-gitops.io/gateway: ${VPN_GATEWAY_NAME}
+                        gluetun.k8s-gitops.io/gateway: ${GLUETUN_GATEWAY_NAME}
                     namespaces: [gluetun]
                     topologyKey: kubernetes.io/hostname
             annotations:
-              k8s.v1.cni.cncf.io/networks: "gluetun/${VPN_GATEWAY_NAME}-client@vpn"
+              k8s.v1.cni.cncf.io/networks: "gluetun/${GLUETUN_GATEWAY_NAME}-client@vpn"
             dnsConfig:
-              nameservers: ["100.100.${VPN_GATEWAY_ID}.1"]
+              nameservers: ["100.100.${GLUETUN_GATEWAY_ID}.1"]
             dnsPolicy: None
             labels:
-              gluetun.k8s-gitops.io/client-gateway: ${VPN_GATEWAY_NAME}
+              gluetun.k8s-gitops.io/client-gateway: ${GLUETUN_GATEWAY_NAME}
     target:
       group: helm.toolkit.fluxcd.io
       kind: HelmRelease

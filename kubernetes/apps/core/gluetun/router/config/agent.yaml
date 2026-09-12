@@ -72,7 +72,7 @@ data:
     }
 
     port_forwarding_requested() {
-      case "${VPN_PORT_FORWARDS:-0}" in
+      case "${GLUETUN_PORT_FORWARDS:-0}" in
         ""|*[!0-9]*|0) return 1 ;;
         *) return 0 ;;
       esac

@@ -11,7 +11,7 @@ spec:
     - ../../../../../components/common/app/shared
     - ../../../../../components/envoy-oidc
     - ../../../../../components/volsync
-    - ../../../../../components/vpn
+    - ../../../../../components/gluetun
   dependsOn:
     - name: gluetun-charlie
     - name: qbit-hardlinker
@@ -21,8 +21,8 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      VPN_GATEWAY_NAME: gluetun-charlie
-      VPN_GATEWAY_ID: "3"
+      GLUETUN_GATEWAY_NAME: gluetun-charlie
+      GLUETUN_GATEWAY_ID: "3"
   prune: true
   sourceRef:
     kind: GitRepository

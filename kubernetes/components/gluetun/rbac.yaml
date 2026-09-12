@@ -9,7 +9,7 @@ rules:
     verbs: ["list"]
   - apiGroups: [""]
     resources: ["services"]
-    resourceNames: ["${VPN_SERVICE:=${APP}}"]
+    resourceNames: ["${GLUETUN_SERVICE:=${APP}}"]
     verbs: ["get"]
   - apiGroups: [""]
     resources: ["pods/eviction"]
