@@ -48,7 +48,7 @@ spec:
                 exec /gluetun-entrypoint
             env:
               FIREWALL_INPUT_PORTS: '{{- $ports := list "9000" -}}{{- if eq "${GLUETUN_HTTPPROXY_ENABLED:=${GLUETUN_PROXIES_ENABLED:=false}}" "true" -}}{{- $ports = append $ports "8888" -}}{{- end -}}{{- if eq "${GLUETUN_SHADOWSOCKS_ENABLED:=${GLUETUN_PROXIES_ENABLED:=false}}" "true" -}}{{- $ports = append $ports "8388" -}}{{- end -}}{{- if eq "${GLUETUN_SOCKS5_ENABLED:=${GLUETUN_PROXIES_ENABLED:=false}}" "true" -}}{{- $ports = append $ports "1080" -}}{{- end -}}{{ join "," $ports }}'
-              FIREWALL_OUTBOUND_SUBNETS: '{{ if eq "${GLUETUN_CLUSTER_DNS_ENABLED:=false}" "true" }}${GLUETUN_DNS_SERVICE_IP:=172.30.0.10}/32{{ end }}'
+              FIREWALL_OUTBOUND_SUBNETS: '{{ if eq "${GLUETUN_CLUSTER_DNS_ACTION:=DROP}" "ACCEPT" }}${GLUETUN_DNS_SERVICE_IP:=172.30.0.10}/32{{ end }}'
               HTTP_CONTROL_SERVER_ADDRESS: 127.0.0.1:8000
               HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: /run/secrets/gluetun/config.toml
               HTTP_CONTROL_SERVER_LOG: off

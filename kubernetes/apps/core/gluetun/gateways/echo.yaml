@@ -15,7 +15,7 @@ spec:
     substitute:
       APP: *app
       GLUETUN_GATEWAY_ID: "5"
-      GLUETUN_CLUSTER_DNS_ENABLED: "true"
+      GLUETUN_CLUSTER_DNS_ACTION: ACCEPT
       GLUETUN_PROXIES_ENABLED: "true"
   prune: true
   sourceRef:

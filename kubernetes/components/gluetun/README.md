@@ -172,7 +172,7 @@ service:
 | `GLUETUN_SHADOWSOCKS_ENABLED` | `false` | Enables only the Shadowsocks listener and LoadBalancer port. |
 | `GLUETUN_SOCKS5_ENABLED` | `false` | Enables only the SOCKS5 sidecar and LoadBalancer port. |
 | `GLUETUN_DNS_SERVICE_IP` | `172.30.0.10` | CoreDNS Service IP override for clusters using a different `kube-dns` Service IP. |
-| `GLUETUN_CLUSTER_DNS_ENABLED` | `false` | Allows this gateway to reach CoreDNS on UDP/TCP port 53. |
+| `GLUETUN_CLUSTER_DNS_ACTION` | `DROP` | Firewall action for CoreDNS on UDP/TCP port 53. Set to `ACCEPT` to allow cluster DNS. |
 
 ### Instance secrets
 
@@ -200,7 +200,7 @@ Cluster DNS is denied by default. Enable it for a gateway in its `ks.yaml`:
 ```yaml
 postBuild:
   substitute:
-    GLUETUN_CLUSTER_DNS_ENABLED: "true"
+    GLUETUN_CLUSTER_DNS_ACTION: ACCEPT
 ```
 
 This uses `172.30.0.10` by default. Set `GLUETUN_DNS_SERVICE_IP` as well when the cluster uses a different `kube-dns` Service IP. Gluetun then permits only UDP/TCP `53` to that address.
