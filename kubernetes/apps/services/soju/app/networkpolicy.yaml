@@ -1,0 +1,20 @@
+---
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: ${APP}-local-egress
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: ${APP}
+      gluetun.k8s-gitops.io/client-gateway: ${VPN_GATEWAY_NAME}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            cnpg.io/cluster: ${APP}-cnpg
+            k8s:io.kubernetes.pod.namespace: ${APP}
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP

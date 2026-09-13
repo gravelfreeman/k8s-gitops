@@ -39,6 +39,7 @@ spec:
       enabled: true
     sources:
       - gateway-httproute
+      - gateway-tlsroute
       - service
     txtOwnerId: default
     txtPrefix: k8s.

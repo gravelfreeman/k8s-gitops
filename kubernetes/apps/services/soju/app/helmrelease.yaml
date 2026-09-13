@@ -1,0 +1,80 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: soju
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    controllers:
+      soju:
+        containers:
+          app:
+            image:
+              repository: codeberg.org/emersion/soju
+              tag: v0.10.1@sha256:c0473d8f19554a03790f2a475d59646600f2f384b07b296afa782aec4c40253d
+            args: ["-config", "/etc/soju/config"]
+            env:
+              PGUSER: soju
+              PGPASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: soju-cnpg-app
+                    key: password
+            probes:
+              liveness: &probes
+                enabled: true
+                type: HTTP
+                path: /metrics
+                port: 8080
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 25m
+                memory: 128Mi
+              limits:
+                memory: 256Mi
+            securityContext:
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+    persistence:
+      config:
+        type: configMap
+        name: soju-config
+        globalMounts:
+          - path: /etc/soju/config
+            subPath: config
+      runtime:
+        type: emptyDir
+        globalMounts:
+          - path: /run/soju
+    route:
+      irc:
+        kind: TLSRoute
+        hostnames:
+          - irc.${DOMAIN_0}
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy-gateway
+            sectionName: tcp
+    service:
+      app:
+        ports:
+          tcp:
+            port: 6697

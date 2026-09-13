@@ -33,3 +33,16 @@ spec:
           - name: certificate-issuer-domain-0-wildcard
           - name: certificate-issuer-domain-1-wildcard
           - name: certificate-issuer-domain-2-wildcard
+    - name: tcp
+      hostname: "*.${DOMAIN_0}"
+      port: 8443
+      protocol: TLS
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: certificate-issuer-domain-0-wildcard
+          - name: certificate-issuer-domain-1-wildcard
+          - name: certificate-issuer-domain-2-wildcard
