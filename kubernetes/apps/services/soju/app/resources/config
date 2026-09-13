@@ -1,5 +1,5 @@
 listen irc+insecure://0.0.0.0:6697
-listen http+prometheus://0.0.0.0:8080
+listen http+insecure+prometheus://0.0.0.0:8080
 listen unix+admin:///run/soju/admin
 hostname irc.${DOMAIN_0}
 title "Freeman IRC"
