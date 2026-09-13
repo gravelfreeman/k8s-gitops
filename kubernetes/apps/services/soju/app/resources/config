@@ -1,5 +1,7 @@
 listen irc+insecure://0.0.0.0:6697
-listen http+insecure+prometheus://0.0.0.0:8080
+# v0.11.0+: replace the localhost listener with this pod-wide listener.
+# listen http+insecure+prometheus://0.0.0.0:8080
+listen http+prometheus://localhost:8080
 listen unix+admin:///run/soju/admin
 hostname irc.${DOMAIN_0}
 title "Freeman IRC"

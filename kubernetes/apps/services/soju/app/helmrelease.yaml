@@ -26,13 +26,14 @@ spec:
                   secretKeyRef:
                     name: soju-cnpg-app
                     key: password
-            probes:
-              liveness: &probes
-                enabled: true
-                type: HTTP
-                path: /metrics
-                port: 8080
-              readiness: *probes
+            # v0.11.0+
+            # probes:
+            #   liveness: &probes
+            #     enabled: true
+            #     type: HTTP
+            #     path: /metrics
+            #     port: 8080
+            #   readiness: *probes
             resources:
               requests:
                 cpu: 25m
