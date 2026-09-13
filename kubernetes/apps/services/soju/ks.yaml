@@ -34,8 +34,8 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      VPN_GATEWAY_ID: "5"
-      VPN_GATEWAY_NAME: gluetun-echo
+      GLUETUN_GATEWAY_ID: "5"
+      GLUETUN_GATEWAY_NAME: gluetun-echo
   prune: true
   sourceRef:
     kind: GitRepository
