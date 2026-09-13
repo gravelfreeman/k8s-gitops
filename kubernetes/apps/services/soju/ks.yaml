@@ -20,17 +20,6 @@ spec:
     - name: openebs
   interval: 1h
   path: kubernetes/apps/services/soju/app
-  patches:
-    - patch: |-
-        - op: replace
-          path: /spec/bootstrap
-          value:
-            initdb:
-              database: soju
-              owner: soju
-      target:
-        group: postgresql.cnpg.io
-        kind: Cluster
   postBuild:
     substitute:
       APP: *app

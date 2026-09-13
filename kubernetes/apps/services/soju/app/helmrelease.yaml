@@ -61,10 +61,6 @@ spec:
         globalMounts:
           - path: /etc/soju/config
             subPath: config
-      runtime:
-        type: emptyDir
-        globalMounts:
-          - path: /run/soju
     route:
       irc:
         kind: TLSRoute
