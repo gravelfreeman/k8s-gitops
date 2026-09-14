@@ -203,7 +203,7 @@ spec:
         enabled: ${GLUETUN_PROXIES_ENABLED:=false}
         type: LoadBalancer
         annotations:
-          external-dns.alpha.kubernetes.io/hostname: ${APP}.${DOMAIN_2}
+          external-dns.kubernetes.io/hostname: ${APP}.${DOMAIN_2}
           "lbipam.cilium.io/ips": "10.0.20.2${GLUETUN_GATEWAY_ID}"
         labels:
           io.cilium/bgp-advertise: "true"
