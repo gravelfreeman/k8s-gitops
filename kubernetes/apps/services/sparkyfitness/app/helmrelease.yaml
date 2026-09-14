@@ -17,7 +17,7 @@ spec:
           frontend:
             image:
               repository: codewithcj/sparkyfitness
-              tag: v1.7.0@sha256:91af83e6c97ede31273a74119f17da14c24c8672f4ad15b1e4479d91b8495d59
+              tag: v1.7.1@sha256:4dd132cf1db66d6c4f4669bd04d9558ffe5006e40e8b7ee33c0859d52d9de379
             env:
               SPARKY_FITNESS_FRONTEND_URL: https://sparkyfitness.${DOMAIN_0}
               SPARKY_FITNESS_SERVER_HOST: localhost
