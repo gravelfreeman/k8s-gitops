@@ -1,5 +1,7 @@
 # Poznote
 
+The 1Password item `poznote` must contain `POZNOTE_MCP_AUTH_TOKEN`. The value is injected into both the Poznote webserver and the separate `poznote-mcp` deployment, so the MCP server does not need access to the Poznote data PVC.
+
 Poznote's official rootless image runs as UID/GID `1000`. The data PVC must be owned by `1000:1000`; newly provisioned or restored volumes may require a one-time permission fix with `chown -R 1000:1000 /data`. The namespace normally uses Pod Security `restricted`; temporarily switch it to `baseline` for the maintenance pod.
 
 **Error before the fix:**

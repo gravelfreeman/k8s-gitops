@@ -28,4 +28,5 @@ resources:
   - gluetun/gateways/echo.yaml
   - onepassword-connect/ks.yaml
   - pocket-id/ks.yaml
+  - toolhive/ks.yaml
   - volsync/ks.yaml

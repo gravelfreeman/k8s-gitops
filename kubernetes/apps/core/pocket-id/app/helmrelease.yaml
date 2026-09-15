@@ -36,6 +36,11 @@ spec:
               APP_NAME: Freeman ID
               HOME_PAGE_URL: /settings/apps
               APP_URL: https://id.${DOMAIN_0}
+              CIMD_URL_ALLOWLIST: |-
+                [
+                  "https://zed.dev/oauth/client-metadata.json",
+                  "https://chatgpt.com/oauth/client.json"
+                ]
               TRUST_PROXY: true
               # TRUSTED_PLATFORM: CF-Connecting-IP
               FILE_BACKEND: database

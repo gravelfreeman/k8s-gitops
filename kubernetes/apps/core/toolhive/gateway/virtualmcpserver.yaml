@@ -1,0 +1,19 @@
+---
+apiVersion: toolhive.stacklok.dev/v1beta1
+kind: VirtualMCPServer
+metadata:
+  name: toolhive-mcp
+spec:
+  groupRef:
+    name: ${TOOLHIVE_MCP_GROUP:=toolhive-mcp}
+  incomingAuth:
+    type: oidc
+    oidcConfigRef:
+      name: pocket-id
+      audience: https://mcp.${DOMAIN_0}
+      resourceUrl: https://mcp.${DOMAIN_0}
+      scopes: [openid, profile, email, groups, offline_access]
+    authzConfig:
+      type: inline
+      inline:
+        policies: ['permit(principal, action, resource) when { principal in THVGroup::"admin" };']

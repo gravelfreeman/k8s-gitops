@@ -1,0 +1,56 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: poznote-mcp
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    controllers:
+      poznote-mcp:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/timothepoznanski/poznote-mcp
+              tag: 6@sha256:0404b8f4212d96915465487154805fbca79b6f69c09791729e8b307763960cfe
+            env:
+              POZNOTE_API_URL: http://poznote.poznote.svc.cluster.local:8080/api/v1
+            envFrom:
+              - secretRef:
+                  name: poznote-mcp-secret
+            probes:
+              liveness: &probes
+                enabled: true
+                type: TCP
+                port: 8045
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 25m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+            securityContext:
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsGroup: 1000
+            runAsUser: 1000
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+    service:
+      app:
+        ports:
+          http:
+            port: 8045

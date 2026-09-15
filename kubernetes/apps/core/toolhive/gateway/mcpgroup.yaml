@@ -1,0 +1,7 @@
+---
+apiVersion: toolhive.stacklok.dev/v1beta1
+kind: MCPGroup
+metadata:
+  name: ${TOOLHIVE_MCP_GROUP:=toolhive-mcp}
+spec:
+  description: Centralized tools for connected AI workflows

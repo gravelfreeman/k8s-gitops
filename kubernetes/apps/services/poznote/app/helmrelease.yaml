@@ -25,77 +25,49 @@ spec:
               - secretRef:
                   name: poznote-app-secret
             probes:
-              liveness: &probesApp
+              liveness: &probes
                 enabled: true
                 type: HTTP
                 path: /api/health
-              readiness: *probesApp
+              readiness: *probes
             resources:
               requests:
                 cpu: 100m
                 memory: 256Mi
               limits:
                 memory: 1Gi
-          mcp:
-            image:
-              repository: ghcr.io/timothepoznanski/poznote-mcp
-              tag: 6@sha256:0404b8f4212d96915465487154805fbca79b6f69c09791729e8b307763960cfe
-            env:
-              POZNOTE_API_URL: http://localhost:8080/api/v1
-            probes:
-              liveness: &probesMcp
-                enabled: true
-                type: TCP
-                port: 8045
-              readiness: *probesMcp
-            resources:
-              requests:
-                cpu: 25m
-                memory: 64Mi
-              limits:
-                memory: 256Mi
-        defaultContainerOptions:
+            securityContext:
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+        pod:
           securityContext:
-            readOnlyRootFilesystem: true
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-    defaultPodOptions:
-      securityContext:
-        runAsNonRoot: true
-        runAsGroup: 1000
-        runAsUser: 1000
-        fsGroup: 1000
-        fsGroupChangePolicy: OnRootMismatch
-        seccompProfile:
-          type: RuntimeDefault
+            runAsNonRoot: true
+            runAsGroup: 1000
+            runAsUser: 1000
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
     persistence:
       data:
         existingClaim: poznote-data
-        advancedMounts:
-          poznote:
-            app:
-              - path: /var/www/html/data
-            mcp:
-              - path: /var/www/html/data
-                readOnly: true
+        globalMounts:
+          - path: /var/www/html/data
       css:
-        type: configMap
         name: poznote-css
-        advancedMounts:
-          poznote:
-            app:
-              - path: /var/www/html/data/css
+        type: configMap
+        globalMounts:
+          - path: /var/www/html/data/css
       runtime:
         type: emptyDir
-        advancedMounts:
-          poznote:
-            app:
-              - path: /run
-              - path: /run/nginx
-              - path: /var/lib/nginx/logs
-              - path: /var/lib/nginx/tmp
-              - path: /var/log/supervisor
+        globalMounts:
+          - path: /run
+          - path: /run/nginx
+          - path: /var/lib/nginx/logs
+          - path: /var/lib/nginx/tmp
+          - path: /var/log/supervisor
     route:
       app:
         hostnames: ['poznote.${DOMAIN_0}']
@@ -103,22 +75,8 @@ spec:
           - name: envoy-internal
             namespace: envoy-gateway
             sectionName: https
-        rules:
-          - backendRefs:
-              - identifier: app
-                port: 8080
-          - matches:
-              - path:
-                  type: PathPrefix
-                  value: /mcp
-            backendRefs:
-              - identifier: app
-                port: 8045
     service:
       app:
-        controller: poznote
         ports:
           http:
             port: 8080
-          mcp:
-            port: 8045
