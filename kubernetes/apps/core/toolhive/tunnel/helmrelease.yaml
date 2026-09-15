@@ -29,6 +29,7 @@ spec:
                 enabled: true
                 type: HTTP
                 path: /healthz
+                port: 8080
               readiness: *probes
             resources:
               requests:
