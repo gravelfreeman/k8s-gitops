@@ -21,6 +21,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      ENVOY_OIDC_FORWARD_ACCESS_TOKEN: "false"
       GLUETUN_GATEWAY_NAME: gluetun-alfa
       GLUETUN_GATEWAY_ID: "1"
   prune: true
