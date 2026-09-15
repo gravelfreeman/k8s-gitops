@@ -1,0 +1,52 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: toolhive-tunnel
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    controllers:
+      toolhive-tunnel:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/openai/tunnel-client
+              tag: v0.0.14@sha256:41d7c85dab37797a3eaa17c41b94a7206dd0bc186fd361034c9ec3863596ff6c
+            env:
+              HEALTH_LISTEN_ADDR: :8080
+              MCP_SERVER_URL: http://vmcp-toolhive-mcp.toolhive.svc.cluster.local:4483/mcp
+            envFrom:
+              - secretRef:
+                  name: toolhive-tunnel-secret
+            probes:
+              liveness: &probes
+                enabled: true
+                type: HTTP
+                path: /healthz
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
+            securityContext:
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
