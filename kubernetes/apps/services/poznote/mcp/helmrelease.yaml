@@ -17,7 +17,7 @@ spec:
           app:
             image:
               repository: ghcr.io/timothepoznanski/poznote-mcp
-              tag: 6@sha256:0404b8f4212d96915465487154805fbca79b6f69c09791729e8b307763960cfe
+              tag: 6@sha256:a1005f2331fcf3c0562d7e945b4d2cafa6db1075ceca0c412566e6ac20ee1ea5
             env:
               POZNOTE_API_URL: http://poznote.poznote.svc.cluster.local:8080/api/v1
             envFrom:
