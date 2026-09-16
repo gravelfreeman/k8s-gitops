@@ -25,12 +25,16 @@ spec:
               - secretRef:
                   name: toolhive-tunnel-secret
             probes:
-              liveness: &probes
+              liveness:
                 enabled: true
                 type: HTTP
                 path: /healthz
                 port: 8080
-              readiness: *probes
+              readiness:
+                enabled: true
+                type: HTTP
+                path: /readyz
+                port: 8080
             resources:
               requests:
                 cpu: 10m
