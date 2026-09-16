@@ -10,8 +10,6 @@ spec:
   mcpPort: 8045
   groupRef:
     name: toolhive-mcp
-  externalAuthConfigRef:
-    name: poznote-mcp-auth
   env:
     - name: POZNOTE_API_URL
       value: http://poznote.poznote.svc.cluster.local:8080/api/v1
