@@ -29,6 +29,10 @@ spec:
     - --proactor_threads=1
     - --cluster_mode=emulated
     - --default_lua_flags=allow-undeclared-keys
+  authentication:
+    passwordFromSecret:
+      key: password
+      name: ${APP}-dragonfly-secret
   topologySpreadConstraints:
     - maxSkew: 1
       topologyKey: kubernetes.io/hostname
