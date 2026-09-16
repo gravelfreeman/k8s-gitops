@@ -19,3 +19,9 @@ spec:
         policies: ['permit(principal, action, resource) when { principal in THVGroup::"admin" };']
   outgoingAuth:
     source: discovered
+  sessionStorage:
+    address: toolhive-dragonfly.toolhive.svc.cluster.local:6379
+    passwordRef:
+      key: password
+      name: toolhive-dragonfly-secret
+    provider: redis

@@ -38,11 +38,18 @@ kind: Kustomization
 metadata:
   name: toolhive-gateway
 spec:
+  components:
+    - ../../../../components/dragonfly
   dependsOn:
+    - name: dragonfly-operator
     - name: envoy-gateway-config
+    - name: external-secrets-store
     - name: toolhive-operator
   interval: 1h
   path: kubernetes/apps/core/toolhive/gateway
+  postBuild:
+    substitute:
+      APP: toolhive
   prune: true
   sourceRef:
     kind: GitRepository
