@@ -38,8 +38,7 @@ spec:
               APP_URL: https://id.${DOMAIN_0}
               CIMD_URL_ALLOWLIST: |-
                 [
-                  "https://zed.dev/oauth/client-metadata.json",
-                  "https://chatgpt.com/oauth/client.json"
+                  "https://zed.dev/oauth/client-metadata.json"
                 ]
               TRUST_PROXY: true
               # TRUSTED_PLATFORM: CF-Connecting-IP
