@@ -17,3 +17,5 @@ spec:
       type: inline
       inline:
         policies: ['permit(principal, action, resource) when { principal in THVGroup::"admin" };']
+  outgoingAuth:
+    source: discovered
