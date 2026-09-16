@@ -34,22 +34,17 @@ kind: Kustomization
 metadata:
   name: poznote-mcp
 spec:
-  components:
-    - ../../../../components/toolhive-mcp
   dependsOn:
     - name: poznote
+    - name: external-secrets-store
     - name: toolhive-operator
   interval: 1h
   path: kubernetes/apps/services/poznote/mcp
-  postBuild:
-    substitute:
-      APP: poznote
-      TOOLHIVE_MCP_PORT: "8045"
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: poznote
+  targetNamespace: toolhive
   timeout: 5m
   wait: true

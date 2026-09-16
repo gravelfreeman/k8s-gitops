@@ -41,24 +41,16 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  components:
-    - ../../../../components/common/app/shared
-    - ../../../../components/toolhive-mcp
-    - ../../../../components/volsync
   dependsOn:
     - name: home-assistant
     - name: external-secrets-store
     - name: toolhive-operator
   interval: 30m
   path: kubernetes/apps/domotics/home-assistant/mcp
-  postBuild:
-    substitute:
-      APP: *app
-      TOOLHIVE_MCP_PORT: "8086"
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
-  targetNamespace: home-assistant
+  targetNamespace: toolhive
   timeout: 5m
   wait: true
