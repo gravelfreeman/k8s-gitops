@@ -3,4 +3,17 @@ apiVersion: toolhive.stacklok.dev/v1beta1
 kind: EmbeddingServer
 metadata:
   name: optimizer-embedding
-spec: {}
+spec:
+  podTemplateSpec:
+    spec:
+      containers:
+        - name: embedding
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
