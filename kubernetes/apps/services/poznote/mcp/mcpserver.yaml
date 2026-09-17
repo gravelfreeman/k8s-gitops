@@ -13,6 +13,25 @@ spec:
   env:
     - name: POZNOTE_API_URL
       value: http://poznote.poznote.svc.cluster.local:8080/api/v1
+    - name: POZNOTE_SERVICE_TOKEN_FILE
+      value: /var/run/secrets/poznote/.mcp_token
   secrets:
     - name: poznote-mcp-secret
       key: POZNOTE_MCP_AUTH_TOKEN
+  externalAuthConfigRef:
+    name: poznote-mcp-auth
+  podTemplateSpec:
+    spec:
+      containers:
+        - name: mcp
+          volumeMounts:
+            - name: poznote-service-token
+              mountPath: /var/run/secrets/poznote
+              readOnly: true
+      volumes:
+        - name: poznote-service-token
+          secret:
+            secretName: poznote-mcp-secret
+            items:
+              - key: POZNOTE_MCP_AUTH_TOKEN
+                path: .mcp_token
