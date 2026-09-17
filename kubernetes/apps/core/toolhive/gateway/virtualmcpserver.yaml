@@ -40,6 +40,7 @@ spec:
       - name: pocket-id
         type: oidc
         oidcConfig:
+          allowPrivateIPs: true
           issuerUrl: https://id.${DOMAIN_0}
           clientId: 01c38b75-0e5f-4c95-8d74-6ca87aafb596
           clientSecretRef:
