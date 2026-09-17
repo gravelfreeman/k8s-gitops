@@ -4,6 +4,21 @@ version: "3"
 
 tasks:
 
+  namespace:delete:
+    desc: Clear finalizers from a Terminating namespace [NS=required]
+    prompt: Clear finalizers from namespace {{.NS}} ... continue?
+    silent: true
+    cmd: >-
+      namespace_json="$(kubectl get namespace "{{.NS}}" -o json)" &&
+      test "$(printf '%s' "$namespace_json" | jq -r '.status.phase')" = Terminating &&
+      printf '%s' "$namespace_json" |
+      jq '.spec.finalizers = []' |
+      kubectl replace --raw "/api/v1/namespaces/{{.NS}}/finalize" -f -
+    requires:
+      vars: [NS]
+    preconditions:
+      - which jq kubectl
+
   pvc:mount:
     desc: Mount a PVC in a temporary BusyBox pod (PVC=<pvc-name> [NS=<namespace>] [RUN_AS_USER=568] [RUN_AS_GROUP=568])
     silent: true
