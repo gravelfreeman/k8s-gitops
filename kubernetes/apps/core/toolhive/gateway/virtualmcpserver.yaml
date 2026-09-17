@@ -48,3 +48,14 @@ spec:
             key: client-secret
           redirectUri: https://mcp.${DOMAIN_0}/oauth/callback
           scopes: [openid, profile, email, groups, offline_access]
+  # https://github.com/zed-industries/zed/issues/57180
+  podTemplateSpec:
+    spec:
+      containers:
+        - name: vmcp
+          args:
+            - serve
+            - --config=/etc/vmcp-config/config.yaml
+            - --host=0.0.0.0
+            - --port=4483
+            - --session-ttl=720h
