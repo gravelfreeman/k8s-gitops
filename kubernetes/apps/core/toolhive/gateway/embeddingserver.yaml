@@ -12,9 +12,15 @@ spec:
             allowPrivilegeEscalation: false
             capabilities:
               drop: [ALL]
+          volumeMounts:
+            - mountPath: /data
+              name: model-cache
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
         fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
+      volumes:
+        - emptyDir: {}
+          name: model-cache
