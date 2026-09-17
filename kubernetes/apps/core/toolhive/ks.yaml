@@ -44,6 +44,7 @@ spec:
     - name: dragonfly-operator
     - name: envoy-gateway-config
     - name: external-secrets-store
+    - name: pocket-id
     - name: toolhive-operator
   interval: 1h
   path: kubernetes/apps/core/toolhive/gateway

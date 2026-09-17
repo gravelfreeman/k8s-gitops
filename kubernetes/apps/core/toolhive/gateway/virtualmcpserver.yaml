@@ -6,22 +6,44 @@ metadata:
 spec:
   groupRef:
     name: ${TOOLHIVE_MCP_GROUP:=toolhive-mcp}
+  embeddingServerRef:
+    name: optimizer-embedding
+  sessionStorage:
+    address: &dragonfly toolhive-dragonfly.toolhive.svc.cluster.local:6379
+    passwordRef: &passwordRef
+      name: toolhive-dragonfly-secret
+      key: password
+    provider: redis
   incomingAuth:
     type: oidc
     oidcConfigRef:
       name: pocket-id
       audience: https://mcp.${DOMAIN_0}
       resourceUrl: https://mcp.${DOMAIN_0}
-      scopes: [openid, profile, email, groups, offline_access]
-    authzConfig:
-      type: inline
-      inline:
-        policies: ['permit(principal, action, resource) when { principal in THVGroup::"admin" };']
   outgoingAuth:
     source: discovered
-  sessionStorage:
-    address: toolhive-dragonfly.toolhive.svc.cluster.local:6379
-    passwordRef:
-      key: password
-      name: toolhive-dragonfly-secret
-    provider: redis
+  authServerConfig:
+    issuer: https://mcp.${DOMAIN_0}
+    signingKeySecretRefs:
+      - name: toolhive-auth-secret
+        key: signing-key
+    hmacSecretRefs:
+      - name: toolhive-auth-secret
+        key: hmac-key
+    storage:
+      type: redis
+      redis:
+        addr: *dragonfly
+        aclUserConfig:
+          passwordSecretRef: *passwordRef
+    upstreamProviders:
+      - name: pocket-id
+        type: oidc
+        oidcConfig:
+          issuerUrl: https://id.${DOMAIN_0}
+          clientId: 01c38b75-0e5f-4c95-8d74-6ca87aafb596
+          clientSecretRef:
+            name: toolhive-auth-secret
+            key: client-secret
+          redirectUri: https://mcp.${DOMAIN_0}/oauth/callback
+          scopes: [openid, profile, email, groups, offline_access]

@@ -6,4 +6,5 @@ metadata:
 spec:
   type: inline
   inline:
-    issuer: https://id.${DOMAIN_0}
+    issuer: https://mcp.${DOMAIN_0}
+    jwksAllowPrivateIP: true
