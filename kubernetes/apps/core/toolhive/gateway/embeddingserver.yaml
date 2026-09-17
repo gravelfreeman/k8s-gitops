@@ -4,9 +4,6 @@ kind: EmbeddingServer
 metadata:
   name: optimizer-embedding
 spec:
-  modelCache:
-    enabled: true
-    storageClassName: ceph-block
   podTemplateSpec:
     spec:
       containers:
