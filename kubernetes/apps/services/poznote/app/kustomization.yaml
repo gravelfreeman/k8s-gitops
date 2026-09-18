@@ -6,6 +6,9 @@ resources:
 configMapGenerator:
   - name: poznote-css
     files:
-      - custom.css=./resources/custom.css
+      - catppuccin_frappe_dark.css=./resources/catppuccin_frappe_dark.css
+      - catppuccin_latte_light.css=./resources/catppuccin_latte_light.css
+      - catppuccin_macchiato_dark.css=./resources/catppuccin_macchiato_dark.css
+      - catppuccin_mocha_dark.css=./resources/catppuccin_mocha_dark.css
 generatorOptions:
   disableNameSuffixHash: true

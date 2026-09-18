@@ -1,0 +1,94 @@
+/*
+ * Catppuccin Macchiato theme for Poznote by Gravel Freeman
+ */
+
+html[data-theme='dark'] {
+    --pz-color-red: #ed8796;        /* Red */
+    --pz-color-orange: #f5a97f;     /* Peach */
+    --pz-color-amber: #f4dbd6;      /* Rosewater */
+    --pz-color-yellow: #eed49f;     /* Yellow */
+    --pz-color-lime: #a6da95;       /* Green */
+    --pz-color-green: #8bd5ca;      /* Teal */
+    --pz-color-teal: #7dc4e4;       /* Sapphire */
+    --pz-color-cyan: #91d7e3;       /* Sky */
+    --pz-color-blue: #8aadf4;       /* Blue */
+    --pz-color-indigo: #b7bdf8;     /* Lavender */
+    --pz-color-purple: #c6a0f6;     /* Mauve */
+    --pz-color-magenta: #f0c6c6;    /* Flamingo */
+    --pz-color-pink: #f5bde6;       /* Pink */
+    --pz-color-brown: #ee99a0;      /* Maroon */
+    --pz-color-gray: #6e738d;       /* Overlay 0 */
+
+    --dm-bg: #1e2030;               /* Mantle */
+    --dm-content-bg: #24273a;       /* Base */
+    --dm-code-bg: #181926;          /* Crust */
+    --dm-surface: #363a4f;          /* Surface 0 */
+    --dm-surface-hover: #494d64;    /* Surface 1 */
+    --dm-surface-raised: #5b6078;   /* Surface 2 */
+
+    --dm-sidebar-bg: var(--dm-bg);
+    --dm-sidebar-surface: var(--dm-surface);
+
+    --dm-text: #cad3f5;             /* Text */
+    --dm-text-muted: #b8c0e0;       /* Subtext 1 */
+    --dm-text-subtle: #8087a2;      /* Overlay 1 */
+    --dm-text-bright: var(--dm-text);
+
+    --dm-icon: var(--dm-text-muted);
+    --dm-icon-hover: var(--dm-text);
+
+    --dm-border: var(--dm-surface-hover);
+    --dm-border-light: var(--dm-surface-raised);
+
+    --dm-accent: var(--pz-color-blue);
+    --dm-accent-hover: var(--pz-color-indigo);
+    --dm-accent-rgb: 138, 173, 244;
+    --dm-accent-soft: color-mix(in srgb, var(--pz-color-blue) 18%, var(--dm-surface));
+    --dm-active: var(--dm-surface-hover);
+
+    --dm-danger: var(--pz-color-red);
+    --dm-danger-soft: color-mix(in srgb, var(--pz-color-red) 18%, var(--dm-content-bg));
+    --dm-danger-hover: var(--pz-color-brown);
+    --dm-success: var(--pz-color-lime);
+    --dm-success-soft: color-mix(in srgb, var(--pz-color-lime) 18%, var(--dm-content-bg));
+    --dm-success-hover: var(--pz-color-green);
+    --dm-warning: var(--pz-color-yellow);
+    --dm-warning-soft: color-mix(in srgb, var(--pz-color-yellow) 18%, var(--dm-content-bg));
+    --dm-warning-hover: var(--pz-color-orange);
+
+    --dm-neutral: var(--dm-surface-hover);
+    --dm-neutral-hover: var(--dm-surface-raised);
+    --dm-disabled: var(--dm-surface-hover);
+    --dm-scrollbar: var(--dm-surface-hover);
+    --dm-scrollbar-hover: var(--dm-surface-raised);
+
+    --dm-tabbar-bg: var(--dm-code-bg);
+    --dm-tab-bg: var(--dm-bg);
+    --dm-tab-hover-bg: var(--dm-sidebar-surface);
+    --dm-tab-active-bg: var(--dm-content-bg);
+
+    --pz-shadow-rgb: 24, 25, 38;
+    --pz-highlight-rgb: 202, 211, 245;
+
+    --pz-accent: var(--dm-accent);
+    --pz-accent-hover: var(--dm-accent-hover);
+    --pz-accent-rgb: var(--dm-accent-rgb);
+    --pz-accent-strong: var(--dm-accent-hover);
+    --pz-accent-soft: var(--dm-accent-soft);
+    --pz-link: var(--dm-accent-hover);
+    --pz-danger: var(--dm-danger);
+    --pz-danger-hover: var(--dm-danger-hover);
+    --pz-danger-strong: var(--dm-danger-hover);
+    --pz-danger-soft: var(--dm-danger-soft);
+    --pz-success: var(--dm-success);
+    --pz-success-hover: var(--dm-success-hover);
+    --pz-success-strong: var(--dm-success-hover);
+    --pz-success-soft: var(--dm-success-soft);
+    --pz-warning: var(--dm-warning);
+    --pz-warning-hover: var(--dm-warning-hover);
+    --pz-warning-strong: var(--dm-warning-hover);
+    --pz-warning-soft: var(--dm-warning-soft);
+    --pz-text-inverse: var(--dm-content-bg);
+    --pz-neutral: var(--dm-text-muted);
+    --pz-neutral-hover: var(--dm-text-bright);
+}
