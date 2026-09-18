@@ -44,7 +44,7 @@ spec:
           mariadb:
             image:
               repository: docker.io/library/mariadb
-              tag: 12.3.3-noble@sha256:adbf5727f3d6ffa0ea11109f948247d88d110edd3f43f8d4c134c0a09060c5f3
+              tag: 12.3.3-noble@sha256:805c8e104bd563d5bfa24fadd3f31cd419ea859cb5277f32b5dbf2db714f9ed1
             args: [--innodb-use-native-aio=0]
             env:
               MARIADB_DATABASE: *app
