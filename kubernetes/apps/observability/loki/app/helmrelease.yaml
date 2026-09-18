@@ -32,6 +32,8 @@ spec:
       limits_config:
         allow_structured_metadata: true
         discover_log_levels: true
+        max_line_size_truncate: true
+        max_line_size_truncate_identifier: " [truncated]"
         retention_period: 14d
       pattern_ingester:
         enabled: true
