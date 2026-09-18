@@ -5,7 +5,7 @@ kind: MCPServer
 metadata:
   name: poznote-mcp
 spec:
-  image: ghcr.io/timothepoznanski/poznote-mcp:6.90.1-beta@sha256:c69fea78a1b723f21b6bfb62a240c49e6395638fa83ff61d1bedc92e9cae71b4
+  image: ghcr.io/timothepoznanski/poznote-mcp:6.90.2-beta@sha256:a09dc05dbb0c76beb9c19d68ab8b3a4f81ab8671e55b7bd75b1c6bb1fc576e22
   transport: streamable-http
   mcpPort: 8045
   groupRef:
