@@ -55,11 +55,11 @@ spec:
         existingClaim: poznote-data
         globalMounts:
           - path: /var/www/html/data
-      css:
-        name: poznote-css
-        type: configMap
-        globalMounts:
-          - path: /var/www/html/data/css
+      # css:
+      #   name: poznote-css
+      #   type: configMap
+      #   globalMounts:
+      #     - path: /var/www/html/data/css
       runtime:
         type: emptyDir
         globalMounts:
