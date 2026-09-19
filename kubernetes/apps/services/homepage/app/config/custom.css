@@ -113,136 +113,42 @@
   --catppuccin-mocha-crust: 17 17 27;
 }
 
-/* Homepage maps this scale throughout the UI. Light is always Latte. */
-html,
-html[class*="theme-"] {
-  --catppuccin-accent: var(--catppuccin-latte-overlay0);
-  --catppuccin-base: var(--catppuccin-latte-base);
-  --catppuccin-blue: var(--catppuccin-latte-blue);
-  --catppuccin-green: var(--catppuccin-latte-green);
-  --catppuccin-mantle: var(--catppuccin-latte-mantle);
-  --catppuccin-overlay2: var(--catppuccin-latte-overlay2);
-  --catppuccin-peach: var(--catppuccin-latte-peach);
-  --catppuccin-red: var(--catppuccin-latte-red);
-  --catppuccin-rosewater: var(--catppuccin-latte-rosewater);
-  --catppuccin-surface0: var(--catppuccin-latte-surface0);
-  --catppuccin-surface1: var(--catppuccin-latte-surface1);
-  --catppuccin-surface2: var(--catppuccin-latte-surface2);
-  --catppuccin-text: var(--catppuccin-latte-text);
-  --color-50: var(--catppuccin-latte-base);
-  --color-100: var(--catppuccin-latte-mantle);
-  --color-200: var(--catppuccin-latte-surface0);
-  --color-300: var(--catppuccin-latte-surface1);
-  --color-400: var(--catppuccin-latte-surface2);
-  --color-500: var(--catppuccin-latte-subtext0);
-  --color-600: var(--catppuccin-latte-overlay0);
-  --color-700: var(--catppuccin-latte-subtext0);
-  --color-800: var(--catppuccin-latte-text);
-  --color-900: var(--catppuccin-latte-crust);
-  --color-logo-start: var(--catppuccin-latte-overlay0);
-  --color-logo-stop: var(--catppuccin-latte-overlay0);
-}
+/* Homepage semantic utilities use Catppuccin's semantic colors. */
 
-html.dark,
-html.dark[class*="theme-"] {
-  --catppuccin-accent: var(--catppuccin-frappe-overlay0);
-  --catppuccin-base: var(--catppuccin-frappe-base);
-  --catppuccin-blue: var(--catppuccin-frappe-blue);
-  --catppuccin-green: var(--catppuccin-frappe-green);
-  --catppuccin-mantle: var(--catppuccin-frappe-mantle);
-  --catppuccin-overlay2: var(--catppuccin-frappe-overlay2);
-  --catppuccin-peach: var(--catppuccin-frappe-peach);
-  --catppuccin-red: var(--catppuccin-frappe-red);
-  --catppuccin-rosewater: var(--catppuccin-frappe-rosewater);
-  --catppuccin-surface0: var(--catppuccin-frappe-surface0);
-  --catppuccin-surface1: var(--catppuccin-frappe-surface1);
-  --catppuccin-surface2: var(--catppuccin-frappe-surface2);
-  --catppuccin-text: var(--catppuccin-frappe-text);
-  --color-50: var(--catppuccin-frappe-surface0);
-  --color-100: var(--catppuccin-frappe-surface1);
-  --color-200: var(--catppuccin-frappe-text);
-  --color-300: var(--catppuccin-frappe-subtext0);
-  --color-400: var(--catppuccin-frappe-subtext1);
-  --color-500: var(--catppuccin-frappe-subtext1);
-  --color-600: var(--catppuccin-frappe-overlay0);
-  --color-700: var(--catppuccin-frappe-surface2);
-  --color-800: var(--catppuccin-frappe-base);
-  --color-900: var(--catppuccin-frappe-crust);
-  --color-logo-start: var(--catppuccin-frappe-overlay0);
-  --color-logo-stop: var(--catppuccin-frappe-overlay0);
-}
-
-/* Homepage's generic surfaces become Catppuccin's neutral panes and surfaces. */
-[class*="bg-theme-100/20"] {
-  background-color: rgb(var(--catppuccin-mantle)) !important;
-}
-
-[class*="bg-theme-200/50"] {
-  background-color: rgb(var(--catppuccin-surface0)) !important;
-}
-
-[class*="bg-theme-500/10"] {
-  background-color: rgb(var(--catppuccin-surface1)) !important;
-}
-
-[class*="hover:bg-theme-300/20"]:hover {
-  background-color: rgb(var(--catppuccin-surface1)) !important;
-}
-
-[aria-selected="true"] {
-  background-color: rgb(var(--catppuccin-accent) / 20%) !important;
-}
-
-.service-icon > div[style*="mask"],
-.service-group-icon > div[style*="mask"],
-.bookmark-icon > div[style*="mask"],
-.bookmark-group-icon > div[style*="mask"] {
-  background: rgb(var(--catppuccin-accent)) !important;
-}
-
-:focus-visible {
-  outline-color: rgb(var(--catppuccin-accent));
-}
-
-/* Homepage status utilities mapped to Catppuccin semantic colors. */
 [class*="text-emerald-"] {
-  color: rgb(var(--catppuccin-green)) !important;
+  color: rgb(var(--catppuccin-green));
 }
 
 [class*="bg-emerald-"] {
-  background-color: rgb(var(--catppuccin-green)) !important;
+  background-color: rgb(var(--catppuccin-green));
 }
 
 [class*="text-rose-"] {
-  color: rgb(var(--catppuccin-red)) !important;
+  color: rgb(var(--catppuccin-red));
 }
 
 [class*="bg-rose-"] {
-  background-color: rgb(var(--catppuccin-red)) !important;
+  background-color: rgb(var(--catppuccin-red));
 }
 
 [class*="text-orange-"] {
-  color: rgb(var(--catppuccin-peach)) !important;
+  color: rgb(var(--catppuccin-peach));
 }
 
 [class*="bg-orange-"] {
-  background-color: rgb(var(--catppuccin-peach)) !important;
+  background-color: rgb(var(--catppuccin-peach));
 }
 
 [class*="text-blue-"] {
-  color: rgb(var(--catppuccin-blue)) !important;
+  color: rgb(var(--catppuccin-blue));
 }
 
 [class*="bg-blue-"] {
-  background-color: rgb(var(--catppuccin-blue)) !important;
+  background-color: rgb(var(--catppuccin-blue));
 }
 
 ::selection {
   background-color: rgb(var(--catppuccin-overlay2) / 25%);
-}
-
-a {
-  color: rgb(var(--catppuccin-blue));
 }
 
 html {
