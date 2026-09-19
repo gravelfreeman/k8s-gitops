@@ -13,6 +13,7 @@ spec:
     - ../../../../components/dragonfly
   dependsOn:
     - name: cloudnative-pg
+    - name: cloudnative-pg-catalogs
     - name: dragonfly-operator
     - name: envoy-gateway-config
     - name: external-secrets-store
@@ -21,6 +22,10 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      CNPG_DATABASE_EXTENSIONS: '[{"name":"timescaledb"},{"name":"timescaledb_toolkit"}]'
+      CNPG_IMAGE_CATALOG_NAME: postgresql-timescaledb
+      CNPG_MAX_LOCKS_PER_TRANSACTION: '4096'
+      CNPG_SHARED_PRELOAD_LIBRARIES: '[timescaledb]'
   prune: true
   sourceRef:
     kind: GitRepository

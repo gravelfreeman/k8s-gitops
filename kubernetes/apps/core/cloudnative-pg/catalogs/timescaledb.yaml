@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/refs/heads/main/postgresql.cnpg.io/clusterimagecatalog_v1.json
+apiVersion: postgresql.cnpg.io/v1
+kind: ClusterImageCatalog
+metadata:
+  name: postgresql-timescaledb
+  labels:
+    images.cnpg.io/date: "20260831"
+    images.cnpg.io/family: timescaledb-postgis
+    images.cnpg.io/os: trixie
+    images.cnpg.io/publisher: cnpg.io
+    images.cnpg.io/type: system
+spec:
+  images:
+    - major: 18
+      image: ghcr.io/imusmanmalik/timescaledb-postgis:18.6-3.6.4-202608311018-system-trixie@sha256:b276b98842cb89febb99a966191dd8e1304934986d61034f605f96e65840682a

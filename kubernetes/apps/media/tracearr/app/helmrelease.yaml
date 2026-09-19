@@ -20,6 +20,9 @@ spec:
               tag: 2.4.0@sha256:287d9b75dd2c95075988cdab6a55d586303e0f14a80e1c105c2ed0e02e133b8e
             env:
               NODE_ENV: production
+              OIDC_CLIENT_ID: 3cd6c47f-3033-4a2d-a0a0-e950ae63b311
+              OIDC_ISSUER_URL: https://id.${DOMAIN_0}
+              OIDC_PROVIDER_NAME: Freeman ID
               REDIS_URL_FILE: /dragonfly/REDIS_URL
               TRUST_PROXY: true
               DATABASE_URL:
