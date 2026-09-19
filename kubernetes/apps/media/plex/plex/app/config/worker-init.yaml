@@ -32,7 +32,7 @@ data:
     # renovate: datasource=custom.alpine-apk depName=main/libdrm packageName=libdrm registryUrl=https://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/
     fetch_pkg main libdrm-2.4.134-r0.apk
     # renovate: datasource=custom.alpine-apk depName=main/libva packageName=libva registryUrl=https://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/
-    fetch_pkg main libva-2.23.0-r0.apk
+    fetch_pkg main libva-2.24.1-r0.apk
     # renovate: datasource=custom.alpine-apk depName=main/libpciaccess packageName=libpciaccess registryUrl=https://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/
     fetch_pkg main libpciaccess-0.19-r0.apk
     # renovate: datasource=custom.alpine-apk depName=community/intel-gmmlib packageName=intel-gmmlib registryUrl=https://dl-cdn.alpinelinux.org/alpine/edge/community/x86_64/
