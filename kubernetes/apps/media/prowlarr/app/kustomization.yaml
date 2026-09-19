@@ -8,8 +8,5 @@ configMapGenerator:
   - name: custom-definitions
     files:
       - newasgard.yml=./resources/newasgard.yml
-  - name: qcm-newznab-scripts
-    files:
-      - qcm-newznab.py=./resources/qcm-newznab.py
 generatorOptions:
   disableNameSuffixHash: true
