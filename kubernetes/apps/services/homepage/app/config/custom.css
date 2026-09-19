@@ -111,6 +111,22 @@
   --catppuccin-mocha-base: 30 30 46;
   --catppuccin-mocha-mantle: 24 24 37;
   --catppuccin-mocha-crust: 17 17 27;
+
+  /* Active theme role fallbacks. custom.js replaces these for dark mode. */
+  --theme-card-bg: var(--catppuccin-latte-base);
+  --theme-card-hover: var(--catppuccin-latte-surface0);
+  --theme-block-bg: var(--catppuccin-latte-mantle);
+  --theme-progress-track: var(--catppuccin-latte-mantle);
+  --theme-progress-fill: var(--catppuccin-latte-crust);
+  --theme-status-hover: var(--catppuccin-latte-overlay0);
+  --theme-tabs-bg: var(--catppuccin-latte-crust);
+  --theme-tab-active: var(--catppuccin-latte-surface0);
+  --theme-tab-hover: var(--catppuccin-latte-mantle);
+  --theme-bookmark-bg: var(--catppuccin-latte-base);
+  --theme-bookmark-hover: var(--catppuccin-latte-surface0);
+  --theme-bookmark-icon: var(--catppuccin-latte-mantle);
+  --theme-label: var(--catppuccin-latte-subtext0);
+  --theme-hover-text: var(--catppuccin-frappe-text);
 }
 
 /* Homepage semantic utilities use Catppuccin's semantic colors. */
@@ -158,127 +174,71 @@ html {
 }
 
 /* Service cards */
-html:not(.dark):not(.scheme-dark) .service-card {
-  background-color: rgb(var(--catppuccin-latte-base));
+.service-card {
+  background-color: rgb(var(--theme-card-bg));
 }
 
-html:not(.dark):not(.scheme-dark) .service-card:hover {
-  background-color: rgb(var(--catppuccin-latte-surface0));
-}
-
-/* Internal blocks */
-html:not(.dark):not(.scheme-dark) .service-block {
-  background-color: rgb(var(--catppuccin-latte-mantle));
-}
-
-/* Progress bars */
-html:not(.dark):not(.scheme-dark) .service-card [class*="bg-theme-200/50"][class*="h-5"] {
-  background-color: rgb(var(--catppuccin-latte-mantle));
-}
-
-html:not(.dark):not(.scheme-dark) .service-card [class~="bg-theme-200"][class*="h-5"] {
-  background-color: rgb(var(--catppuccin-latte-crust));
-}
-
-/* Kubernetes service status button hover */
-html:not(.dark):not(.scheme-dark) .service-card .service-app .k8s-status:hover {
-  background-color: rgb(var(--catppuccin-latte-overlay0));
-}
-
-/* Tabs */
-html:not(.dark):not(.scheme-dark) #myTab {
-  background-color: rgb(var(--catppuccin-latte-crust));
-}
-
-html:not(.dark):not(.scheme-dark) #myTab button[aria-selected="true"] {
-  background-color: rgb(var(--catppuccin-latte-surface0));
-}
-
-html:not(.dark):not(.scheme-dark) #myTab button[aria-selected="false"]:hover {
-  background-color: rgb(var(--catppuccin-latte-mantle));
-}
-
-/* Bookmarks */
-html:not(.dark):not(.scheme-dark) .bookmark > a {
-  background-color: rgb(var(--catppuccin-latte-base));
-}
-
-html:not(.dark):not(.scheme-dark) .bookmark > a:hover {
-  background-color: rgb(var(--catppuccin-latte-surface0));
-}
-
-html:not(.dark):not(.scheme-dark) .bookmark > a .bookmark-icon {
-  background-color: rgb(var(--catppuccin-latte-mantle));
-}
-
-/* Server labels in Glances and Kubernetes widgets */
-html:not(.dark):not(.scheme-dark) .information-widget-glances .information-widget-label,
-html:not(.dark):not(.scheme-dark) .information-widget-kubernetes div.pt-1.text-center {
-  color: rgb(var(--catppuccin-latte-subtext0));
-}
-
-/* Service cards */
-.dark .service-card {
-  background-color: rgb(var(--catppuccin-frappe-surface0));
-}
-
-.dark .service-card:hover {
-  background-color: rgb(var(--catppuccin-frappe-overlay0));
+.service-card:hover {
+  background-color: rgb(var(--theme-card-hover));
 }
 
 /* Internal blocks */
-.dark .service-block {
-  background-color: rgb(var(--catppuccin-frappe-surface1));
+.service-block {
+  background-color: rgb(var(--theme-block-bg));
 }
 
 /* Progress bars */
-.dark .service-card [class*="dark:bg-theme-900/20"][class*="h-5"] {
-  background-color: rgb(var(--catppuccin-frappe-surface1));
+.service-card [class*="bg-theme-200/50"][class*="h-5"],
+.service-card [class*="dark:bg-theme-900/20"][class*="h-5"] {
+  background-color: rgb(var(--theme-progress-track));
 }
 
-.dark .service-card [class*="dark:bg-theme-900/40"][class*="h-5"] {
-  background-color: rgb(var(--catppuccin-frappe-surface2));
+.service-card [class~="bg-theme-200"][class*="h-5"],
+.service-card [class*="dark:bg-theme-900/40"][class*="h-5"] {
+  background-color: rgb(var(--theme-progress-fill));
 }
 
 /* Kubernetes service status button hover */
-.dark .service-card .service-app .k8s-status:hover {
-  background-color: rgb(var(--catppuccin-frappe-overlay2));
+.service-card .service-app .k8s-status:hover {
+  background-color: rgb(var(--theme-status-hover));
 }
 
 /* Tabs */
-.dark #myTab {
-  background-color: rgb(var(--catppuccin-frappe-mantle));
+#myTab {
+  background-color: rgb(var(--theme-tabs-bg));
 }
 
-.dark #myTab button[aria-selected="true"] {
-  background-color: rgb(var(--catppuccin-frappe-surface0));
+#myTab button[aria-selected="true"] {
+  background-color: rgb(var(--theme-tab-active));
 }
 
-.dark #myTab button[aria-selected="false"]:hover {
-  background-color: rgb(var(--catppuccin-frappe-overlay0));
+#myTab button[aria-selected="false"]:hover {
+  background-color: rgb(var(--theme-tab-hover));
 }
 
 /* Bookmarks */
-.dark .bookmark > a {
-  background-color: rgb(var(--catppuccin-frappe-surface0));
+.bookmark > a {
+  background-color: rgb(var(--theme-bookmark-bg));
 }
 
-.dark .bookmark > a:hover {
-  background-color: rgb(var(--catppuccin-frappe-overlay0));
+.bookmark > a:hover {
+  background-color: rgb(var(--theme-bookmark-hover));
 }
 
-.dark .bookmark > a .bookmark-icon {
-  background-color: rgb(var(--catppuccin-frappe-surface1));
+.bookmark > a .bookmark-icon {
+  background-color: rgb(var(--theme-bookmark-icon));
 }
 
 /* Server labels in Glances and Kubernetes widgets */
-.dark .information-widget-glances .information-widget-label,
-.dark .information-widget-kubernetes div.pt-1.text-center {
-  color: rgb(var(--catppuccin-macchiato-subtext0));
+.information-widget-glances .information-widget-label,
+.information-widget-kubernetes div.pt-1.text-center {
+  color: rgb(var(--theme-label));
 }
 
 /* Text: keep the normal color when hovering services and bookmarks. */
-.dark .service-card:hover,
-.dark .bookmark > a:hover {
-  color: rgb(var(--catppuccin-frappe-text));
+html.dark .service-card:hover,
+html.dark .bookmark > a:hover,
+html.scheme-dark .service-card:hover,
+html.scheme-dark .bookmark > a:hover {
+  color: rgb(var(--theme-hover-text));
 }

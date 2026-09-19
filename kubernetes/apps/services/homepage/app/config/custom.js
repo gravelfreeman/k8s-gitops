@@ -53,11 +53,49 @@
   const applyTheme = () => {
     const isDark = root.classList.contains("dark") || root.classList.contains("scheme-dark");
     const flavor = isDark ? config.darkFlavor : "latte";
+    const themeRoles = isDark
+      ? {
+          "card-bg": "surface0",
+          "card-hover": "overlay0",
+          "block-bg": "surface1",
+          "progress-track": "surface1",
+          "progress-fill": "surface2",
+          "status-hover": "overlay2",
+          "tabs-bg": "mantle",
+          "tab-active": "surface0",
+          "tab-hover": "overlay0",
+          "bookmark-bg": "surface0",
+          "bookmark-hover": "overlay0",
+          "bookmark-icon": "surface1",
+        }
+      : {
+          "card-bg": "base",
+          "card-hover": "surface0",
+          "block-bg": "mantle",
+          "progress-track": "mantle",
+          "progress-fill": "crust",
+          "status-hover": "overlay0",
+          "tabs-bg": "crust",
+          "tab-active": "surface0",
+          "tab-hover": "mantle",
+          "bookmark-bg": "base",
+          "bookmark-hover": "surface0",
+          "bookmark-icon": "mantle",
+        };
     const homepageColor = Array.from(root.classList)
       .find((className) => className.startsWith("theme-"))
       ?.slice(6);
     const accent = colorMap[homepageColor] || colorMap.slate;
     const scale = isDark ? darkScale : lightScale;
+
+    Object.entries(themeRoles).forEach(([role, token]) => {
+      root.style.setProperty(`--theme-$${role}`, `var(--catppuccin-$${flavor}-$${token})`);
+    });
+    root.style.setProperty(
+      "--theme-label",
+      `var(--catppuccin-$${isDark ? "macchiato" : "latte"}-subtext0)`,
+    );
+    root.style.setProperty("--theme-hover-text", `var(--catppuccin-$${flavor}-text)`);
 
     Object.entries(scale).forEach(([step, color]) => {
       const token = color === "accent" ? accent : color;

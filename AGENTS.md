@@ -43,6 +43,7 @@ Without the user's explicit authorization;
 - Keep edits surgical and localized.
 - No hacks, workarounds, or outdated methods; use clean modern patterns.
 - Use `.agents/skills/add-app/SKILL.md` for app-specific workflows.
+- Flux `postBuild` substitutions also scan ConfigMap data. Treat `${...}` inside JavaScript, CSS, templates, or other runtime content as a literal unless it is an intentional Flux variable; write `$${...}` in the source so Flux restores it as `${...}`.
 
 ## Communication
 
