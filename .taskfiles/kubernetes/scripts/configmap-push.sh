@@ -30,7 +30,10 @@ changed_files="$(
   } | sort -u
 )"
 
-test -n "$changed_files"
+if [ -z "$changed_files" ]; then
+  printf 'No local changes found for %s\n' "$app" >&2
+  exit 1
+fi
 
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
