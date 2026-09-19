@@ -5,4 +5,6 @@
 /kubernetes/apps/media/torrent/qbitmanage/app/resources/config_qb2.yml
 /kubernetes/apps/media/torrent/qbitmanage/app/resources/config_qb3.yml
 /kubernetes/apps/media/torrent/qbitmanage/app/resources/config_qb4.yml
+/kubernetes/apps/services/homepage/app/config/AGENTS.md
 /kubernetes/apps/services/homepage/app/config/homepage
+/kubernetes/apps/services/homepage/app/config/style-guide.md

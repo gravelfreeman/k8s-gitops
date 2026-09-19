@@ -32,7 +32,7 @@
     200: "surface0",
     300: "surface1",
     400: "surface2",
-    500: "accent",
+    500: "subtext0",
     600: "overlay0",
     700: "subtext0",
     800: "text",
@@ -44,7 +44,7 @@
     200: "text",
     300: "subtext0",
     400: "subtext1",
-    500: "accent",
+    500: "subtext1",
     600: "overlay0",
     700: "surface2",
     800: "base",
@@ -61,14 +61,28 @@
     const accent = colorMap[homepageColor] || colorMap.slate;
 
     Object.entries(scale).forEach(([step, color]) => {
-      const token = color === "accent" ? accent : color;
-      root.style.setProperty("--color-" + step, "var(--catppuccin-" + flavor + "-" + token + ")");
+      root.style.setProperty("--color-" + step, "var(--catppuccin-" + flavor + "-" + color + ")");
     });
 
-    ["blue", "overlay2", "rosewater", "text"].forEach((color) => {
+    [
+      "base",
+      "mantle",
+      "surface0",
+      "surface1",
+      "surface2",
+      "blue",
+      "green",
+      "red",
+      "peach",
+      "overlay2",
+      "rosewater",
+      "text",
+    ].forEach((color) => {
       root.style.setProperty("--catppuccin-" + color, "var(--catppuccin-" + flavor + "-" + color + ")");
     });
     root.style.setProperty("--catppuccin-accent", "var(--catppuccin-" + flavor + "-" + accent + ")");
+    root.style.setProperty("--color-logo-start", "var(--catppuccin-" + flavor + "-" + accent + ")");
+    root.style.setProperty("--color-logo-stop", "var(--catppuccin-" + flavor + "-" + accent + ")");
   };
 
   new MutationObserver(applyTheme).observe(root, { attributeFilter: ["class"] });
