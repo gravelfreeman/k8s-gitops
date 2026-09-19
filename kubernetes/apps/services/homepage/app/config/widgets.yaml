@@ -23,7 +23,7 @@
     mem: 'false'
     cputemp: 'true'
     uptime: 'true'
-    label: 'PVE-01'
+    label: 'Scale-1'
 - weatherapi:
     label: '${CITY}'
     latitude: '${LATITUDE}'

@@ -119,7 +119,8 @@
   color: rgb(var(--catppuccin-green));
 }
 
-[class*="bg-emerald-"] {
+[class*="bg-emerald-"],
+.dark .service-card span > span.bg-green-500 {
   background-color: rgb(var(--catppuccin-green));
 }
 
@@ -132,11 +133,12 @@
 }
 
 [class*="text-orange-"] {
-  color: rgb(var(--catppuccin-peach));
+  color: rgb(var(--catppuccin-yellow));
 }
 
-[class*="bg-orange-"] {
-  background-color: rgb(var(--catppuccin-peach));
+[class*="bg-orange-"],
+.dark .service-card span > span.bg-yellow-500 {
+  background-color: rgb(var(--catppuccin-yellow));
 }
 
 [class*="text-blue-"] {
@@ -153,4 +155,70 @@
 
 html {
   caret-color: rgb(var(--catppuccin-rosewater));
+}
+
+/* Service cards */
+.dark .service-card {
+  background-color: rgb(var(--catppuccin-frappe-surface0));
+}
+
+.dark .service-card:hover {
+  background-color: rgb(var(--catppuccin-frappe-overlay0));
+}
+
+/* Internal blocks */
+.dark .service-block {
+  background-color: rgb(var(--catppuccin-frappe-surface1));
+}
+
+/* Progress bars */
+.dark .service-card [class*="dark:bg-theme-900/20"][class*="h-5"] {
+  background-color: rgb(var(--catppuccin-frappe-surface1));
+}
+
+.dark .service-card [class*="dark:bg-theme-900/40"][class*="h-5"] {
+  background-color: rgb(var(--catppuccin-frappe-surface2));
+}
+
+/* Kubernetes service status button hover */
+.dark .service-card .service-app .k8s-status:hover {
+  background-color: rgb(var(--catppuccin-frappe-overlay2));
+}
+
+/* Tabs */
+.dark #myTab {
+  background-color: rgb(var(--catppuccin-frappe-mantle));
+}
+
+.dark #myTab button[aria-selected="true"] {
+  background-color: rgb(var(--catppuccin-frappe-surface0));
+}
+
+.dark #myTab button[aria-selected="false"]:hover {
+  background-color: rgb(var(--catppuccin-frappe-overlay0));
+}
+
+/* Bookmarks */
+.dark .bookmark > a {
+  background-color: rgb(var(--catppuccin-frappe-surface0));
+}
+
+.dark .bookmark > a:hover {
+  background-color: rgb(var(--catppuccin-frappe-overlay0));
+}
+
+.dark .bookmark > a .bookmark-icon {
+  background-color: rgb(var(--catppuccin-frappe-surface1));
+}
+
+/* Server labels in Glances and Kubernetes widgets */
+.dark .information-widget-glances .information-widget-label,
+.dark .information-widget-kubernetes div.pt-1.text-center {
+  color: rgb(var(--catppuccin-macchiato-subtext0));
+}
+
+/* Text: keep the normal color when hovering services and bookmarks. */
+.dark .service-card:hover,
+.dark .bookmark > a:hover {
+  color: rgb(var(--catppuccin-frappe-text));
 }
