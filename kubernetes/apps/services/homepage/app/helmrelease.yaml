@@ -129,8 +129,6 @@ spec:
         type: configMap
         name: homepage-assets
         globalMounts:
-          - path: /app/public/images/background.jpg
-            subPath: background.jpg
           - path: /app/public/images/favicon.png
             subPath: favicon.png
           - path: /app/public/images/logo.png

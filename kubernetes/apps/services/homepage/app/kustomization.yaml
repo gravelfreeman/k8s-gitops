@@ -16,7 +16,6 @@ configMapGenerator:
       - widgets.yaml=./config/widgets.yaml
   - name: homepage-assets
     files:
-      - background.jpg=./config/assets/background.jpg
       - favicon.png=./config/assets/favicon.png
       - logo.png=./config/assets/logo.png
 configurations:

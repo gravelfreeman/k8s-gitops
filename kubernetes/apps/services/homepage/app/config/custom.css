@@ -1,40 +1,163 @@
-/* Center the Glances info widget */
-@media (min-width: 768px) {
-  #widgets-wrap {
-    position: relative;
-  }
+/* Catppuccin tokens from the official palette. Values are RGB tuples for Homepage's alpha-aware variables. */
+:root {
+  /* Latte */
+  --catppuccin-latte-rosewater: 220 138 120;
+  --catppuccin-latte-flamingo: 221 120 120;
+  --catppuccin-latte-pink: 234 118 203;
+  --catppuccin-latte-mauve: 136 57 239;
+  --catppuccin-latte-red: 210 15 57;
+  --catppuccin-latte-maroon: 230 69 83;
+  --catppuccin-latte-peach: 254 100 11;
+  --catppuccin-latte-yellow: 223 142 29;
+  --catppuccin-latte-green: 64 160 43;
+  --catppuccin-latte-teal: 23 146 153;
+  --catppuccin-latte-sky: 4 165 229;
+  --catppuccin-latte-sapphire: 32 159 181;
+  --catppuccin-latte-blue: 30 102 245;
+  --catppuccin-latte-lavender: 114 135 253;
+  --catppuccin-latte-text: 76 79 105;
+  --catppuccin-latte-subtext1: 92 95 119;
+  --catppuccin-latte-subtext0: 108 111 133;
+  --catppuccin-latte-overlay2: 124 127 147;
+  --catppuccin-latte-overlay1: 140 143 161;
+  --catppuccin-latte-overlay0: 156 160 176;
+  --catppuccin-latte-surface2: 172 176 190;
+  --catppuccin-latte-surface1: 188 192 204;
+  --catppuccin-latte-surface0: 204 208 218;
+  --catppuccin-latte-base: 239 241 245;
+  --catppuccin-latte-mantle: 230 233 239;
+  --catppuccin-latte-crust: 220 224 232;
 
-  #widgets-wrap > .information-widget-glances {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1;
-  }
+  /* Frappé */
+  --catppuccin-frappe-rosewater: 242 213 207;
+  --catppuccin-frappe-flamingo: 238 190 190;
+  --catppuccin-frappe-pink: 244 184 228;
+  --catppuccin-frappe-mauve: 202 158 230;
+  --catppuccin-frappe-red: 231 130 132;
+  --catppuccin-frappe-maroon: 234 153 156;
+  --catppuccin-frappe-peach: 239 159 118;
+  --catppuccin-frappe-yellow: 229 200 144;
+  --catppuccin-frappe-green: 166 209 137;
+  --catppuccin-frappe-teal: 129 200 190;
+  --catppuccin-frappe-sky: 153 209 219;
+  --catppuccin-frappe-sapphire: 133 193 220;
+  --catppuccin-frappe-blue: 140 170 238;
+  --catppuccin-frappe-lavender: 186 187 241;
+  --catppuccin-frappe-text: 198 208 245;
+  --catppuccin-frappe-subtext1: 181 191 226;
+  --catppuccin-frappe-subtext0: 165 173 206;
+  --catppuccin-frappe-overlay2: 148 156 187;
+  --catppuccin-frappe-overlay1: 131 139 167;
+  --catppuccin-frappe-overlay0: 115 121 148;
+  --catppuccin-frappe-surface2: 98 104 128;
+  --catppuccin-frappe-surface1: 81 87 109;
+  --catppuccin-frappe-surface0: 65 69 89;
+  --catppuccin-frappe-base: 48 52 70;
+  --catppuccin-frappe-mantle: 41 44 60;
+  --catppuccin-frappe-crust: 35 38 52;
+
+  /* Macchiato */
+  --catppuccin-macchiato-rosewater: 244 219 214;
+  --catppuccin-macchiato-flamingo: 240 198 198;
+  --catppuccin-macchiato-pink: 245 189 230;
+  --catppuccin-macchiato-mauve: 198 160 246;
+  --catppuccin-macchiato-red: 237 135 150;
+  --catppuccin-macchiato-maroon: 238 153 160;
+  --catppuccin-macchiato-peach: 245 169 127;
+  --catppuccin-macchiato-yellow: 238 212 159;
+  --catppuccin-macchiato-green: 166 218 149;
+  --catppuccin-macchiato-teal: 139 213 202;
+  --catppuccin-macchiato-sky: 145 215 227;
+  --catppuccin-macchiato-sapphire: 125 196 228;
+  --catppuccin-macchiato-blue: 138 173 244;
+  --catppuccin-macchiato-lavender: 183 189 248;
+  --catppuccin-macchiato-text: 202 211 245;
+  --catppuccin-macchiato-subtext1: 184 192 224;
+  --catppuccin-macchiato-subtext0: 165 173 203;
+  --catppuccin-macchiato-overlay2: 147 154 183;
+  --catppuccin-macchiato-overlay1: 128 135 162;
+  --catppuccin-macchiato-overlay0: 110 115 141;
+  --catppuccin-macchiato-surface2: 91 96 120;
+  --catppuccin-macchiato-surface1: 73 77 100;
+  --catppuccin-macchiato-surface0: 54 58 79;
+  --catppuccin-macchiato-base: 36 39 58;
+  --catppuccin-macchiato-mantle: 30 32 48;
+  --catppuccin-macchiato-crust: 24 25 38;
+
+  /* Mocha */
+  --catppuccin-mocha-rosewater: 245 224 220;
+  --catppuccin-mocha-flamingo: 242 205 205;
+  --catppuccin-mocha-pink: 245 194 231;
+  --catppuccin-mocha-mauve: 203 166 247;
+  --catppuccin-mocha-red: 243 139 168;
+  --catppuccin-mocha-maroon: 235 160 172;
+  --catppuccin-mocha-peach: 250 179 135;
+  --catppuccin-mocha-yellow: 249 226 175;
+  --catppuccin-mocha-green: 166 227 161;
+  --catppuccin-mocha-teal: 148 226 213;
+  --catppuccin-mocha-sky: 137 220 235;
+  --catppuccin-mocha-sapphire: 116 199 236;
+  --catppuccin-mocha-blue: 137 180 250;
+  --catppuccin-mocha-lavender: 180 190 254;
+  --catppuccin-mocha-text: 205 214 244;
+  --catppuccin-mocha-subtext1: 186 194 222;
+  --catppuccin-mocha-subtext0: 166 173 200;
+  --catppuccin-mocha-overlay2: 147 153 178;
+  --catppuccin-mocha-overlay1: 127 132 156;
+  --catppuccin-mocha-overlay0: 108 112 134;
+  --catppuccin-mocha-surface2: 88 91 112;
+  --catppuccin-mocha-surface1: 69 71 90;
+  --catppuccin-mocha-surface0: 49 50 68;
+  --catppuccin-mocha-base: 30 30 46;
+  --catppuccin-mocha-mantle: 24 24 37;
+  --catppuccin-mocha-crust: 17 17 27;
 }
-/* Improve tab hover and active contrast */
-@media (min-width: 640px) {
-  #myTab {
-    background: rgb(255 255 255 / 0.14);
-  }
 
-  #myTab > li > button[role="tab"] {
-    transition: background-color 160ms ease;
-  }
+/* Homepage maps this scale throughout the UI. Light is always Latte. */
+html {
+  --catppuccin-accent: var(--catppuccin-latte-mauve);
+  --catppuccin-blue: var(--catppuccin-latte-blue);
+  --catppuccin-overlay2: var(--catppuccin-latte-overlay2);
+  --catppuccin-rosewater: var(--catppuccin-latte-rosewater);
+  --catppuccin-text: var(--catppuccin-latte-text);
+  --color-50: var(--catppuccin-latte-base);
+  --color-100: var(--catppuccin-latte-mantle);
+  --color-200: var(--catppuccin-latte-surface0);
+  --color-300: var(--catppuccin-latte-surface1);
+  --color-400: var(--catppuccin-latte-surface2);
+  --color-500: var(--catppuccin-accent);
+  --color-600: var(--catppuccin-latte-overlay0);
+  --color-700: var(--catppuccin-latte-subtext0);
+  --color-800: var(--catppuccin-latte-text);
+  --color-900: var(--catppuccin-latte-crust);
+}
 
-  #myTab > li > button[role="tab"][aria-selected="false"]:hover {
-    background: rgb(255 255 255 / 0.26) !important;
-  }
+html.dark {
+  --catppuccin-accent: var(--catppuccin-mocha-mauve);
+  --catppuccin-blue: var(--catppuccin-mocha-blue);
+  --catppuccin-overlay2: var(--catppuccin-mocha-overlay2);
+  --catppuccin-rosewater: var(--catppuccin-mocha-rosewater);
+  --catppuccin-text: var(--catppuccin-mocha-text);
+  --color-50: var(--catppuccin-mocha-surface0);
+  --color-100: var(--catppuccin-mocha-surface1);
+  --color-200: var(--catppuccin-mocha-text);
+  --color-300: var(--catppuccin-mocha-subtext0);
+  --color-400: var(--catppuccin-mocha-subtext1);
+  --color-500: var(--catppuccin-accent);
+  --color-600: var(--catppuccin-mocha-overlay0);
+  --color-700: var(--catppuccin-mocha-surface2);
+  --color-800: var(--catppuccin-mocha-base);
+  --color-900: var(--catppuccin-mocha-crust);
+}
 
-  .dark #myTab > li > button[role="tab"][aria-selected="false"]:hover {
-    background: rgb(255 255 255 / 0.16) !important;
-  }
+::selection {
+  background-color: rgb(var(--catppuccin-overlay2) / 25%);
+}
 
-  #myTab > li > button[role="tab"][aria-selected="true"] {
-    background: rgb(255 255 255 / 0.38) !important;
-  }
+a {
+  color: rgb(var(--catppuccin-blue));
+}
 
-  .dark #myTab > li > button[role="tab"][aria-selected="true"] {
-    background: rgb(255 255 255 / 0.2) !important;
-  }
+html {
+  caret-color: rgb(var(--catppuccin-rosewater));
 }

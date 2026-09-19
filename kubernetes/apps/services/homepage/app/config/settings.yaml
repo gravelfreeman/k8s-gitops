@@ -1,13 +1,8 @@
 # yaml-language-server: $schema=https://www.schemastore.org/any.json
 ---
 title: 'root:freeman'
-background:
-  image: '/images/background.jpg'
-  brightness: '60'
-cardBlur: 'sm'
+# cardBlur: 'sm'
 favicon: '/images/favicon.png'
-theme: 'light'
-color: 'slate'
 providers:
   openweathermap: 'openweathermapapikey'
   weatherapi: 'weatherapiapikey'
