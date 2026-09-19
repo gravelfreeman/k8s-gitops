@@ -120,7 +120,7 @@
 }
 
 [class*="bg-emerald-"],
-.dark .service-card span > span.bg-green-500 {
+.service-card span > span.bg-green-500 {
   background-color: rgb(var(--catppuccin-green));
 }
 
@@ -137,7 +137,7 @@
 }
 
 [class*="bg-orange-"],
-.dark .service-card span > span.bg-yellow-500 {
+.service-card span > span.bg-yellow-500 {
   background-color: rgb(var(--catppuccin-yellow));
 }
 
@@ -155,6 +155,66 @@
 
 html {
   caret-color: rgb(var(--catppuccin-rosewater));
+}
+
+/* Service cards */
+html:not(.dark):not(.scheme-dark) .service-card {
+  background-color: rgb(var(--catppuccin-latte-base));
+}
+
+html:not(.dark):not(.scheme-dark) .service-card:hover {
+  background-color: rgb(var(--catppuccin-latte-surface0));
+}
+
+/* Internal blocks */
+html:not(.dark):not(.scheme-dark) .service-block {
+  background-color: rgb(var(--catppuccin-latte-mantle));
+}
+
+/* Progress bars */
+html:not(.dark):not(.scheme-dark) .service-card [class*="bg-theme-200/50"][class*="h-5"] {
+  background-color: rgb(var(--catppuccin-latte-mantle));
+}
+
+html:not(.dark):not(.scheme-dark) .service-card [class~="bg-theme-200"][class*="h-5"] {
+  background-color: rgb(var(--catppuccin-latte-crust));
+}
+
+/* Kubernetes service status button hover */
+html:not(.dark):not(.scheme-dark) .service-card .service-app .k8s-status:hover {
+  background-color: rgb(var(--catppuccin-latte-overlay0));
+}
+
+/* Tabs */
+html:not(.dark):not(.scheme-dark) #myTab {
+  background-color: rgb(var(--catppuccin-latte-crust));
+}
+
+html:not(.dark):not(.scheme-dark) #myTab button[aria-selected="true"] {
+  background-color: rgb(var(--catppuccin-latte-surface0));
+}
+
+html:not(.dark):not(.scheme-dark) #myTab button[aria-selected="false"]:hover {
+  background-color: rgb(var(--catppuccin-latte-mantle));
+}
+
+/* Bookmarks */
+html:not(.dark):not(.scheme-dark) .bookmark > a {
+  background-color: rgb(var(--catppuccin-latte-base));
+}
+
+html:not(.dark):not(.scheme-dark) .bookmark > a:hover {
+  background-color: rgb(var(--catppuccin-latte-surface0));
+}
+
+html:not(.dark):not(.scheme-dark) .bookmark > a .bookmark-icon {
+  background-color: rgb(var(--catppuccin-latte-mantle));
+}
+
+/* Server labels in Glances and Kubernetes widgets */
+html:not(.dark):not(.scheme-dark) .information-widget-glances .information-widget-label,
+html:not(.dark):not(.scheme-dark) .information-widget-kubernetes div.pt-1.text-center {
+  color: rgb(var(--catppuccin-latte-subtext0));
 }
 
 /* Service cards */

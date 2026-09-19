@@ -26,7 +26,7 @@
     red: "red",
   };
   const lightScale = {
-    50: "base", // main background
+    50: "mantle", // main background
     100: "surface1", // services level 0+bookmarks background
     200: "surface0", // services level 1 background
     300: "overlay0", // selected tab
