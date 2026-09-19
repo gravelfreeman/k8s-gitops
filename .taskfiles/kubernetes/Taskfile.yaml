@@ -4,6 +4,14 @@ version: "3"
 
 tasks:
 
+  configmap:push:
+    desc: Push local app ConfigMap changes directly to the cluster [APP=required]
+    cmd: bash "$(git rev-parse --show-toplevel)/.taskfiles/kubernetes/scripts/configmap-push.sh" "{{.APP}}"
+    requires:
+      vars: [APP]
+    preconditions:
+      - which base64 bash flux git jq kubectl kustomize yq
+
   namespace:delete:
     desc: Clear finalizers from a Terminating namespace [NS=required]
     prompt: Clear finalizers from namespace {{.NS}} ... continue?
