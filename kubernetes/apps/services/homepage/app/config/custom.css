@@ -115,7 +115,7 @@
 
 /* Homepage maps this scale throughout the UI. Light is always Latte. */
 html {
-  --catppuccin-accent: var(--catppuccin-latte-mauve);
+  --catppuccin-accent: var(--catppuccin-latte-overlay0);
   --catppuccin-blue: var(--catppuccin-latte-blue);
   --catppuccin-overlay2: var(--catppuccin-latte-overlay2);
   --catppuccin-rosewater: var(--catppuccin-latte-rosewater);
@@ -133,21 +133,21 @@ html {
 }
 
 html.dark {
-  --catppuccin-accent: var(--catppuccin-mocha-mauve);
-  --catppuccin-blue: var(--catppuccin-mocha-blue);
-  --catppuccin-overlay2: var(--catppuccin-mocha-overlay2);
-  --catppuccin-rosewater: var(--catppuccin-mocha-rosewater);
-  --catppuccin-text: var(--catppuccin-mocha-text);
-  --color-50: var(--catppuccin-mocha-surface0);
-  --color-100: var(--catppuccin-mocha-surface1);
-  --color-200: var(--catppuccin-mocha-text);
-  --color-300: var(--catppuccin-mocha-subtext0);
-  --color-400: var(--catppuccin-mocha-subtext1);
+  --catppuccin-accent: var(--catppuccin-frappe-overlay0);
+  --catppuccin-blue: var(--catppuccin-frappe-blue);
+  --catppuccin-overlay2: var(--catppuccin-frappe-overlay2);
+  --catppuccin-rosewater: var(--catppuccin-frappe-rosewater);
+  --catppuccin-text: var(--catppuccin-frappe-text);
+  --color-50: var(--catppuccin-frappe-surface0);
+  --color-100: var(--catppuccin-frappe-surface1);
+  --color-200: var(--catppuccin-frappe-text);
+  --color-300: var(--catppuccin-frappe-subtext0);
+  --color-400: var(--catppuccin-frappe-subtext1);
   --color-500: var(--catppuccin-accent);
-  --color-600: var(--catppuccin-mocha-overlay0);
-  --color-700: var(--catppuccin-mocha-surface2);
-  --color-800: var(--catppuccin-mocha-base);
-  --color-900: var(--catppuccin-mocha-crust);
+  --color-600: var(--catppuccin-frappe-overlay0);
+  --color-700: var(--catppuccin-frappe-surface2);
+  --color-800: var(--catppuccin-frappe-base);
+  --color-900: var(--catppuccin-frappe-crust);
 }
 
 ::selection {
