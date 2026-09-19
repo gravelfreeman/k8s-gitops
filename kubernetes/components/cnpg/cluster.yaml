@@ -45,6 +45,7 @@ spec:
       cron.database_name: ${APP}
       cron.timezone: America/Toronto
       max_connections: '100'
+      max_locks_per_transaction: '${CNPG_MAX_LOCKS_PER_TRANSACTION:=64}'
     shared_preload_libraries: ${CNPG_SHARED_PRELOAD_LIBRARIES:=[]}
   plugins:
     - name: barman-cloud.cloudnative-pg.io

@@ -1,0 +1,12 @@
+---
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: ${APP}-cnpg
+spec:
+  cluster:
+    name: ${APP}-cnpg
+  extensions: ${CNPG_DATABASE_EXTENSIONS:=[]}
+  name: ${CNPG_DATABASE:=${APP}}
+  owner: ${CNPG_USERNAME:=${APP}}
