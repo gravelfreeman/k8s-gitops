@@ -1,4 +1,9 @@
+/*
+ * Catppuccin theme for Homepage by Gravel Freeman
+ */
+
 (() => {
+  // Set dark mode flavor to "frappe", "macchiato", or "mocha" here
   const config = { darkFlavor: "frappe" };
   const root = document.documentElement;
   const lightScale = {
@@ -28,6 +33,8 @@
 
   const themeRoles = {
     light: {
+      label: "subtext0",
+      shadow: "text",
       "card-bg": "base",
       "card-hover": "surface0",
       "block-bg": "mantle",
@@ -42,6 +49,8 @@
       "bookmark-icon": "mantle",
     },
     dark: {
+      label: "subtext0",
+      shadow: "crust",
       "card-bg": "surface0",
       "card-hover": "overlay0",
       "block-bg": "surface1",
@@ -69,14 +78,10 @@
         "var(--catppuccin-" + flavor + "-" + token + ")",
       );
     });
-    root.style.setProperty(
-      "--theme-label",
-      "var(--catppuccin-" + (isDark ? "macchiato" : "latte") + "-subtext0)",
-    );
     Object.entries(scale).forEach(([step, token]) => {
       root.style.setProperty("--color-" + step, "var(--catppuccin-" + flavor + "-" + token + ")");
     });
-    ["blue", "green", "red", "peach", "yellow", "overlay0", "overlay2", "rosewater", "text"].forEach((color) => {
+    ["blue", "green", "red", "yellow", "overlay2", "rosewater", "text"].forEach((color) => {
       root.style.setProperty("--catppuccin-" + color, "var(--catppuccin-" + flavor + "-" + color + ")");
     });
   };

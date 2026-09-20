@@ -90,6 +90,9 @@ spec:
             - apiGroups: ["metrics.k8s.io"]
               resources: ["nodes", "pods"]
               verbs: *readVerbs
+            - apiGroups: ["gateway.networking.k8s.io"]
+              resources: ["gateways", "httproutes"]
+              verbs: *readVerbs
       bindings:
         homepage:
           forceRename: *app

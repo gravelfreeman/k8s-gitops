@@ -24,13 +24,6 @@
   #         key: '{{HOMEPAGE_FILE_SCALE_02_KEY}}'
   #         enablePools: 'true'
   #         nasType: 'scale'
-  - Plex:
-      icon: 'sh-plex.svg'
-      href: 'https://plex.${DOMAIN_1}'
-      siteMonitor: 'http://plex.plex.svc.cluster.local:32400'
-      namespace: 'plex'
-      app: 'plex'
-      podSelector: 'app.kubernetes.io/instance=plex,app.kubernetes.io/name=plex,pod.name=main'
   - Home Assistant:
       icon: 'sh-home-assistant.svg'
       href: 'https://home.${DOMAIN_0}'
@@ -167,18 +160,6 @@
       app: 'splitpro'
       podSelector: 'app.kubernetes.io/instance=splitpro,app.kubernetes.io/name=splitpro'
 - Library:
-  - Plex:
-      icon: 'sh-plex.svg'
-      href: 'https://plex.${DOMAIN_1}'
-      siteMonitor: 'http://plex.plex.svc.cluster.local:32400'
-      namespace: 'plex'
-      app: 'plex'
-      podSelector: 'app.kubernetes.io/instance=plex,app.kubernetes.io/name=plex,pod.name=main'
-      widgets:
-        - type: 'plex'
-          fields: ["albums", "movies", "tv"]
-          url: 'http://plex.plex.svc.cluster.local:32400'
-          key: '{{HOMEPAGE_FILE_PLEX_KEY}}'
   - Romm:
       icon: 'sh-romm.svg'
       href: 'https://romm.${DOMAIN_1}'
