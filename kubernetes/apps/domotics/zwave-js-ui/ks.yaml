@@ -24,6 +24,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      HOMEPAGE_ICON: sh-z-wave-js-ui.svg
   prune: true
   sourceRef:
     kind: GitRepository

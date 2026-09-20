@@ -288,3 +288,10 @@ html:is(.dark, .scheme-dark) .bookmark > a:hover {
 .services-group.subgroup:has(#scale-2-glances) {
   grid-column: span 2;
 }
+
+/* System layout: Observability uses one third, Operations uses two thirds. */
+@media (min-width: 1024px) {
+  #layout-groups > .services-group:has(#flux) > div > div > .services-group.subgroup:last-child {
+    grid-column: span 2;
+  }
+}

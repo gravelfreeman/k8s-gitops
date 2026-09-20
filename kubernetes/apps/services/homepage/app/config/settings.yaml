@@ -20,26 +20,28 @@ useEqualHeights: 'true'
 layout:
   # TAB 1
   System:
-    tab: 'System'
+    tab: 'Homelab'
     header: false
     style: 'row'
-    columns: '2'
-    Flux:
+    columns: '3'
+    Observability:
       style: 'row'
       columns: '1'
     Operations:
       header: false
+      style: 'row'
+      columns: '1'
       Services:
         style: 'row'
-        columns: '1'
+        columns: '4'
       Domotics:
         style: 'row'
-        columns: '1'
+        columns: '4'
       Core:
         style: 'row'
-        columns: '1'
+        columns: '4'
   Scale-1:
-    tab: 'System'
+    tab: 'Homelab'
     icon: 'sh-truenas-scale.svg'
     style: 'row'
     columns: '3'
@@ -52,7 +54,7 @@ layout:
       style: 'row'
       columns: '3'
   Scale-2:
-    tab: 'System'
+    tab: 'Homelab'
     icon: 'sh-truenas-scale.svg'
     style: 'row'
     columns: '3'
@@ -65,11 +67,11 @@ layout:
       style: 'row'
       columns: '3'
   Bookmarks:
-    tab: 'System'
+    tab: 'Homelab'
   Server:
-    tab: 'System'
+    tab: 'Homelab'
   Forums:
-    tab: 'System'
+    tab: 'Homelab'
   # TAB 3
   Media:
     tab: 'Media'

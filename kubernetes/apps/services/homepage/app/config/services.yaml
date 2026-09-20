@@ -1,39 +1,90 @@
 # yaml-language-server: $schema=https://www.schemastore.org/any.json
 - System:
-    - Flux:
+    - Observability:
         - Flux:
-            icon: 'https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/flux-cd.svg'
+            id: flux
+            icon: 'https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/flux-operator.svg'
             href: 'https://flux.${DOMAIN_0}'
+            namespace: flux-system
+            podSelector: 'app.kubernetes.io/instance=flux-operator,app.kubernetes.io/name=flux-operator'
+            siteMonitor: 'https://flux.${DOMAIN_0}'
             widgets:
                 - type: customapi
-                  url: 'http://kps-prometheus.kube-prometheus-stack.svc.cluster.local:9090/api/v1/query?query=flux_instance_info%7Bjob%3D%22flux-operator%22%7D'
+                  url: >-
+                    http://kps-prometheus.kube-prometheus-stack.svc.cluster.local:9090/api/v1/query?query=label_replace(flux_instance_info%7Bjob%3D%22flux-operator%22%7D%2C%22homepage%22%2C%22status%22%2C%22%22%2C%22%22)%20or%20label_replace((count(flux_resource_info%7Bready%3D%22True%22%2Csuspended%3D%22False%22%7D)%20or%20vector(0))%2C%22homepage%22%2C%22running%22%2C%22%22%2C%22%22)%20or%20label_replace((count(flux_resource_info%7Bkind%3D%22Kustomization%22%2Csuspended%3D%22True%22%7D)%20or%20vector(0))%2C%22homepage%22%2C%22suspended%22%2C%22%22%2C%22%22)%20or%20label_replace((count(flux_resource_info%7Bkind%3D%22Kustomization%22%2Cready%3D%22False%22%7D)%20or%20vector(0))%2C%22homepage%22%2C%22failing%22%2C%22%22%2C%22%22)
                   refreshInterval: 30000
                   mappings:
                       - field: 'data.result.0.metric.ready'
-                        label: 'Instance'
+                        label: 'Status'
+                        remap:
+                            - value: 'True'
+                              to: Up
+                            - value: 'False'
+                              to: Down
+                      - field: 'data.result.1.value.1'
+                        label: 'Running'
+                        format: number
+                      - field: 'data.result.2.value.1'
+                        label: 'Suspended'
+                        format: number
+                      - field: 'data.result.3.value.1'
+                        label: 'Failing'
+                        format: number
+                - type: customapi
+                  url: >-
+                    http://kps-prometheus.kube-prometheus-stack.svc.cluster.local:9090/api/v1/query?query=label_replace(flux_instance_info%7Bjob%3D%22flux-operator%22%7D%2C%22homepage%22%2C%22reconciliation_status%22%2C%22%22%2C%22%22)%20or%20label_replace(sum(controller_runtime_reconcile_errors_total%7Bjob%3D%22flux-operator%22%7D)%2C%22homepage%22%2C%22errors%22%2C%22%22%2C%22%22)
+                  refreshInterval: 30000
+                  display: list
+                  mappings:
                       - field: 'data.result.0.metric.reason'
-                        label: 'Reason'
-                - type: customapi
-                  url: 'http://kps-prometheus.kube-prometheus-stack.svc.cluster.local:9090/api/v1/query?query=count%28flux_resource_info%7Bjob%3D%22flux-operator%22%2Cready%3D%22True%22%7D%29'
+                        label: 'Reconciliation Status'
+                        remap:
+                            - value: 'ReconciliationSucceeded'
+                              to: Succeeded
+                            - value: 'Progressing'
+                              to: Reconciling
+                            - value: 'ProgressingWithRetry'
+                              to: Retrying
+                            - value: 'ReconciliationFailed'
+                              to: Failed
+                            - value: 'ArtifactFailed'
+                              to: Artifact failed
+                            - value: 'BuildFailed'
+                              to: Build failed
+                            - value: 'HealthCheckFailed'
+                              to: Health check failed
+                            - value: 'Stalled'
+                              to: Stalled
+        - Grafana:
+            icon: 'sh-grafana.svg'
+            href: 'https://grafana.${DOMAIN_0}/bookmarks'
+            namespace: kube-prometheus-stack
+            podSelector: 'app.kubernetes.io/instance=kube-prometheus-stack,app.kubernetes.io/name=grafana'
+            siteMonitor: 'https://grafana.${DOMAIN_0}'
+            widgets:
+                - type: prometheusmetric
+                  url: 'http://kps-prometheus.kube-prometheus-stack.svc.cluster.local:9090'
                   refreshInterval: 30000
-                  mappings:
-                      - field: 'data.result.0.value.1'
-                        label: 'Resources ready'
-                        format: number
+                  metrics:
+                      - label: 'Total Alerts'
+                        query: 'sum(grafana_stat_totals_alert_rules)'
+                        format:
+                            type: number
+                      - label: 'Alerts Triggered'
+                        query: 'sum(grafana_alerting_alerts{state="alerting"})'
+                        format:
+                            type: number
                 - type: customapi
-                  url: 'http://kps-prometheus.kube-prometheus-stack.svc.cluster.local:9090/api/v1/query?query=count%28flux_resource_info%7Bjob%3D%22flux-operator%22%2Cready%21%3D%22True%22%7D%29'
+                  url: 'http://grafana.kube-prometheus-stack.svc.cluster.local/api/alertmanager/alertmanager/api/v2/alerts?active=true&silenced=false&inhibited=false&unprocessed=false'
+                  headers:
+                      Authorization: 'Bearer {{HOMEPAGE_FILE_GRAFANA_KEY}}'
                   refreshInterval: 30000
+                  display: dynamic-list
                   mappings:
-                      - field: 'data.result.0.value.1'
-                        label: 'Resources not ready'
-                        format: number
-                - type: customapi
-                  url: 'http://kps-prometheus.kube-prometheus-stack.svc.cluster.local:9090/api/v1/query?query=sum%28controller_runtime_reconcile_errors_total%7Bjob%3D%22flux-operator%22%7D%29'
-                  refreshInterval: 30000
-                  mappings:
-                      - field: 'data.result.0.value.1'
-                        label: 'Reconcile errors'
-                        format: number
+                      name: labels.alertname
+                      label: labels.severity
+                      target: '{generatorURL}'
+                      limit: 10
     - Operations:
         - Services: []
         - Domotics: []

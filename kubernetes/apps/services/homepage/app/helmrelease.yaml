@@ -24,6 +24,7 @@ spec:
               HOMEPAGE_FILE_AUTOBRR_KEY: /secrets/AUTOBRR_KEY
               HOMEPAGE_FILE_BAZARR_KEY: /secrets/BAZARR_KEY
               HOMEPAGE_FILE_CLOUDFLARED_KEY: /secrets/CLOUDFLARED_KEY
+              HOMEPAGE_FILE_GRAFANA_KEY: /secrets/GRAFANA_KEY
               HOMEPAGE_FILE_HAOS_KEY: /secrets/HAOS_KEY
               HOMEPAGE_FILE_HOMEBOX_KEY: /secrets/HOMEBOX_KEY
               HOMEPAGE_FILE_IMMICH_KEY: /secrets/IMMICH_KEY

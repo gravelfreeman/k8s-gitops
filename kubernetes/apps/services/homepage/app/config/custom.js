@@ -88,4 +88,30 @@
 
   new MutationObserver(applyTheme).observe(root, { attributeFilter: ["class"] });
   applyTheme();
+
+  // Color the Flux "Failing" block when one or more Kustomizations are failing.
+  const updateFluxNotReady = () => {
+    const fluxCard = [...document.querySelectorAll(".service-card")].find(
+      (card) => card.querySelector(".service-name")?.textContent.trim() === "Flux",
+    );
+    if (!fluxCard) return;
+
+    const label = [...fluxCard.querySelectorAll(".font-thin, .font-bold")].find(
+      (element) => element.textContent.trim() === "Failing",
+    );
+    const block = label?.closest(".service-block");
+    const row = block ?? label?.closest(".flex.flex-row.items-center.justify-between");
+    const value = block ? block.querySelector(".font-thin") : row?.querySelector(".font-bold");
+    if (!value) return;
+
+    // Homepage renders custom API values as text, so convert the displayed count.
+    const count = Number(value.textContent.trim().replace(/,/g, ""));
+    row.classList.toggle("homepage-not-ready-alert", Number.isFinite(count) && count > 0);
+  };
+
+  new MutationObserver(updateFluxNotReady).observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+  updateFluxNotReady();
 })();
