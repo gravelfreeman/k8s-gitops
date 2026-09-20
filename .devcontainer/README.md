@@ -31,7 +31,7 @@ Starts from the pinned `mcr.microsoft.com/devcontainers/base:ubuntu` image.
 - Installs devcontainer features for AWS CLI, common utilities, Kubernetes tools, Cloudflared, Task, Helmfile, Talos, K9s, YQ, 1Password CLI, Flux, and Kustomize.
 - Installs extra apt packages through the apt packages feature.
 - Mounts the host 1Password SSH agent directory into `/home/zed/.1password`.
-- Mounts the host 1Password CLI IPC socket into `/run/user/1000/1Password-BrowserSupport.sock`.
+- Mounts the host runtime directory read-only into `/run/host-runtime`.
 - Mounts the host Talos artifact cache into `/tmp/talos`.
 - Configures the `op` executable with the host `onepassword-cli` GID and setgid permissions for 1Password CLI desktop app integration.
 - Mounts host `~/.gitconfig` read-only into `/tmp/host.gitconfig`.
@@ -54,6 +54,7 @@ Runs on the host before the container starts.
 Runs inside the container only when the container is first created.
 
 - Creates `$HOME/.config`.
+- Creates the container-local 1Password CLI socket link before running any `op` commands.
 - Links the repository-managed `.zshrc` into `$HOME/.zshrc`.
 - The `.zshrc` is Linux/container-only; host macOS shell paths stay out of the devcontainer config.
 - The `.zshrc` configures Oh My Zsh, shell history, FZF theme, prompt, SSH helpers, task completion, key bindings, and syntax highlighting for the devcontainer.
@@ -85,3 +86,10 @@ Runs inside the container after `onCreateCommand.sh` during first creation.
 - Generates `$HOME/.kube/config` with `talosctl kubeconfig`.
 - Restricts `$HOME/.kube/config` to mode `0600`.
 - Removes the devcontainer feature-created passwordless sudoers files through an exit trap for runtime hardening.
+
+## postStartCommand.sh
+
+Runs inside the container at every start.
+
+- Links the container's standard 1Password CLI IPC socket path to the read-only host runtime mount.
+- Replaces a stale socket entry left by an older container configuration.

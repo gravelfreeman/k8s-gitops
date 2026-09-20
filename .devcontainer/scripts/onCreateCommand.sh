@@ -12,6 +12,10 @@ setup_shell_config() {
   ln -sfn "$workspace_dir/.devcontainer/.config/zsh" "$HOME/.config/zsh"
 }
 
+setup_op_socket() {
+  bash "$workspace_dir/.devcontainer/scripts/postStartCommand.sh"
+}
+
 setup_ssh_config() {
   local github_auth_key_file="$HOME/.ssh/github-auth.pub"
   local github_auth_key_tmp
@@ -55,6 +59,7 @@ setup_k9s_config() {
 
 on_create() {
   mkdir -p "$HOME/.config"
+  run_step "Setting up 1Password CLI socket" setup_op_socket
   run_step "Setting up shell config" setup_shell_config
   run_step "Setting up SSH config" setup_ssh_config
   run_step "Setting up git config" setup_git_config

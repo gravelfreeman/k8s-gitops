@@ -28,7 +28,7 @@
     },
     "mounts": [
         "source=${localEnv:HOME}/.1password,target=/home/zed/.1password,type=bind",
-        "source=${localEnv:XDG_RUNTIME_DIR}/1Password-BrowserSupport.sock,target=/run/user/1000/1Password-BrowserSupport.sock,type=bind",
+        "source=${localEnv:XDG_RUNTIME_DIR},target=/run/host-runtime,type=bind,readonly",
         "source=${localEnv:HOME}/.cache/k8s-gitops/talos,target=/tmp/talos,type=bind",
         "source=${localEnv:HOME}/.gitconfig,target=/tmp/host.gitconfig,type=bind,readonly",
         "source=${localEnv:HOME}/.codex,target=/home/zed/.codex,type=bind"
@@ -44,7 +44,6 @@
         "K8S_GITOPS_DEVCONTAINER": "true",
         "SSH_AUTH_SOCK": "/home/zed/.1password/agent.sock",
         "XDG_RUNTIME_DIR": "/run/user/1000",
-        "OP_SOCK": "/run/user/1000/1Password-BrowserSupport.sock",
         "OP_BIOMETRIC_UNLOCK_ENABLED": "true",
         "PATH": "/home/zed/.local/bin:/home/zed/.krew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
         "MINIJINJA_CONFIG_FILE": "${containerWorkspaceFolder}/.devcontainer/.config/.minijinja.toml",
@@ -57,5 +56,6 @@
     "userEnvProbe": "loginInteractiveShell",
     "initializeCommand": "bash ${localWorkspaceFolder}/.devcontainer/scripts/initializeCommand.sh",
     "onCreateCommand": "bash ${containerWorkspaceFolder}/.devcontainer/scripts/onCreateCommand.sh ${containerWorkspaceFolder}",
-    "postCreateCommand": "bash ${containerWorkspaceFolder}/.devcontainer/scripts/postCreateCommand.sh ${containerWorkspaceFolder}"
+    "postCreateCommand": "bash ${containerWorkspaceFolder}/.devcontainer/scripts/postCreateCommand.sh ${containerWorkspaceFolder}",
+    "postStartCommand": "bash ${containerWorkspaceFolder}/.devcontainer/scripts/postStartCommand.sh"
 }
