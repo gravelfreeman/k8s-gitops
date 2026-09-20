@@ -47,14 +47,14 @@ tasks:
     desc: List ignored app files
     silent: true
     cmd: |-
-      while IFS= read -r path || [ -n "$path" ]; do
-        case "$path" in /kubernetes/apps/*/*/*) ;; *) continue ;; esac
-        externalsecret_path=".${path%/app/*}/app/externalsecret.yaml"
+      while IFS= read -r ignored_path || [ -n "$ignored_path" ]; do
+        case "$ignored_path" in /kubernetes/apps/*/*/*) ;; *) continue ;; esac
+        externalsecret_path=".${ignored_path%/app/*}/app/externalsecret.yaml"
         [ -f "$externalsecret_path" ] || continue
         yq --no-doc --output-format=tsv "
           .spec.data[]?
-          | select(.secretKey == \"${path##*/}\" and .remoteRef.key)
-          | [\"$(basename "${path%/app/*}")\", .remoteRef.key, (.remoteRef.property // .secretKey), \".$path\"]
+          | select(.secretKey == \"${ignored_path##*/}\" and .remoteRef.key)
+          | [\"$(basename "${ignored_path%/app/*}")\", .remoteRef.key, (.remoteRef.property // .secretKey), \".$ignored_path\"]
         " "$externalsecret_path"
       done < .gitignore
     preconditions:
@@ -62,19 +62,29 @@ tasks:
       - sh: which yq
 
   secrets:push:
-    desc: Push ignored app files to 1Password
+    desc: Push ignored app files to 1Password and refresh live secrets
     silent: true
     cmd: |-
       task kubernetes:secrets:list \
       | while IFS="$(printf '\t')" read -r app item file_name file_path; do
-          field_name="$(printf '%s' "$file_name" | sed 's/[.=\\]/\\&/g')"
-          op item edit "$item" "$field_name[file]=$file_path" --vault "{{.OP_VAULT}}" < /dev/tty > /dev/null || exit 1
+          op document edit "$item" "$file_path" --file-name "$file_name" --vault "{{.OP_VAULT}}" > /dev/null || exit 1
+          manifest_path="${file_path#./}"
+          externalsecret_path="${manifest_path%/app/*}/app/externalsecret.yaml"
+          externalsecret_name="$(SECRET_KEY="$file_name" yq -r 'select(.spec.data[].secretKey == strenv(SECRET_KEY)) | .metadata.name' "$externalsecret_path")"
+          refresh_time="$(kubectl get externalsecret "$externalsecret_name" -n "$app" -o jsonpath='{.status.refreshTime}')"
+          kubectl annotate externalsecret "$externalsecret_name" -n "$app" "force-sync=$(date +%s)" --overwrite > /dev/null
+          until [ "$(kubectl get externalsecret "$externalsecret_name" -n "$app" -o jsonpath='{.status.refreshTime}')" != "$refresh_time" ]; do sleep 1; done
+          kubectl get deployment,statefulset,daemonset -n "$app" -l "app.kubernetes.io/name=$app" -o name \
+          | while IFS= read -r workload; do
+              kubectl rollout restart -n "$app" "$workload"
+              kubectl rollout status -n "$app" "$workload" --timeout=2m
+            done
           echo "$app/$file_name -> $item"
         done
     preconditions:
       - sh: test -f .gitignore
       - sh: op user get --me
-      - sh: which yq
+      - sh: which date kubectl op sleep yq
 
   tuppr:reset:
     desc: Reset the Tuppr Talos upgrade campaign

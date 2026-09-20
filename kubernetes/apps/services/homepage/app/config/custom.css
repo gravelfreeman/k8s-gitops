@@ -126,58 +126,73 @@
   --theme-bookmark-hover: var(--catppuccin-latte-surface0);
   --theme-bookmark-icon: var(--catppuccin-latte-mantle);
   --theme-label: var(--catppuccin-latte-subtext0);
-  --theme-hover-text: var(--catppuccin-frappe-text);
+  --theme-hover-text: var(--catppuccin-text, var(--catppuccin-frappe-text));
+  --color-slate-700: rgb(var(--color-700));
 }
 
-/* Homepage semantic utilities use Catppuccin's semantic colors. */
-
+/* Homepage semantic colors */
 [class*="text-emerald-"] {
   color: rgb(var(--catppuccin-green));
 }
-
 [class*="bg-emerald-"],
 .service-card span > span.bg-green-500 {
   background-color: rgb(var(--catppuccin-green));
 }
-
 [class*="text-rose-"] {
   color: rgb(var(--catppuccin-red));
 }
-
 [class*="bg-rose-"] {
   background-color: rgb(var(--catppuccin-red));
 }
-
 [class*="text-orange-"] {
   color: rgb(var(--catppuccin-yellow));
 }
-
 [class*="bg-orange-"],
 .service-card span > span.bg-yellow-500 {
   background-color: rgb(var(--catppuccin-yellow));
 }
-
 [class*="text-blue-"] {
   color: rgb(var(--catppuccin-blue));
 }
-
 [class*="bg-blue-"] {
   background-color: rgb(var(--catppuccin-blue));
 }
-
 ::selection {
   background-color: rgb(var(--catppuccin-overlay2) / 25%);
 }
-
 html {
   caret-color: rgb(var(--catppuccin-rosewater));
+}
+
+/* Static text hover */
+html.dark .service-card:hover,
+html.dark .bookmark > a:hover,
+html.scheme-dark .service-card:hover,
+html.scheme-dark .bookmark > a:hover {
+  color: rgb(var(--theme-hover-text));
+}
+
+/* Header widgets labels */
+.information-widget-glances .information-widget-label,
+.information-widget-kubernetes div.pt-1.text-center {
+  color: rgb(var(--theme-label));
+}
+
+/* Tabs */
+#myTab {
+  background-color: rgb(var(--theme-tabs-bg));
+}
+#myTab button[aria-selected="true"] {
+  background-color: rgb(var(--theme-tab-active));
+}
+#myTab button[aria-selected="false"]:hover {
+  background-color: rgb(var(--theme-tab-hover));
 }
 
 /* Service cards */
 .service-card {
   background-color: rgb(var(--theme-card-bg));
 }
-
 .service-card:hover {
   background-color: rgb(var(--theme-card-hover));
 }
@@ -192,7 +207,6 @@ html {
 .service-card [class*="dark:bg-theme-900/20"][class*="h-5"] {
   background-color: rgb(var(--theme-progress-track));
 }
-
 .service-card [class~="bg-theme-200"][class*="h-5"],
 .service-card [class*="dark:bg-theme-900/40"][class*="h-5"] {
   background-color: rgb(var(--theme-progress-fill));
@@ -203,42 +217,13 @@ html {
   background-color: rgb(var(--theme-status-hover));
 }
 
-/* Tabs */
-#myTab {
-  background-color: rgb(var(--theme-tabs-bg));
-}
-
-#myTab button[aria-selected="true"] {
-  background-color: rgb(var(--theme-tab-active));
-}
-
-#myTab button[aria-selected="false"]:hover {
-  background-color: rgb(var(--theme-tab-hover));
-}
-
 /* Bookmarks */
 .bookmark > a {
   background-color: rgb(var(--theme-bookmark-bg));
 }
-
 .bookmark > a:hover {
   background-color: rgb(var(--theme-bookmark-hover));
 }
-
 .bookmark > a .bookmark-icon {
   background-color: rgb(var(--theme-bookmark-icon));
-}
-
-/* Server labels in Glances and Kubernetes widgets */
-.information-widget-glances .information-widget-label,
-.information-widget-kubernetes div.pt-1.text-center {
-  color: rgb(var(--theme-label));
-}
-
-/* Text: keep the normal color when hovering services and bookmarks. */
-html.dark .service-card:hover,
-html.dark .bookmark > a:hover,
-html.scheme-dark .service-card:hover,
-html.scheme-dark .bookmark > a:hover {
-  color: rgb(var(--theme-hover-text));
 }

@@ -1,36 +1,12 @@
 (() => {
   const config = { darkFlavor: "frappe" };
   const root = document.documentElement;
-  const colorMap = {
-    slate: "overlay0",
-    gray: "overlay1",
-    zinc: "surface2",
-    neutral: "surface1",
-    stone: "surface0",
-    white: "base",
-    amber: "yellow",
-    yellow: "peach",
-    lime: "green",
-    green: "green",
-    emerald: "teal",
-    teal: "teal",
-    cyan: "sapphire",
-    sky: "sky",
-    blue: "blue",
-    indigo: "lavender",
-    violet: "mauve",
-    purple: "mauve",
-    fuchsia: "pink",
-    pink: "pink",
-    rose: "flamingo",
-    red: "red",
-  };
   const lightScale = {
     50: "mantle", // main background
     100: "surface1", // services level 0+bookmarks background
     200: "surface0", // services level 1 background
     300: "overlay0", // selected tab
-    400: "base", // color picker bg, loading border
+    400: "base", // loading border
     500: "surface2", // bookmarks icon background
     600: "subtext1", // secondary text
     700: "text", // main text, header progress bars
@@ -42,7 +18,7 @@
     100: "base", // defaults to other vars
     200: "text", // main text
     300: "subtext0", // category text, bookmarks link text
-    400: "subtext0", // version text, color picker bg, loading border
+    400: "subtext0", // version text, loading border
     500: "base", // defaults to other vars
     600: "subtext0", // secondary text
     700: "overlay0", // search results overlay
@@ -50,64 +26,59 @@
     900: "surface2", // services level 1 background
   };
 
+  const themeRoles = {
+    light: {
+      "card-bg": "base",
+      "card-hover": "surface0",
+      "block-bg": "mantle",
+      "progress-track": "mantle",
+      "progress-fill": "crust",
+      "status-hover": "overlay0",
+      "tabs-bg": "crust",
+      "tab-active": "surface0",
+      "tab-hover": "mantle",
+      "bookmark-bg": "base",
+      "bookmark-hover": "surface0",
+      "bookmark-icon": "mantle",
+    },
+    dark: {
+      "card-bg": "surface0",
+      "card-hover": "overlay0",
+      "block-bg": "surface1",
+      "progress-track": "surface1",
+      "progress-fill": "surface2",
+      "status-hover": "overlay2",
+      "tabs-bg": "mantle",
+      "tab-active": "surface0",
+      "tab-hover": "overlay0",
+      "bookmark-bg": "surface0",
+      "bookmark-hover": "overlay0",
+      "bookmark-icon": "surface1",
+    },
+  };
+
   const applyTheme = () => {
     const isDark = root.classList.contains("dark") || root.classList.contains("scheme-dark");
     const flavor = isDark ? config.darkFlavor : "latte";
-    const themeRoles = isDark
-      ? {
-          "card-bg": "surface0",
-          "card-hover": "overlay0",
-          "block-bg": "surface1",
-          "progress-track": "surface1",
-          "progress-fill": "surface2",
-          "status-hover": "overlay2",
-          "tabs-bg": "mantle",
-          "tab-active": "surface0",
-          "tab-hover": "overlay0",
-          "bookmark-bg": "surface0",
-          "bookmark-hover": "overlay0",
-          "bookmark-icon": "surface1",
-        }
-      : {
-          "card-bg": "base",
-          "card-hover": "surface0",
-          "block-bg": "mantle",
-          "progress-track": "mantle",
-          "progress-fill": "crust",
-          "status-hover": "overlay0",
-          "tabs-bg": "crust",
-          "tab-active": "surface0",
-          "tab-hover": "mantle",
-          "bookmark-bg": "base",
-          "bookmark-hover": "surface0",
-          "bookmark-icon": "mantle",
-        };
-    const homepageColor = Array.from(root.classList)
-      .find((className) => className.startsWith("theme-"))
-      ?.slice(6);
-    const accent = colorMap[homepageColor] || colorMap.slate;
     const scale = isDark ? darkScale : lightScale;
+    const roles = themeRoles[isDark ? "dark" : "light"];
 
-    Object.entries(themeRoles).forEach(([role, token]) => {
-      root.style.setProperty(`--theme-$${role}`, `var(--catppuccin-$${flavor}-$${token})`);
+    Object.entries(roles).forEach(([role, token]) => {
+      root.style.setProperty(
+        "--theme-" + role,
+        "var(--catppuccin-" + flavor + "-" + token + ")",
+      );
     });
     root.style.setProperty(
       "--theme-label",
-      `var(--catppuccin-$${isDark ? "macchiato" : "latte"}-subtext0)`,
+      "var(--catppuccin-" + (isDark ? "macchiato" : "latte") + "-subtext0)",
     );
-    root.style.setProperty("--theme-hover-text", `var(--catppuccin-$${flavor}-text)`);
-
-    Object.entries(scale).forEach(([step, color]) => {
-      const token = color === "accent" ? accent : color;
+    Object.entries(scale).forEach(([step, token]) => {
       root.style.setProperty("--color-" + step, "var(--catppuccin-" + flavor + "-" + token + ")");
     });
-    root.style.setProperty("--color-slate-700", "rgb(var(--color-700))"); // search results border
-    ["blue", "green", "red", "peach", "yellow", "overlay2", "rosewater"].forEach((color) => {
+    ["blue", "green", "red", "peach", "yellow", "overlay0", "overlay2", "rosewater", "text"].forEach((color) => {
       root.style.setProperty("--catppuccin-" + color, "var(--catppuccin-" + flavor + "-" + color + ")");
     });
-    const accentToken = "var(--catppuccin-" + flavor + "-" + accent + ")";
-    root.style.setProperty("--color-logo-start", accentToken);
-    root.style.setProperty("--color-logo-stop", accentToken);
   };
 
   new MutationObserver(applyTheme).observe(root, { attributeFilter: ["class"] });

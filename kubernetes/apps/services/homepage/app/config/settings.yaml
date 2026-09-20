@@ -2,6 +2,7 @@
 ---
 title: 'root:freeman'
 favicon: '/images/favicon.png'
+color: 'slate'
 providers:
   openweathermap: 'openweathermapapikey'
   weatherapi: 'weatherapiapikey'
