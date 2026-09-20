@@ -10,6 +10,7 @@ spec:
       app.kubernetes.io/name: home-assistant
   components:
     - ../../../../components/common/app
+    - ../../../../components/homepage
     - ../../../../components/cnpg
     - ../../../../components/volsync
   dependsOn:

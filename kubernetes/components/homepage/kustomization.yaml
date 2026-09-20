@@ -1,0 +1,57 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+patches:
+  - patch: |-
+      apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      metadata:
+        name: _
+      spec:
+        values:
+          route:
+            app:
+              annotations:
+                gethomepage.dev/enabled: "true"
+                gethomepage.dev/group: '{{ default (title "${domain}") "${HOMEPAGE_GROUP:=}" }}'
+                gethomepage.dev/icon: '{{ default (printf "sh-%s.svg" (regexReplaceAll "-[0-9]+$" .Release.Name "")) "${HOMEPAGE_ICON:=}" }}'
+                gethomepage.dev/name: '{{ default (.Release.Name | title) "${HOMEPAGE_NAME:=}" }}'
+                gethomepage.dev/pod-selector: >-
+                  {{ default
+                    (printf "app.kubernetes.io/instance=%s,app.kubernetes.io/name=%s"
+                      .Release.Name .Release.Name)
+                    "${HOMEPAGE_POD_SELECTOR:=}" }}
+                gethomepage.dev/siteMonitor: >-
+                  {{- $route := include "bjw-s.common.lib.route.getByIdentifier"
+                    (dict "rootContext" . "id" "app") | fromYaml -}}
+                  {{- $backend := dict -}}
+                  {{- range $route.rules -}}
+                  {{- if and (not $backend) .backendRefs -}}
+                  {{- $backend = index .backendRefs 0 -}}
+                  {{- end -}}
+                  {{- end -}}
+                  {{- $port := "${HOMEPAGE_PORT:=}" -}}
+                  {{- $detected := "" -}}
+                  {{- if $backend.identifier -}}
+                  {{- $service := include "bjw-s.common.lib.service.getByIdentifier"
+                    (dict "rootContext" . "id" $backend.identifier) | fromYaml -}}
+                  {{- if not $port -}}
+                  {{- $port = $backend.port -}}
+                  {{- end -}}
+                  {{- if not $port -}}
+                  {{- $port = (include "bjw-s.common.lib.service.primaryPort"
+                    (dict "rootContext" . "serviceObject" $service) | fromYaml).port -}}
+                  {{- end -}}
+                  {{- $detected = printf "http://%s.%s.svc.cluster.local:%v"
+                    $service.name .Release.Namespace $port -}}
+                  {{- else if $backend.name -}}
+                  {{- if not $port -}}
+                  {{- $port = $backend.port -}}
+                  {{- end -}}
+                  {{- $detected = printf "http://%s.%s.svc.cluster.local:%v"
+                    $backend.name .Release.Namespace $port -}}
+                  {{- end }}
+                  {{ default $detected "${HOMEPAGE_SITE_MONITOR:=}" }}
+    target:
+      group: helm.toolkit.fluxcd.io
+      kind: HelmRelease
+      name: .*

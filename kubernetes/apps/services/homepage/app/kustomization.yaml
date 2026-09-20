@@ -8,12 +8,18 @@ configMapGenerator:
     files:
       - custom.css=./config/custom.css
       - custom.js=./config/custom.js
-      - docker.yaml=./config/docker.yaml
-      - kubernetes.yaml=./config/kubernetes.yaml
-      - proxmox.yaml=./config/proxmox.yaml
       - services.yaml=./config/services.yaml
       - settings.yaml=./config/settings.yaml
       - widgets.yaml=./config/widgets.yaml
+    literals:
+      - docker.yaml=
+      - proxmox.yaml=
+      - |-
+        kubernetes.yaml=
+        mode: cluster
+        ingress: false
+        traefik: false
+        gateway: true
   - name: homepage-assets
     files:
       - favicon.png=./config/assets/favicon.png

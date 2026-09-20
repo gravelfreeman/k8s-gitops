@@ -9,6 +9,7 @@ spec:
       app.kubernetes.io/name: plex
   components:
     - ../../../../../components/common/app/shared
+    - ../../../../../components/homepage
     - ../../../../../components/volsync
   dependsOn:
     - name: envoy-gateway-config

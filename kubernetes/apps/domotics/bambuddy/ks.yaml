@@ -10,6 +10,7 @@ spec:
       app.kubernetes.io/name: bambuddy
   components:
     - ../../../../components/common/app
+    - ../../../../components/homepage
     - ../../../../components/volsync
   dependsOn:
     - name: envoy-gateway-config
