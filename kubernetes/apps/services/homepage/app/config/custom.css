@@ -232,6 +232,14 @@ html:is(.dark, .scheme-dark) .bookmark > a:hover {
   /* Services card hover background color */
   background-color: rgb(var(--theme-card-hover));
 }
+.service-card .service-container > div > a:hover {
+  /* Dynamic list selection uses the lighter card hover color */
+  background-color: rgb(var(--theme-card-hover)) !important;
+}
+.service-card:has(.homepage-dynamic-list:hover) {
+  /* Disable parent hover only across the dynamic list area */
+  background-color: rgb(var(--theme-card-bg)) !important;
+}
 .service-card > .service-title + .service-stats:not([class~="max-h-0"]),
 .service-card > .service-title + :not(.service-stats):not(.service-container),
 .service-card > .service-title + .service-container,
@@ -247,6 +255,10 @@ html:is(.dark, .scheme-dark) .bookmark > a:hover {
 [class*="rounded-"] {
   /* Services and widgets border radius */
   border-radius: 20px;
+}
+div.border-theme-400.rounded-full.animate-spin {
+  /* Keep the loading spinner circular */
+  border-radius: 9999px !important;
 }
 .service-card [class*="bg-theme-200/50"][class*="h-5"],
 .service-card [class*="dark:bg-theme-900/20"][class*="h-5"] {
@@ -294,4 +306,63 @@ html:is(.dark, .scheme-dark) .bookmark > a:hover {
   #layout-groups > .services-group:has(#flux) > div > div > .services-group.subgroup:last-child {
     grid-column: span 2;
   }
+}
+
+/* Status dots for Prometheus and other dynamic status lists */
+.homepage-status-dot {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-right: 0.5rem;
+  border-radius: 9999px;
+}
+.homepage-status-dot-green {
+  background-color: rgb(var(--catppuccin-green, var(--catppuccin-latte-green)));
+}
+.homepage-status-dot-yellow {
+  background-color: rgb(var(--catppuccin-yellow, var(--catppuccin-latte-yellow)));
+}
+.homepage-status-dot-red {
+  background-color: rgb(var(--catppuccin-red, var(--catppuccin-latte-red)));
+}
+.service-card .service-container > div > a > div:first-child {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+/* Glances charts use the configured Catppuccin accent for all series. */
+.information-widget-glances .chart svg path.recharts-curve,
+.information-widget-glances .chart svg path.recharts-area-area {
+  stroke: rgb(var(--theme-accent)) !important;
+}
+.information-widget-glances .chart svg stop {
+  stop-color: rgb(var(--theme-accent)) !important;
+}
+.information-widget-glances .chart svg stop[offset="5%"] {
+  stop-opacity: 0.4 !important;
+}
+.information-widget-glances .chart svg stop[offset="95%"] {
+  stop-opacity: 0.1 !important;
+}
+
+/* TrueNAS pools use the same row style as dynamic status lists. */
+#scale-1-truenas .service-card > div:has(> span > span),
+#scale-2-truenas .service-card > div:has(> span > span) {
+  box-sizing: border-box;
+  width: calc(100% - 0.5rem);
+  height: 1.5rem;
+  margin: 0.25rem;
+  padding: 0.25rem;
+}
+#scale-1-truenas .service-card > div:has(> span > span) + div:has(> span > span),
+#scale-2-truenas .service-card > div:has(> span > span) + div:has(> span > span) {
+  margin-top: 0.5rem;
+}
+#scale-1-truenas .service-card > div:has(> span > span) > div:first-child,
+#scale-2-truenas .service-card > div:has(> span > span) > div:first-child {
+  top: 0;
+  left: 0;
+  height: 100%;
 }

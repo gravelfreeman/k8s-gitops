@@ -140,9 +140,10 @@ spec:
       secrets:
         type: secret
         name: homepage-file-secret
-      logs:
+      runtime:
         type: emptyDir
         globalMounts:
+          - path: /app/.next/cache
           - path: /app/config/logs
     route:
       app:

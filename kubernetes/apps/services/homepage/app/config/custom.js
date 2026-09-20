@@ -3,17 +3,18 @@
  */
 
 (() => {
-  // Set dark mode flavor to "frappe", "macchiato", or "mocha" here
-  const config = { darkFlavor: "frappe" };
+  // Set the dark flavor and accent to any official Catppuccin color here.
+  const config = { darkFlavor: "frappe", accent: "mauve" };
+  const accentColors = new Set(["rosewater", "flamingo", "pink", "mauve", "red", "maroon", "peach", "yellow", "green", "teal", "sky", "sapphire", "blue", "lavender"]);
   const root = document.documentElement;
   const lightScale = {
     50: "mantle", // main background
     100: "surface1", // services level 0+bookmarks background
     200: "surface0", // services level 1 background
     300: "overlay0", // selected tab
-    400: "base", // loading border
-    500: "surface2", // bookmarks icon background
-    600: "subtext1", // secondary text
+    400: "accent", // loading spinner
+    500: "accent", // charts and primary accent
+    600: "accent", // secondary accent
     700: "text", // main text, header progress bars
     800: "text", // category+header text, icons
     900: "text", // category icons
@@ -23,9 +24,9 @@
     100: "base", // defaults to other vars
     200: "text", // main text
     300: "subtext0", // category text, bookmarks link text
-    400: "subtext0", // version text, loading border
-    500: "base", // defaults to other vars
-    600: "subtext0", // secondary text
+    400: "accent", // loading spinner
+    500: "accent", // charts and primary accent
+    600: "accent", // secondary accent
     700: "overlay0", // search results overlay
     800: "base", // main background
     900: "surface2", // services level 1 background
@@ -71,6 +72,8 @@
     const flavor = isDark ? config.darkFlavor : "latte";
     const scale = isDark ? darkScale : lightScale;
     const roles = themeRoles[isDark ? "dark" : "light"];
+    const accent = accentColors.has(config.accent) ? config.accent : "blue";
+    const accentValue = "var(--catppuccin-" + flavor + "-" + accent + ")";
 
     Object.entries(roles).forEach(([role, token]) => {
       root.style.setProperty(
@@ -79,8 +82,10 @@
       );
     });
     Object.entries(scale).forEach(([step, token]) => {
-      root.style.setProperty("--color-" + step, "var(--catppuccin-" + flavor + "-" + token + ")");
+      const color = token === "accent" ? accent : token;
+      root.style.setProperty("--color-" + step, "var(--catppuccin-" + flavor + "-" + color + ")");
     });
+    root.style.setProperty("--theme-accent", accentValue);
     ["blue", "green", "red", "yellow", "overlay2", "rosewater", "text"].forEach((color) => {
       root.style.setProperty("--catppuccin-" + color, "var(--catppuccin-" + flavor + "-" + color + ")");
     });
@@ -89,29 +94,45 @@
   new MutationObserver(applyTheme).observe(root, { attributeFilter: ["class"] });
   applyTheme();
 
-  // Color the Flux "Failing" block when one or more Kustomizations are failing.
-  const updateFluxNotReady = () => {
-    const fluxCard = [...document.querySelectorAll(".service-card")].find(
-      (card) => card.querySelector(".service-name")?.textContent.trim() === "Flux",
-    );
-    if (!fluxCard) return;
+  // Status dots for Prometheus and other dynamic status lists
+  const applyStatusDots = () => {
+    document.querySelectorAll(".service-card .service-container").forEach((container) => {
+      const firstItem = container.firstElementChild?.firstElementChild;
+      container.classList.toggle("homepage-dynamic-list", firstItem?.tagName === "A");
+    });
 
-    const label = [...fluxCard.querySelectorAll(".font-thin, .font-bold")].find(
-      (element) => element.textContent.trim() === "Failing",
-    );
-    const block = label?.closest(".service-block");
-    const row = block ?? label?.closest(".flex.flex-row.items-center.justify-between");
-    const value = block ? block.querySelector(".font-thin") : row?.querySelector(".font-bold");
-    if (!value) return;
+    document
+      .querySelectorAll(".service-card .service-container > div > a")
+      .forEach((row) => {
+        const status = row.lastElementChild?.textContent?.trim().toLowerCase() ?? "";
+        const color = /failed|failing|critical/.test(status)
+          ? "red"
+          : /suspended|warning/.test(status)
+            ? "yellow"
+            : /\bnone\b/.test(status)
+              ? "green"
+              : null;
+        const name = row.firstElementChild;
+        const dot = name?.querySelector(".homepage-status-dot");
 
-    // Homepage renders custom API values as text, so convert the displayed count.
-    const count = Number(value.textContent.trim().replace(/,/g, ""));
-    row.classList.toggle("homepage-not-ready-alert", Number.isFinite(count) && count > 0);
+        if (!name) return;
+        if (!color) {
+          dot?.remove();
+          return;
+        }
+        if (!dot) {
+          const newDot = document.createElement("span");
+          newDot.className = "homepage-status-dot homepage-status-dot-" + color;
+          newDot.setAttribute("aria-hidden", "true");
+          name.prepend(newDot);
+          return;
+        }
+        dot.className = "homepage-status-dot homepage-status-dot-" + color;
+        dot.setAttribute("aria-hidden", "true");
+      });
   };
 
-  new MutationObserver(updateFluxNotReady).observe(document.body, {
-    childList: true,
-    subtree: true,
-  });
-  updateFluxNotReady();
+  new MutationObserver(applyStatusDots).observe(document.body, { childList: true, subtree: true });
+  applyStatusDots();
+
 })();

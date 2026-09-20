@@ -11,7 +11,7 @@
             widgets:
                 - type: customapi
                   url: >-
-                    http://kps-prometheus.kube-prometheus-stack.svc.cluster.local:9090/api/v1/query?query=label_replace(flux_instance_info%7Bjob%3D%22flux-operator%22%7D%2C%22homepage%22%2C%22status%22%2C%22%22%2C%22%22)%20or%20label_replace((count(flux_resource_info%7Bready%3D%22True%22%2Csuspended%3D%22False%22%7D)%20or%20vector(0))%2C%22homepage%22%2C%22running%22%2C%22%22%2C%22%22)%20or%20label_replace((count(flux_resource_info%7Bkind%3D%22Kustomization%22%2Csuspended%3D%22True%22%7D)%20or%20vector(0))%2C%22homepage%22%2C%22suspended%22%2C%22%22%2C%22%22)%20or%20label_replace((count(flux_resource_info%7Bkind%3D%22Kustomization%22%2Cready%3D%22False%22%7D)%20or%20vector(0))%2C%22homepage%22%2C%22failing%22%2C%22%22%2C%22%22)
+                    http://kps-prometheus.kube-prometheus-stack.svc.cluster.local:9090/api/v1/query?query=label_replace(flux_instance_info%7Bjob%3D%22flux-operator%22%7D%2C%22homepage%22%2C%22status%22%2C%22%22%2C%22%22)%20or%20label_replace((count(flux_resource_info%7Bready%3D%22True%22%2Csuspended%3D%22False%22%7D)%20or%20vector(0))%2C%22homepage%22%2C%22running%22%2C%22%22%2C%22%22)%20or%20label_replace((count(flux_resource_info%7Bkind%3D%22Kustomization%22%2Csuspended%3D%22True%22%7D)%20or%20vector(0))%2C%22homepage%22%2C%22suspended%22%2C%22%22%2C%22%22)
                   refreshInterval: 30000
                   mappings:
                       - field: 'data.result.0.metric.ready'
@@ -27,34 +27,16 @@
                       - field: 'data.result.2.value.1'
                         label: 'Suspended'
                         format: number
-                      - field: 'data.result.3.value.1'
-                        label: 'Failing'
-                        format: number
                 - type: customapi
                   url: >-
-                    http://kps-prometheus.kube-prometheus-stack.svc.cluster.local:9090/api/v1/query?query=label_replace(flux_instance_info%7Bjob%3D%22flux-operator%22%7D%2C%22homepage%22%2C%22reconciliation_status%22%2C%22%22%2C%22%22)%20or%20label_replace(sum(controller_runtime_reconcile_errors_total%7Bjob%3D%22flux-operator%22%7D)%2C%22homepage%22%2C%22errors%22%2C%22%22%2C%22%22)
+                    http://kps-prometheus.kube-prometheus-stack.svc.cluster.local:9090/api/v1/query?query=label_replace(flux_resource_info%7Bkind%3D%22Kustomization%22%2Cready%3D%22False%22%2Csuspended%3D%22False%22%7D%2C%22homepage_reason%22%2C%22Failing%22%2C%22%22%2C%22%22)%20or%20label_replace(flux_resource_info%7Bkind%3D%22Kustomization%22%2Csuspended%3D%22True%22%7D%2C%22homepage_reason%22%2C%22Suspended%22%2C%22%22%2C%22%22)
                   refreshInterval: 30000
-                  display: list
+                  display: dynamic-list
                   mappings:
-                      - field: 'data.result.0.metric.reason'
-                        label: 'Reconciliation Status'
-                        remap:
-                            - value: 'ReconciliationSucceeded'
-                              to: Succeeded
-                            - value: 'Progressing'
-                              to: Reconciling
-                            - value: 'ProgressingWithRetry'
-                              to: Retrying
-                            - value: 'ReconciliationFailed'
-                              to: Failed
-                            - value: 'ArtifactFailed'
-                              to: Artifact failed
-                            - value: 'BuildFailed'
-                              to: Build failed
-                            - value: 'HealthCheckFailed'
-                              to: Health check failed
-                            - value: 'Stalled'
-                              to: Stalled
+                      items: 'data.result'
+                      name: 'metric.name'
+                      label: 'metric.homepage_reason'
+                      target: 'https://flux.${DOMAIN_0}/resource/{metric.kind}/{metric.namespace}/{metric.name}'
         - Grafana:
             icon: 'sh-grafana.svg'
             href: 'https://grafana.${DOMAIN_0}/bookmarks'
@@ -67,11 +49,11 @@
                   refreshInterval: 30000
                   metrics:
                       - label: 'Total Alerts'
-                        query: 'sum(grafana_stat_totals_alert_rules)'
+                        query: 'sum(alertmanager_alerts)'
                         format:
                             type: number
                       - label: 'Alerts Triggered'
-                        query: 'sum(grafana_alerting_alerts{state="alerting"})'
+                        query: 'sum(alertmanager_alerts{state="active"})'
                         format:
                             type: number
                 - type: customapi
@@ -83,7 +65,7 @@
                   mappings:
                       name: labels.alertname
                       label: labels.severity
-                      target: '{generatorURL}'
+                      target: 'https://grafana.${DOMAIN_0}/alerting/groups?alertmanager=Alertmanager&queryString=alertname%3D%22{labels.alertname}%22'
                       limit: 10
     - Operations:
         - Services: []
