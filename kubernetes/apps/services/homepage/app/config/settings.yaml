@@ -2,6 +2,7 @@
 ---
 title: 'root:freeman'
 favicon: '/images/favicon.png'
+color: slate
 providers:
   openweathermap: 'openweathermapapikey'
   weatherapi: 'weatherapiapikey'
@@ -18,46 +19,63 @@ hideErrors: 'true'
 useEqualHeights: 'true'
 layout:
   # TAB 1
-  Core:
+  System:
     tab: 'System'
-    icon: 'mdi-server'
+    header: false
     style: 'row'
-    columns: '8'
+    columns: '2'
+    Flux:
+      style: 'row'
+      columns: '1'
+    Operations:
+      header: false
+      Services:
+        style: 'row'
+        columns: '1'
+      Domotics:
+        style: 'row'
+        columns: '1'
+      Core:
+        style: 'row'
+        columns: '1'
+  Scale-1:
+    tab: 'System'
+    icon: 'sh-truenas-scale.svg'
+    style: 'row'
+    columns: '3'
+    Storage:
+      header: false
+      style: 'row'
+      columns: '1'
+    Glances:
+      header: false
+      style: 'row'
+      columns: '3'
+  Scale-2:
+    tab: 'System'
+    icon: 'sh-truenas-scale.svg'
+    style: 'row'
+    columns: '3'
+    Storage:
+      header: false
+      style: 'row'
+      columns: '1'
+    Glances:
+      header: false
+      style: 'row'
+      columns: '3'
   Bookmarks:
     tab: 'System'
   Server:
     tab: 'System'
   Forums:
     tab: 'System'
-  # TAB 2
-  Services:
-    tab: 'Services'
-    icon: 'mdi-apps'
-    style: 'row'
-    columns: '8'
-  Domotics:
-    tab: 'Services'
-    icon: 'mdi-home-automation'
-    style: 'row'
-    columns: '8'
-  Accounting:
-    tab: 'Services'
-  Communication:
-    tab: 'Services'
-  Social Media:
-    tab: 'Services'
-  Resources:
-    tab: 'Services'
-  Gaming:
-    tab: 'Services'
-  Boards:
-    tab: 'Services'
   # TAB 3
   Media:
     tab: 'Media'
     icon: 'mdi-bookshelf'
     style: row
-    columns: '8'
+    columns: '6'
   Usenet:
     tab: 'Media'
     icon: 'mdi-newspaper-variant-multiple'

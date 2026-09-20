@@ -23,6 +23,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      HOMEPAGE_ICON: sh-snapotter.png
   prune: true
   sourceRef:
     kind: GitRepository

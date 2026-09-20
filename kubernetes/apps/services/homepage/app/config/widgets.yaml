@@ -1,6 +1,9 @@
 ---
 - logo:
     icon: '/images/favicon.png'
+- unifi_console:
+    url: 'https://10.0.20.1:443'
+    key: '{{HOMEPAGE_FILE_UDM_KEY}}'
 - kubernetes:
     cluster:
       show: false
@@ -13,17 +16,6 @@
       cpu: true
       memory: true
       showLabel: true
-- unifi_console:
-    url: 'https://10.0.20.1:443'
-    key: '{{HOMEPAGE_FILE_UDM_KEY}}'
-- glances:
-    url: 'http://10.0.10.10:30015'
-    version: '4'
-    cpu: 'true'
-    mem: 'false'
-    cputemp: 'true'
-    uptime: 'true'
-    label: 'Scale-1'
 - weatherapi:
     label: '${CITY}'
     latitude: '${LATITUDE}'

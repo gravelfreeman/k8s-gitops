@@ -22,6 +22,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      HOMEPAGE_ICON: "mdi-playlist-music-#1a94da"
   prune: true
   sourceRef:
     kind: GitRepository

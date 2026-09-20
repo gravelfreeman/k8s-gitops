@@ -71,9 +71,20 @@ tasks:
           manifest_path="${file_path#./}"
           externalsecret_path="${manifest_path%/app/*}/app/externalsecret.yaml"
           externalsecret_name="$(SECRET_KEY="$file_name" yq -r 'select(.spec.data[].secretKey == strenv(SECRET_KEY)) | .metadata.name' "$externalsecret_path")"
+          secret_name="$(kubectl get externalsecret "$externalsecret_name" -n "$app" -o jsonpath='{.spec.target.name}')"
+          expected_hash="$(sha256sum "$file_path" | awk '{print $1}')"
           refresh_time="$(kubectl get externalsecret "$externalsecret_name" -n "$app" -o jsonpath='{.status.refreshTime}')"
           kubectl annotate externalsecret "$externalsecret_name" -n "$app" "force-sync=$(date +%s)" --overwrite > /dev/null
           until [ "$(kubectl get externalsecret "$externalsecret_name" -n "$app" -o jsonpath='{.status.refreshTime}')" != "$refresh_time" ]; do sleep 1; done
+          secret_key="$(printf '%s' "$file_name" | sed 's/\./\\./g')"
+          secret_hash=""
+          for _ in $(seq 1 24); do
+            secret_hash="$(kubectl get secret "$secret_name" -n "$app" -o jsonpath="{.data.${secret_key}}" | base64 -d | sha256sum | awk '{print $1}')"
+            [ "$secret_hash" = "$expected_hash" ] && break
+            kubectl annotate externalsecret "$externalsecret_name" -n "$app" "force-sync=$(date +%s)" --overwrite > /dev/null
+            sleep 5
+          done
+          [ "$secret_hash" = "$expected_hash" ] || { echo "Secret $app/$secret_name did not match $file_path" >&2; exit 1; }
           kubectl get deployment,statefulset,daemonset -n "$app" -l "app.kubernetes.io/name=$app" -o name \
           | while IFS= read -r workload; do
               kubectl rollout restart -n "$app" "$workload"
@@ -84,7 +95,7 @@ tasks:
     preconditions:
       - sh: test -f .gitignore
       - sh: op user get --me
-      - sh: which date kubectl op sleep yq
+      - sh: which awk base64 date kubectl op sed sha256sum sleep yq
 
   tuppr:reset:
     desc: Reset the Tuppr Talos upgrade campaign

@@ -209,7 +209,7 @@ spec:
         enabled: false
         type: emptyDir
     route:
-      plex:
+      app:
         hostnames: ['plex.${DOMAIN_1}']
         parentRefs:
           - name: envoy-internal

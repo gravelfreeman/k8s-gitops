@@ -1,5 +1,143 @@
 # yaml-language-server: $schema=https://www.schemastore.org/any.json
-- Core: []
-- Domotics: []
+- System:
+    - Flux:
+        - Flux:
+            icon: 'https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/flux-cd.svg'
+            href: 'https://flux.${DOMAIN_0}'
+            widgets:
+                - type: customapi
+                  url: 'http://kps-prometheus.kube-prometheus-stack.svc.cluster.local:9090/api/v1/query?query=flux_instance_info%7Bjob%3D%22flux-operator%22%7D'
+                  refreshInterval: 30000
+                  mappings:
+                      - field: 'data.result.0.metric.ready'
+                        label: 'Instance'
+                      - field: 'data.result.0.metric.reason'
+                        label: 'Reason'
+                - type: customapi
+                  url: 'http://kps-prometheus.kube-prometheus-stack.svc.cluster.local:9090/api/v1/query?query=count%28flux_resource_info%7Bjob%3D%22flux-operator%22%2Cready%3D%22True%22%7D%29'
+                  refreshInterval: 30000
+                  mappings:
+                      - field: 'data.result.0.value.1'
+                        label: 'Resources ready'
+                        format: number
+                - type: customapi
+                  url: 'http://kps-prometheus.kube-prometheus-stack.svc.cluster.local:9090/api/v1/query?query=count%28flux_resource_info%7Bjob%3D%22flux-operator%22%2Cready%21%3D%22True%22%7D%29'
+                  refreshInterval: 30000
+                  mappings:
+                      - field: 'data.result.0.value.1'
+                        label: 'Resources not ready'
+                        format: number
+                - type: customapi
+                  url: 'http://kps-prometheus.kube-prometheus-stack.svc.cluster.local:9090/api/v1/query?query=sum%28controller_runtime_reconcile_errors_total%7Bjob%3D%22flux-operator%22%7D%29'
+                  refreshInterval: 30000
+                  mappings:
+                      - field: 'data.result.0.value.1'
+                        label: 'Reconcile errors'
+                        format: number
+    - Operations:
+        - Services: []
+        - Domotics: []
+        - Core: []
+- Scale-1:
+    - Storage:
+        - TrueNAS:
+            id: scale-1-truenas
+            icon: 'sh-truenas-scale.svg'
+            href: 'https://10.0.10.10'
+            widget:
+                type: truenas
+                url: 'https://10.0.10.10'
+                version: 2
+                key: '{{HOMEPAGE_FILE_SCALE_01_KEY}}'
+                enablePools: true
+                nasType: scale
+    - Glances:
+        - CPU Usage:
+            id: scale-1-glances
+            widget:
+                type: glances
+                url: 'http://10.0.10.10:30015'
+                version: 4
+                metric: cpu
+        - Memory Usage:
+            widget:
+                type: glances
+                url: 'http://10.0.10.10:30015'
+                version: 4
+                metric: memory
+        - Network Usage:
+            widget:
+                type: glances
+                url: 'http://10.0.10.10:30015'
+                version: 4
+                metric: 'network:eth0'
+        - Top Processes:
+            widget:
+                type: glances
+                url: 'http://10.0.10.10:30015'
+                version: 4
+                metric: process
+        - CPU Temp:
+            widget:
+                type: glances
+                url: 'http://10.0.10.10:30015'
+                version: 4
+                metric: 'sensor:Package id 0'
+        - Disk I/O:
+            widget:
+                type: glances
+                url: 'http://10.0.10.10:30015'
+                version: 4
+                metric: 'disk:sdj'
+- Scale-2:
+    - Storage:
+        - TrueNAS:
+            id: scale-2-truenas
+            icon: 'sh-truenas-scale.svg'
+            href: 'https://10.0.10.11'
+            widget:
+                type: truenas
+                url: 'https://10.0.10.11'
+                version: 2
+                key: '{{HOMEPAGE_FILE_SCALE_02_KEY}}'
+                enablePools: true
+                nasType: scale
+    - Glances:
+        - CPU Usage:
+            id: scale-2-glances
+            widget:
+                type: glances
+                url: 'http://10.0.10.11:30015'
+                version: 4
+                metric: cpu
+        - Memory Usage:
+            widget:
+                type: glances
+                url: 'http://10.0.10.11:30015'
+                version: 4
+                metric: memory
+        - Network Usage:
+            widget:
+                type: glances
+                url: 'http://10.0.10.11:30015'
+                version: 4
+                metric: 'network:eth0'
+        - Top Processes:
+            widget:
+                type: glances
+                url: 'http://10.0.10.11:30015'
+                version: 4
+                metric: process
+        - CPU Temp:
+            widget:
+                type: glances
+                url: 'http://10.0.10.11:30015'
+                version: 4
+                metric: 'sensor:Package id 0'
+        - Disk I/O:
+            widget:
+                type: glances
+                url: 'http://10.0.10.11:30015'
+                version: 4
+                metric: 'disk:sda'
 - Media: []
-- Services: []

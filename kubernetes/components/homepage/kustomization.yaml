@@ -21,35 +21,11 @@ patches:
                       .Release.Name .Release.Name)
                     "${HOMEPAGE_POD_SELECTOR:=}" }}
                 gethomepage.dev/siteMonitor: >-
-                  {{- $route := include "bjw-s.common.lib.route.getByIdentifier"
-                    (dict "rootContext" . "id" "app") | fromYaml -}}
-                  {{- $backend := dict -}}
-                  {{- range $route.rules -}}
-                  {{- if and (not $backend) .backendRefs -}}
-                  {{- $backend = index .backendRefs 0 -}}
-                  {{- end -}}
-                  {{- end -}}
-                  {{- $port := "${HOMEPAGE_PORT:=}" -}}
                   {{- $detected := "" -}}
-                  {{- if $backend.identifier -}}
-                  {{- $service := include "bjw-s.common.lib.service.getByIdentifier"
-                    (dict "rootContext" . "id" $backend.identifier) | fromYaml -}}
-                  {{- if not $port -}}
-                  {{- $port = $backend.port -}}
+                  {{- if .Values.route.app.hostnames -}}
+                  {{- $detected = printf "https://%s"
+                    (tpl (index .Values.route.app.hostnames 0) .) -}}
                   {{- end -}}
-                  {{- if not $port -}}
-                  {{- $port = (include "bjw-s.common.lib.service.primaryPort"
-                    (dict "rootContext" . "serviceObject" $service) | fromYaml).port -}}
-                  {{- end -}}
-                  {{- $detected = printf "http://%s.%s.svc.cluster.local:%v"
-                    $service.name .Release.Namespace $port -}}
-                  {{- else if $backend.name -}}
-                  {{- if not $port -}}
-                  {{- $port = $backend.port -}}
-                  {{- end -}}
-                  {{- $detected = printf "http://%s.%s.svc.cluster.local:%v"
-                    $backend.name .Release.Namespace $port -}}
-                  {{- end }}
                   {{ default $detected "${HOMEPAGE_SITE_MONITOR:=}" }}
     target:
       group: helm.toolkit.fluxcd.io

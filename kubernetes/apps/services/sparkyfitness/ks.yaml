@@ -24,6 +24,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      HOMEPAGE_ICON: sh-sparkyfitness.png
   prune: true
   sourceRef:
     kind: GitRepository

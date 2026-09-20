@@ -278,3 +278,13 @@ html:is(.dark, .scheme-dark) .bookmark > a:hover {
   /* Bookmark name font size */
   font-size: 0.875rem;
 }
+
+/* Homepage layout override: independent from the Catppuccin theme above. */
+.services-group.subgroup:has(#scale-1-truenas),
+.services-group.subgroup:has(#scale-2-truenas) {
+  grid-column: span 1;
+}
+.services-group.subgroup:has(#scale-1-glances),
+.services-group.subgroup:has(#scale-2-glances) {
+  grid-column: span 2;
+}
