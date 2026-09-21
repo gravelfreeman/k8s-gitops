@@ -331,11 +331,20 @@ div.border-theme-400.rounded-full.animate-spin {
   align-items: center;
   min-width: 0;
 }
+.service-card .homepage-dynamic-list > div > a > div:first-child {
+  /* Match the TrueNAS pool name typography. */
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 400;
+}
 
-/* Glances charts use the configured Catppuccin accent for all series. */
+/* Glances graphs use configured accent color */
 .information-widget-glances .chart svg path.recharts-curve,
 .information-widget-glances .chart svg path.recharts-area-area {
   stroke: rgb(var(--theme-accent)) !important;
+}
+.information-widget-glances .chart svg path.recharts-area-area {
+  fill: rgb(var(--theme-accent) / 0.25) !important;
 }
 .information-widget-glances .chart svg stop {
   stop-color: rgb(var(--theme-accent)) !important;
@@ -347,7 +356,34 @@ div.border-theme-400.rounded-full.animate-spin {
   stop-opacity: 0.1 !important;
 }
 
-/* TrueNAS pools use the same row style as dynamic status lists. */
+/* Keep Glances graphs below the widget title */
+.services-group.subgroup:has(#scale-1-glances, #scale-2-glances) .service-container.chart {
+  overflow: hidden;
+}
+.services-group.subgroup:has(#scale-1-glances, #scale-2-glances) .service-card > .service-title + .service-container,
+.services-group.subgroup:has(#scale-1-glances, #scale-2-glances) .service-card > .service-stats + .service-container {
+  margin-top: 0 !important;
+}
+.services-group.subgroup:has(#scale-1-glances, #scale-2-glances) .service-container.chart > div:first-child {
+  top: 0 !important;
+  right: 0 !important;
+  bottom: auto !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 68px !important;
+}
+.services-group.subgroup:has(#scale-1-glances, #scale-2-glances) .chart svg path[fill^="url("] {
+  fill: rgb(var(--theme-accent) / 0.25) !important;
+}
+.services-group.subgroup:has(#scale-1-glances, #scale-2-glances) .chart svg path.recharts-curve,
+.services-group.subgroup:has(#scale-1-glances, #scale-2-glances) .chart svg path.recharts-area-area {
+  stroke: rgb(var(--theme-accent)) !important;
+}
+.services-group.subgroup:has(#scale-1-glances, #scale-2-glances) .chart svg stop {
+  stop-color: rgb(var(--theme-accent)) !important;
+}
+
+/* TrueNAS pools use the same row style as dynamic status lists */
 #scale-1-truenas .service-card > div:has(> span > span),
 #scale-2-truenas .service-card > div:has(> span > span) {
   box-sizing: border-box;
@@ -365,4 +401,10 @@ div.border-theme-400.rounded-full.animate-spin {
   top: 0;
   left: 0;
   height: 100%;
+}
+#scale-1-truenas .service-card > div:has(> span > span) > div:last-child,
+#scale-2-truenas .service-card > div:has(> span > span) > div:last-child {
+  /* Match the right-hand text of dynamic status lists. */
+  margin-right: 0.5rem;
+  font-weight: 700;
 }

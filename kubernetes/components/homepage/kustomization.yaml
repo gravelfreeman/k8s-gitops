@@ -15,18 +15,7 @@ patches:
                 gethomepage.dev/group: '{{ default (title "${domain}") "${HOMEPAGE_GROUP:=}" }}'
                 gethomepage.dev/icon: '{{ default (printf "sh-%s.svg" (regexReplaceAll "-[0-9]+$" .Release.Name "")) "${HOMEPAGE_ICON:=}" }}'
                 gethomepage.dev/name: '{{ default (.Release.Name | title) "${HOMEPAGE_NAME:=}" }}'
-                gethomepage.dev/pod-selector: >-
-                  {{ default
-                    (printf "app.kubernetes.io/instance=%s,app.kubernetes.io/name=%s"
-                      .Release.Name .Release.Name)
-                    "${HOMEPAGE_POD_SELECTOR:=}" }}
-                gethomepage.dev/siteMonitor: >-
-                  {{- $detected := "" -}}
-                  {{- if .Values.route.app.hostnames -}}
-                  {{- $detected = printf "https://%s"
-                    (tpl (index .Values.route.app.hostnames 0) .) -}}
-                  {{- end -}}
-                  {{ default $detected "${HOMEPAGE_SITE_MONITOR:=}" }}
+                gethomepage.dev/pod-selector: '{{ default (printf "app.kubernetes.io/instance=%s,app.kubernetes.io/name=%s" .Release.Name .Release.Name) "${HOMEPAGE_POD_SELECTOR:=}" }}'
     target:
       group: helm.toolkit.fluxcd.io
       kind: HelmRelease

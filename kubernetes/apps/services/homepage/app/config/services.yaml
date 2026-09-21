@@ -65,7 +65,7 @@
                   mappings:
                       name: labels.alertname
                       label: labels.severity
-                      target: 'https://grafana.${DOMAIN_0}/alerting/groups?alertmanager=Alertmanager&queryString=alertname%3D%22{labels.alertname}%22'
+                      target: 'https://grafana.${DOMAIN_0}/alerting/groups?alertmanager=Alertmanager&queryString=alertname%3D%22{labels.alertname}%22#homepage-alert-description={annotations.description}'
                       limit: 10
     - Operations:
         - Services: []

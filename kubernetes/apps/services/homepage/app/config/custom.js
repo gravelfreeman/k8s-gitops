@@ -135,4 +135,26 @@
   new MutationObserver(applyStatusDots).observe(document.body, { childList: true, subtree: true });
   applyStatusDots();
 
+  // Show Alertmanager descriptions in the native tooltip
+  const applyAlertDescriptions = () => {
+    const marker = "#homepage-alert-description=";
+
+    document.querySelectorAll(".service-card .service-container > div > a").forEach((row) => {
+      const markerIndex = row.href.indexOf(marker);
+      if (markerIndex === -1) return;
+
+      const encodedDescription = row.href.slice(markerIndex + marker.length);
+      let description = encodedDescription;
+      try {
+        description = decodeURIComponent(encodedDescription);
+      } catch {
+        // Keep the raw fragment if an alert contains an invalid percent sequence.
+      }
+      if (description) row.title = description;
+    });
+  };
+
+  new MutationObserver(applyAlertDescriptions).observe(document.body, { childList: true, subtree: true });
+  applyAlertDescriptions();
+
 })();
