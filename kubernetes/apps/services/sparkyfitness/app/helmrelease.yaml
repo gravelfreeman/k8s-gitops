@@ -42,7 +42,7 @@ spec:
           server:
             image:
               repository: codewithcj/sparkyfitness_server
-              tag: v1.7.1@sha256:dd340607b2748941032a5c0db679363eb736ad810e26df10d93810a2b1518d5e
+              tag: v1.7.2@sha256:a3562bb89cf0c7f8394bc2728776d9ba42327aaabf831ef35f00e0fe1ee47a93
             env:
               SPARKY_FITNESS_ADMIN_EMAIL: "id@{DOMAIN_0}"
               BETTER_AUTH_SECRET_FILE: /secrets/app/BETTER_AUTH_SECRET
