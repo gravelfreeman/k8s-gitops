@@ -6,8 +6,8 @@
             icon: 'https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/flux-operator.svg'
             href: 'https://flux.${DOMAIN_0}'
             namespace: flux-system
+            app: flux-operator
             podSelector: 'app.kubernetes.io/instance=flux-operator,app.kubernetes.io/name=flux-operator'
-            siteMonitor: 'https://flux.${DOMAIN_0}'
             widgets:
                 - type: customapi
                   url: >-
@@ -41,8 +41,8 @@
             icon: 'sh-grafana.svg'
             href: 'https://grafana.${DOMAIN_0}/bookmarks'
             namespace: kube-prometheus-stack
+            app: grafana
             podSelector: 'app.kubernetes.io/instance=kube-prometheus-stack,app.kubernetes.io/name=grafana'
-            siteMonitor: 'https://grafana.${DOMAIN_0}'
             widgets:
                 - type: prometheusmetric
                   url: 'http://kps-prometheus.kube-prometheus-stack.svc.cluster.local:9090'

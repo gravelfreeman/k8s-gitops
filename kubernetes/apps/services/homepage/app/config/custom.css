@@ -271,8 +271,12 @@ div.border-theme-400.rounded-full.animate-spin {
   background-color: rgb(var(--theme-progress-fill));
 }
 .service-card .service-app .k8s-status:hover {
-  /* k8s status hover background color */
-  background-color: rgb(var(--theme-status-hover));
+  /* Keep the status background transparent on hover. */
+  background-color: transparent;
+}
+.service-card .service-app .k8s-status:hover .rounded-full {
+  /* Use the configured accent for the status point on hover. */
+  background-color: rgb(var(--theme-accent)) !important;
 }
 .bookmark > a {
   /* Bookmark background color */
