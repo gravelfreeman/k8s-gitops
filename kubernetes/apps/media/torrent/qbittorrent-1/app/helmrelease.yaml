@@ -21,7 +21,7 @@ spec:
             env:
               QBIT_HARDLINKER_DEST_DIR: /media/temp/downloads
               QBIT_HARDLINKER_SOURCE_DIR: /media/share/qb1
-              QBIT_HARDLINKER_EXCLUDED_CATEGORIES: radarr,sonarr
+              QBIT_HARDLINKER_CATEGORIES: radarr,sonarr
             probes:
               liveness:
                 enabled: true
