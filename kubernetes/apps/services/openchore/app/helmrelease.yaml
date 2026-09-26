@@ -20,7 +20,7 @@ spec:
               tag: sha-c5a9dd8@sha256:c7e12f06f4d95ddebefe762628a0a7438720b942a354109f90c4561bc6c103db
             env:
               AI_ENDPOINT: http://openchore-litert:8080
-              CONFIG_PATH: /secrets/oidc/config.yaml
+              CONFIG_PATH: /secrets/config/config.yaml
             probes:
               liveness: &apiProbes
                 enabled: true
