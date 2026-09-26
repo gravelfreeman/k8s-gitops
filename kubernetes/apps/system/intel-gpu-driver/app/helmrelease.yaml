@@ -9,6 +9,8 @@ spec:
   chartRef:
     kind: OCIRepository
     name: *app
+  upgrade:
+    serverSideApply: disabled
   values:
     manager:
       devices:
