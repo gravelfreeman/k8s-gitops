@@ -22,6 +22,7 @@ spec:
               QBIT_HARDLINKER_SOURCE_DIR: /media/share/qb3
               QBIT_HARDLINKER_DEST_DIR: /media/temp/downloads
               QBIT_HARDLINKER_CATEGORIES: cross-seed
+            probes:
               liveness:
                 enabled: true
               readiness:
