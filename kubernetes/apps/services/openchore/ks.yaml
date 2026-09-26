@@ -10,7 +10,6 @@ spec:
   components:
     - ../../../../components/common/app
     - ../../../../components/homepage
-    - ../../../../components/envoy-oidc
     - ../../../../components/volsync
   dependsOn:
     - name: envoy-gateway-config
@@ -23,8 +22,6 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      ENVOY_OIDC_FORWARD_ACCESS_TOKEN: "false"
-      ENVOY_OIDC_GROUP: user
       HOMEPAGE_ICON: "mdi-calendar-check-#1e293b"
   prune: true
   sourceRef:

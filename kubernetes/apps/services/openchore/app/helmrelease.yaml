@@ -17,9 +17,10 @@ spec:
           app:
             image:
               repository: ghcr.io/liftedkilt/openchore/api
-              tag: sha-e0134c5@sha256:d7e815ed667e192ae5b4ca29d1edabaaa475c2a896bdafe171dfe6e6e3dffb74
+              tag: sha-c5a9dd8@sha256:c7e12f06f4d95ddebefe762628a0a7438720b942a354109f90c4561bc6c103db
             env:
               AI_ENDPOINT: http://openchore-litert:8080
+              CONFIG_PATH: /secrets/oidc/config.yaml
             probes:
               liveness: &apiProbes
                 enabled: true
@@ -40,7 +41,7 @@ spec:
           app:
             image:
               repository: ghcr.io/liftedkilt/openchore/web
-              tag: sha-e0134c5@sha256:4859066b7860aa71e7b50d1366e15d398ac43086cbd77331db07b11047c8d60b
+              tag: sha-c5a9dd8@sha256:c399dccfd2e709b1a91331294696bacdac8ba3bc4c44673edb94fe8cf8cf8fb7
             probes:
               liveness:
                 enabled: true
@@ -53,7 +54,7 @@ spec:
           app:
             image:
               repository: ghcr.io/liftedkilt/openchore/litert
-              tag: sha-e0134c5@sha256:a728d544eabf064a3f6fe157016fc5e02d6dfda93842e2c4893bd64cbf87d1b4
+              tag: sha-ce95f33@sha256:182cf41e5168045e4ffe0e59cf1fafbd6119857f855981ec481c207d566a0ed6
             env:
               XDG_CACHE_HOME: /app/model/.cache
               PYTHONDONTWRITEBYTECODE: "1"
@@ -90,6 +91,13 @@ spec:
           api:
             app:
               - path: /data
+      config:
+        type: secret
+        name: openchore-config-secret
+        advancedMounts:
+          api:
+            app:
+              - path: /secrets/config
       nginx-config:
         type: configMap
         name: openchore-nginx
