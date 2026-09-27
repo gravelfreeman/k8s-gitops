@@ -37,6 +37,7 @@ spec:
               INGEST_DIR: /books/{User}
               IRC_SERVER: irc.irchighway.net
               IRC_CHANNEL: ebooks
+              IRC_SEARCH_BOT: SearchBot
               LIBGEN_SEARCH_ENABLED: true
               METADATA_PROVIDER: hardcover
               OIDC_AUTO_REDIRECT: true
@@ -53,6 +54,8 @@ spec:
               QBITTORRENT_TAG: shelfmark
               SABNZBD_URL: http://sabnzbd-1.nzb.svc.cluster.local:8080
               SABNZBD_CATEGORY: shelfmark
+              SUPPORTED_AUDIOBOOK_FORMATS: m4b,m4a,mp3,opus
+              SUPPORTED_FORMATS: epub,mobi,azw3,fb2,cbz,cbr,pdf
             envFrom:
               - secretRef:
                   name: shelfmark-app-secret

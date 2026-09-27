@@ -18,3 +18,27 @@ spec:
         - ports:
             - port: "8191"
               protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/instance: prowlarr
+            k8s:io.kubernetes.pod.namespace: prowlarr
+      toPorts:
+        - ports:
+            - port: "9696"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/instance: qbittorrent-3
+            k8s:io.kubernetes.pod.namespace: torrent
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/instance: sabnzbd-1
+            k8s:io.kubernetes.pod.namespace: nzb
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
