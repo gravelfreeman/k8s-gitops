@@ -9,16 +9,8 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../../components/common/app
-    - ../../../../components/gluetun
-  dependsOn:
-    - name: gluetun-echo
   interval: 1h
   path: kubernetes/apps/core/byparr/app
-  postBuild:
-    substitute:
-      APP: *app
-      GLUETUN_GATEWAY_ID: "5"
-      GLUETUN_GATEWAY_NAME: gluetun-echo
   prune: true
   sourceRef:
     kind: GitRepository

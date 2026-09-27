@@ -9,14 +9,12 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../../components/common/app
-    - ../../../../components/gluetun
     - ../../../../components/homepage
     - ../../../../components/volsync
   dependsOn:
     - name: byparr
     - name: envoy-gateway-config
     - name: external-secrets-store
-    - name: gluetun-echo
     - name: openebs
     - name: rook-ceph-cluster
     - name: volsync
@@ -25,8 +23,6 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      GLUETUN_GATEWAY_ID: "5"
-      GLUETUN_GATEWAY_NAME: gluetun-echo
   prune: true
   sourceRef:
     kind: GitRepository
