@@ -1,0 +1,112 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: shelfmark
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    controllers:
+      shelfmark:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/calibrain/shelfmark
+              tag: v1.4.0@sha256:4ef757349c3c7a7d90ba95b1e2a46ce4dd460a4776efbcf2aa1b1c476e7d5de5
+            env:
+              ABB_ENABLED: true
+              ABB_HOSTNAME: audiobookbay.lu
+              AUTH_METHOD: oidc
+              BOOK_LANGUAGE: fr
+              DISABLE_LOCAL_AUTH: true
+              DIRECT_DOWNLOAD_ENABLED: true
+              DIRECT_DOWNLOAD_LANGUAGE_FROM_PATH: true
+              AA_MIRROR_URLS: annas-archive.gl,annas-archive.pk,annas-archive.gd
+              LIBGEN_MIRROR_URLS: libgen.li,libgen.vc
+              ZLIB_MIRROR_URLS: z-lib.sk
+              WELIB_MIRROR_URLS: welib.org
+              USING_EXTERNAL_BYPASSER: true
+              EXT_BYPASSER_URL: http://byparr.byparr.svc.cluster.local:8191
+              GOOGLEBOOKS_ENABLED: true
+              HARDCOVER_ENABLED: true
+              INGEST_DIR: /books/{User}
+              IRC_SERVER: irc.irchighway.net
+              IRC_CHANNEL: ebooks
+              LIBGEN_SEARCH_ENABLED: true
+              METADATA_PROVIDER: hardcover
+              OIDC_AUTO_REDIRECT: true
+              OIDC_CLIENT_ID: e8b55a35-99c1-4421-96e4-25ed26037d99
+              OIDC_DISCOVERY_URL: https://id.${DOMAIN_0}/.well-known/openid-configuration
+              OPENLIBRARY_ENABLED: true
+              PROWLARR_ENABLED: true
+              PROWLARR_INDEXERS: books
+              PROWLARR_URL: http://prowlarr.prowlarr.svc.cluster.local:9696
+              PROWLARR_TORRENT_CLIENT: qbittorrent
+              PROWLARR_USENET_CLIENT: sabnzbd
+              QBITTORRENT_URL: http://qbittorrent-3.torrent.svc.cluster.local:8080
+              QBITTORRENT_CATEGORY_AUDIOBOOK: audiobooks
+              QBITTORRENT_TAG: shelfmark
+              SABNZBD_URL: http://sabnzbd-1.nzb.svc.cluster.local:8080
+              SABNZBD_CATEGORY: shelfmark
+            envFrom:
+              - secretRef:
+                  name: shelfmark-app-secret
+            probes:
+              liveness: &probes
+                enabled: true
+                type: HTTP
+                path: /api/health
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 100m
+                memory: 2Gi
+            securityContext:
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+    persistence:
+      config:
+        existingClaim: shelfmark-data
+      media:
+        type: custom
+        volumeSpec:
+          csi:
+            driver: nfs.csi.k8s.io
+            volumeAttributes:
+              server: 10.0.10.10
+              share: /mnt/eden/media
+        globalMounts:
+          - path: /books
+            subPath: temp/bookdrop
+      logs:
+        type: emptyDir
+        globalMounts:
+          - path: /var/log/shelfmark
+    route:
+      app:
+        hostnames: ['shelfmark.${DOMAIN_1}']
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy-gateway
+            sectionName: https
+    service:
+      app:
+        ports:
+          http:
+            port: 8084

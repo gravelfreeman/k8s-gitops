@@ -21,7 +21,7 @@ spec:
             env:
               QBIT_HARDLINKER_SOURCE_DIR: /media/share/qb3
               QBIT_HARDLINKER_DEST_DIR: /media/temp/downloads
-              QBIT_HARDLINKER_CATEGORIES: cross-seed
+              QBIT_HARDLINKER_CATEGORIES: cross-seed,shelfmark
             probes:
               liveness:
                 enabled: true
