@@ -30,8 +30,8 @@ spec:
               LIBGEN_MIRROR_URLS: libgen.li,libgen.vc
               ZLIB_MIRROR_URLS: z-lib.sk
               WELIB_MIRROR_URLS: welib.org
-              USING_EXTERNAL_BYPASSER: true
-              EXT_BYPASSER_URL: http://byparr.byparr.svc.cluster.local:8191
+              # USING_EXTERNAL_BYPASSER: true
+              # EXT_BYPASSER_URL: http://byparr.byparr.svc.cluster.local:8191
               GOOGLEBOOKS_ENABLED: true
               HARDCOVER_ENABLED: true
               INGEST_DIR: /books/{User}
