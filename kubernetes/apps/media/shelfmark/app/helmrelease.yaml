@@ -22,7 +22,7 @@ spec:
               ABB_ENABLED: true
               ABB_HOSTNAME: audiobookbay.lu
               AUTH_METHOD: oidc
-              BOOK_LANGUAGE: fr
+              BOOK_LANGUAGE: fr,en
               DISABLE_LOCAL_AUTH: true
               DIRECT_DOWNLOAD_ENABLED: true
               DIRECT_DOWNLOAD_LANGUAGE_FROM_PATH: true
@@ -40,9 +40,9 @@ spec:
               IRC_SEARCH_BOT: SearchBot
               LIBGEN_SEARCH_ENABLED: true
               METADATA_PROVIDER: hardcover
-              OIDC_AUTO_REDIRECT: true
               OIDC_CLIENT_ID: e8b55a35-99c1-4421-96e4-25ed26037d99
               OIDC_DISCOVERY_URL: https://id.${DOMAIN_0}/.well-known/openid-configuration
+              OIDC_BUTTON_LABEL: 'Login with Freeman ID'
               OPENLIBRARY_ENABLED: true
               PROWLARR_ENABLED: true
               PROWLARR_INDEXERS: books
