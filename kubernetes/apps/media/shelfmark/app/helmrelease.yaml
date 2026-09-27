@@ -35,15 +35,14 @@ spec:
               INGEST_DIR: /books/{User}
               IRC_SERVER: irc.irchighway.net
               IRC_CHANNEL: ebooks
-              IRC_SEARCH_BOT: SearchBot
+              IRC_SEARCH_BOT: search
               LIBGEN_SEARCH_ENABLED: true
-              METADATA_PROVIDER: hardcover
+              METADATA_PROVIDER: googlebooks
               OIDC_CLIENT_ID: e8b55a35-99c1-4421-96e4-25ed26037d99
               OIDC_DISCOVERY_URL: https://id.${DOMAIN_0}/.well-known/openid-configuration
               OIDC_BUTTON_LABEL: 'Login with Freeman ID'
               OPENLIBRARY_ENABLED: true
               PROWLARR_ENABLED: true
-              PROWLARR_INDEXERS: books
               PROWLARR_URL: http://prowlarr.prowlarr.svc.cluster.local:9696
               PROWLARR_TORRENT_CLIENT: qbittorrent
               PROWLARR_USENET_CLIENT: sabnzbd

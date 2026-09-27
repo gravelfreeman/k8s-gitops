@@ -13,7 +13,6 @@ spec:
     - ../../../../components/homepage
     - ../../../../components/volsync
   dependsOn:
-    - name: byparr
     - name: envoy-gateway-config
     - name: external-secrets-store
     - name: gluetun-echo
