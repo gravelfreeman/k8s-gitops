@@ -32,7 +32,7 @@ spec:
               WELIB_MIRROR_URLS: welib.org
               GOOGLEBOOKS_ENABLED: true
               HARDCOVER_ENABLED: true
-              INGEST_DIR: /books/{User}
+              INGEST_DIR: /media/temp/bookdrop/{User}
               IRC_SERVER: irc.irchighway.net
               IRC_CHANNEL: ebooks
               IRC_SEARCH_BOT: search
@@ -91,9 +91,6 @@ spec:
             volumeAttributes:
               server: 10.0.10.10
               share: /mnt/eden/media
-        globalMounts:
-          - path: /books
-            subPath: temp/bookdrop
       logs:
         type: emptyDir
         globalMounts:
