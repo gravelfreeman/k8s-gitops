@@ -17,7 +17,7 @@ spec:
           app:
             image:
               repository: ghcr.io/liftedkilt/openchore/api
-              tag: sha-c5a9dd8@sha256:c7e12f06f4d95ddebefe762628a0a7438720b942a354109f90c4561bc6c103db
+              tag: sha-c1a0c39@sha256:a1158b30b38a36fe79838f100d81525af9f5bb65a2e10882780df8e91425dd8b
             env:
               AI_ENDPOINT: http://openchore-litert:8080
               CONFIG_PATH: /secrets/config/config.yaml
@@ -41,7 +41,7 @@ spec:
           app:
             image:
               repository: ghcr.io/liftedkilt/openchore/web
-              tag: sha-c5a9dd8@sha256:c399dccfd2e709b1a91331294696bacdac8ba3bc4c44673edb94fe8cf8cf8fb7
+              tag: sha-c1a0c39@sha256:62ce7398d31bfbd1df1c4341331ae24b47ce65687bc53902c9d222b44587357c
             probes:
               liveness:
                 enabled: true
