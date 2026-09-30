@@ -19,7 +19,7 @@ spec:
     - name: gluetun-echo
     - name: openebs
   interval: 1h
-  path: kubernetes/apps/services/soju/app
+  path: kubernetes/apps/core/soju/app
   postBuild:
     substitute:
       APP: *app

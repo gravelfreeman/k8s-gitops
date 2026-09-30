@@ -1,0 +1,11 @@
+---
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMMCPServer
+metadata:
+  name: github
+spec:
+  authType: bearer_token
+  authTokenRef:
+    name: litellm-app-secret
+    key: GITHUB_MCP_PAT
+  url: https://api.githubcopilot.com/mcp

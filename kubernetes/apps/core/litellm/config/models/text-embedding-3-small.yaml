@@ -1,0 +1,15 @@
+---
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
+  name: semantic-embedding
+spec:
+  modelName: text-embedding-3-small
+  params:
+    model: openai/text-embedding-3-small
+    apiKeyRef:
+      name: litellm-app-secret
+      key: OPENAI_API_KEY
+  info:
+    mode: embedding
+  proxyRef: litellm

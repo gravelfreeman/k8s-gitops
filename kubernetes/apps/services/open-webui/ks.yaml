@@ -1,0 +1,42 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app open-webui
+spec:
+  components:
+    - ../../../../components/common/app
+    - ../../../../components/cnpg
+    - ../../../../components/volsync
+  dependsOn:
+    - name: cloudnative-pg
+    - name: external-secrets-store
+    - name: litellm
+    - name: volsync
+  interval: 1h
+  patches:
+    - target:
+        kind: Cluster
+      patch: |-
+        - op: replace
+          path: /spec/bootstrap
+          value:
+            initdb:
+              database: openwebui
+              owner: openwebui
+        - op: remove
+          path: /spec/externalClusters
+  path: kubernetes/apps/services/open-webui/app
+  postBuild:
+    substitute:
+      APP: *app
+      CNPG_DATABASE: openwebui
+      CNPG_USERNAME: openwebui
+      VOLSYNC_CAPACITY: 20Gi
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: *app
+  timeout: 10m
+  wait: true

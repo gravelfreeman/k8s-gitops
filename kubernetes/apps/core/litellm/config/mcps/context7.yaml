@@ -1,0 +1,7 @@
+---
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMMCPServer
+metadata:
+  name: context7
+spec:
+  url: https://mcp.context7.com/mcp

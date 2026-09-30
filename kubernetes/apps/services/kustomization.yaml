@@ -17,10 +17,10 @@ resources:
   - immich/ks.yaml
   - mealie/ks.yaml
   - norish/ks.yaml
+  - open-webui/ks.yaml
   - openchore/ks.yaml
   - poznote/ks.yaml
   - songhub/ks.yaml
-  - soju/ks.yaml
   - snapotter/ks.yaml
   - sparkyfitness/ks.yaml
   - splitpro/ks.yaml

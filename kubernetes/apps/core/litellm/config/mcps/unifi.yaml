@@ -1,0 +1,61 @@
+---
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMMCPServer
+metadata:
+  name: unifi
+spec:
+  workload:
+    image: ghcr.io/sirkirby/unifi-network-mcp:0.36.1@sha256:bdefa9fcc6ff075c775d84d087fa5d42f0bb1d613ed3bd8180599b875eb583ae
+    port: 3000
+    env:
+      - name: UNIFI_NETWORK_HOST
+        value: 10.0.20.1
+      - name: UNIFI_NETWORK_PORT
+        value: "443"
+      - name: UNIFI_NETWORK_REDACT_SENSITIVE_FIELDS
+        value: "true"
+      - name: UNIFI_NETWORK_TOOL_PERMISSION_MODE
+        value: confirm
+      - name: UNIFI_NETWORK_VERIFY_SSL
+        value: "false"
+      - name: UNIFI_POLICY_NETWORK_CREATE
+        value: "false"
+      - name: UNIFI_POLICY_NETWORK_DELETE
+        value: "false"
+      - name: UNIFI_POLICY_NETWORK_UPDATE
+        value: "false"
+      - name: UNIFI_MCP_ALLOWED_HOSTS
+        value: unifi.litellm.svc.cluster.local:3000
+      - name: UNIFI_MCP_HOST
+        value: 0.0.0.0
+      - name: UNIFI_MCP_HTTP_ENABLED
+        value: "true"
+      - name: UNIFI_MCP_HTTP_TRANSPORT
+        value: streamable-http
+    envFrom:
+      - secretRef:
+          name: unifi-mcp-secret
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 1000
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: [ALL]
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: unifi-mcp-secret
+spec:
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: onepassword
+  target:
+    name: unifi-mcp-secret
+  dataFrom:
+    - extract:
+        key: unifi-mcp

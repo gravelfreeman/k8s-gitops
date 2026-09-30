@@ -1,0 +1,67 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: litellm-operator
+spec:
+  components:
+    - ../../../../components/common
+  interval: 1h
+  path: kubernetes/apps/core/litellm/operator
+  postBuild:
+    substitute:
+      APP: litellm
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: litellm
+  timeout: 10m
+  wait: true
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app litellm
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/cnpg
+    - ../../../../components/dragonfly
+    - ../../../../components/volsync
+  dependsOn:
+    - name: cloudnative-pg
+    - name: dragonfly-operator
+    - name: external-secrets-store
+    - name: litellm-operator
+    - name: volsync
+  interval: 1h
+  patches:
+    - target:
+        kind: Cluster
+      patch: |-
+        - op: replace
+          path: /spec/bootstrap
+          value:
+            initdb:
+              database: litellm
+              owner: litellm
+        - op: remove
+          path: /spec/externalClusters
+  path: kubernetes/apps/core/litellm/config
+  postBuild:
+    substitute:
+      APP: *app
+      VOLSYNC_CAPACITY: 10Gi
+    substituteFrom:
+      - kind: Secret
+        name: flux-common
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: *app
+  timeout: 10m
+  wait: true

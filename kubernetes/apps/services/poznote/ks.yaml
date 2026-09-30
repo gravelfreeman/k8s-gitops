@@ -33,19 +33,21 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: poznote-mcp
+  name: &app poznote-mcp
 spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
   dependsOn:
-    - name: poznote
     - name: external-secrets-store
-    - name: toolhive-operator
+    - name: litellm
+    - name: poznote
   interval: 1h
   path: kubernetes/apps/services/poznote/mcp
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
-    namespace: flux-system
-  targetNamespace: toolhive
+  targetNamespace: litellm
   timeout: 5m
   wait: true

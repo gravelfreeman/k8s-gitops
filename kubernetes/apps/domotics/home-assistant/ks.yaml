@@ -43,15 +43,15 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
+    - name: envoy-gateway-config
     - name: home-assistant
-    - name: external-secrets-store
-    - name: toolhive-operator
+    - name: litellm
   interval: 30m
   path: kubernetes/apps/domotics/home-assistant/mcp
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
-  targetNamespace: toolhive
+  targetNamespace: litellm
   timeout: 5m
   wait: true

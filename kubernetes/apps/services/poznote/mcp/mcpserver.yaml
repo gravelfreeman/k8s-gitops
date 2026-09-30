@@ -1,37 +1,39 @@
 ---
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/toolhive.stacklok.dev/mcpserver_v1beta1.json
-apiVersion: toolhive.stacklok.dev/v1beta1
-kind: MCPServer
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMMCPServer
 metadata:
-  name: poznote-mcp
+  name: poznote
 spec:
-  image: ghcr.io/timothepoznanski/poznote-mcp:6.100.1-beta@sha256:36614eefba731dd2834b59eb8492f3aecd10de900d402772175889b36ef9e46a
-  transport: streamable-http
-  mcpPort: 8045
-  groupRef:
-    name: toolhive-mcp
-  env:
-    - name: POZNOTE_API_URL
-      value: http://poznote.poznote.svc.cluster.local:8080/api/v1
-    - name: POZNOTE_SERVICE_TOKEN_FILE
-      value: /var/run/secrets/poznote/.mcp_token
-  secrets:
-    - name: poznote-mcp-secret
-      key: POZNOTE_MCP_AUTH_TOKEN
-  externalAuthConfigRef:
-    name: poznote-mcp-auth
-  podTemplateSpec:
-    spec:
-      containers:
-        - name: mcp
-          volumeMounts:
-            - name: poznote-service-token
-              mountPath: /var/run/secrets/poznote
-              readOnly: true
-      volumes:
-        - name: poznote-service-token
-          secret:
-            secretName: poznote-mcp-secret
-            items:
-              - key: POZNOTE_MCP_AUTH_TOKEN
-                path: .mcp_token
+  authType: bearer_token
+  authTokenRef:
+    name: poznote-mcp-secret
+    key: POZNOTE_MCP_AUTH_TOKEN
+  workload:
+    image: ghcr.io/timothepoznanski/poznote-mcp:6.100.1-beta@sha256:36614eefba731dd2834b59eb8492f3aecd10de900d402772175889b36ef9e46a
+    port: 8045
+    env:
+      - name: POZNOTE_API_URL
+        value: http://poznote.poznote.svc.cluster.local:8080/api/v1
+      - name: POZNOTE_SERVICE_TOKEN_FILE
+        value: /var/run/secrets/poznote/.mcp_token
+    volumes:
+      - name: poznote-service-token
+        secret:
+          secretName: poznote-mcp-secret
+          items:
+            - key: POZNOTE_MCP_AUTH_TOKEN
+              path: .mcp_token
+    volumeMounts:
+      - name: poznote-service-token
+        mountPath: /var/run/secrets/poznote
+        readOnly: true
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 1000
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: [ALL]

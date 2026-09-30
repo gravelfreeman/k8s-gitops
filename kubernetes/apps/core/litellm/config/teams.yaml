@@ -1,0 +1,27 @@
+---
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMTeam
+metadata:
+  name: admin
+spec:
+  models: [chatgpt/gpt-6-astra, chatgpt/gpt-6-luna, chatgpt/gpt-6-sol]
+  proxyRef: litellm
+  teamID: admin
+---
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMTeam
+metadata:
+  name: privileged
+spec:
+  models: [chatgpt/gpt-6-luna]
+  proxyRef: litellm
+  teamID: privileged
+---
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMTeam
+metadata:
+  name: user
+spec:
+  models: [chatgpt/gpt-6-luna]
+  proxyRef: litellm
+  teamID: user
