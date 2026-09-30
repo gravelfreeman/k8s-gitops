@@ -8,24 +8,6 @@ spec:
   models: [chatgpt/gpt-6-astra, chatgpt/gpt-6-luna, chatgpt/gpt-6-sol]
   proxyRef: litellm
   secretKey: api-key
-  secretName: litellm-key-zed
+  secretName: litellm-zed-secret
   teamID: admin
   userID: freeman
----
-apiVersion: external-secrets.io/v1alpha1
-kind: PushSecret
-metadata:
-  name: zed
-spec:
-  data:
-    - match:
-        remoteRef:
-          property: LITELLM_ZED_API_KEY
-          remoteKey: litellm
-        secretKey: api-key
-  secretStoreRefs:
-    - kind: ClusterSecretStore
-      name: onepassword
-  selector:
-    secret:
-      name: litellm-key-zed
