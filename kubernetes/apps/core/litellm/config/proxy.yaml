@@ -6,6 +6,16 @@ metadata:
 spec:
   image: ghcr.io/berriai/litellm:v1.104.0@sha256:625981c83410a3ea68eb0697590a57ec1d764d634514d54fa5db0591077ee839
   env:
+    - name: GENERIC_AUTHORIZATION_ENDPOINT
+      value: https://id.${DOMAIN_0}/authorize
+    - name: GENERIC_CLIENT_ID
+      value: 98e4e090-b109-4dbf-bd3f-8687cfd767cb
+    - name: GENERIC_CLIENT_USE_PKCE
+      value: "true"
+    - name: GENERIC_TOKEN_ENDPOINT
+      value: https://id.${DOMAIN_0}/api/oidc/token
+    - name: GENERIC_USERINFO_ENDPOINT
+      value: https://id.${DOMAIN_0}/api/oidc/userinfo
     - name: JWT_AUDIENCE
       value: https://litellm.${DOMAIN_0}
     - name: JWT_ISSUER
