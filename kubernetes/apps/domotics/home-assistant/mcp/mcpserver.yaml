@@ -19,6 +19,9 @@ spec:
         value: https://ha.${DOMAIN_0}
       - name: HA_MCP_DISABLE_SETTINGS_UI
         value: "true"
+    envFrom:
+      - secretRef:
+          name: home-assistant-mcp-secret
     resources:
       requests:
         cpu: 25m

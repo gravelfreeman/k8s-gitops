@@ -44,6 +44,7 @@ spec:
       app.kubernetes.io/name: *app
   dependsOn:
     - name: envoy-gateway-config
+    - name: external-secrets-store
     - name: home-assistant
     - name: litellm
   interval: 30m
