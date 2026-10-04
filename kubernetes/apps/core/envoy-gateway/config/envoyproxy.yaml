@@ -8,6 +8,12 @@ spec:
     type: Kubernetes
     kubernetes:
       envoyDeployment:
+        container:
+          resources:
+            requests:
+              cpu: 100m
+            limits:
+              memory: 1Gi
         name: envoy-external
         replicas: 3
         pod:
@@ -35,6 +41,12 @@ spec:
     type: Kubernetes
     kubernetes:
       envoyDeployment:
+        container:
+          resources:
+            requests:
+              cpu: 100m
+            limits:
+              memory: 1Gi
         name: envoy-internal
         replicas: 3
         pod:
