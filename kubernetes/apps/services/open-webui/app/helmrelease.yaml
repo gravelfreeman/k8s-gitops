@@ -18,6 +18,7 @@ spec:
               repository: ghcr.io/open-webui/open-webui
               tag: v0.11.4@sha256:9591b13f13843c7721c2b8eaf7382846c81b3ffe126526d1888d1fed50c6a33f
             env:
+              CORS_ALLOW_ORIGIN: https://chat.${DOMAIN_0}
               DEFAULT_USER_ROLE: user
               ENABLE_LOGIN_FORM: false
               ENABLE_PASSWORD_AUTH: false
@@ -86,7 +87,7 @@ spec:
       app:
         hostnames: ['chat.${DOMAIN_0}']
         parentRefs:
-          - name: envoy-external
+          - name: envoy-internal
             namespace: envoy-gateway
             sectionName: https
     service:
