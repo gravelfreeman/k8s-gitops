@@ -7,6 +7,7 @@ spec:
   components:
     - ../../../../components/common/app
     - ../../../../components/cnpg
+    - ../../../../components/homepage
     - ../../../../components/volsync
   dependsOn:
     - name: cloudnative-pg
@@ -14,19 +15,6 @@ spec:
     - name: litellm
     - name: volsync
   interval: 1h
-  patches:
-    - target:
-        group: postgresql.cnpg.io
-        kind: Cluster
-      patch: |-
-        - op: replace
-          path: /spec/bootstrap
-          value:
-            initdb:
-              database: open-webui
-              owner: open-webui
-        - op: remove
-          path: /spec/externalClusters
   path: kubernetes/apps/services/open-webui/app
   postBuild:
     substitute:

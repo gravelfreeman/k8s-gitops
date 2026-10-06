@@ -38,18 +38,6 @@ spec:
     - name: litellm-operator
     - name: volsync
   interval: 1h
-  patches:
-    - target:
-        kind: Cluster
-      patch: |-
-        - op: replace
-          path: /spec/bootstrap
-          value:
-            initdb:
-              database: litellm
-              owner: litellm
-        - op: remove
-          path: /spec/externalClusters
   path: kubernetes/apps/core/litellm/config
   postBuild:
     substitute:

@@ -70,7 +70,10 @@
     - Operations:
         - Services: []
         - Domotics: []
-        - Core: []
+        - Core:
+            - LiteLLM:
+                href: 'https://litellm.${DOMAIN_0}/ui'
+                icon: sh-litellm.svg
 - Scale-1:
     - Storage:
         - TrueNAS:
