@@ -103,6 +103,10 @@ spec:
           subjects:
             - identifier: *app
     persistence:
+      images:
+        existingClaim: homepage-data
+        globalMounts:
+          - path: /app/public/images
       config:
         type: configMap
         name: homepage-config
