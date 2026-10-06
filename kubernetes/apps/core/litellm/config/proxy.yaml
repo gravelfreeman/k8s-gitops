@@ -52,7 +52,9 @@ spec:
     limits:
       memory: 2Gi
   livenessProbe:
-    initialDelaySeconds: 1200
+    httpGet:
+      path: /health/liveliness
+      port: 4000
   podSecurityContext:
     runAsNonRoot: true
     runAsUser: 65532
