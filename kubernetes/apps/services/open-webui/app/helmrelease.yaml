@@ -80,7 +80,6 @@ spec:
       runtime:
         type: emptyDir
         globalMounts:
-          - path: /tmp
           - path: /root/.cache/chroma
           - path: /app/backend/open_webui/static
     route:
