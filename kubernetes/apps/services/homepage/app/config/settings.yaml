@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://www.schemastore.org/any.json
 ---
 title: 'root:freeman'
-favicon: '/images/favicon.png'
+favicon: '/images/favicon.ico'
 color: slate
 providers:
   openweathermap: 'openweathermapapikey'
@@ -11,12 +11,13 @@ iconStyle: 'theme'
 target: '_blank'
 language: 'en'
 quicklaunch:
-    hideInternetSearch: 'true'
+    hideInternetSearch: true
     provider: 'duckduckgo'
 statusStyle: 'dot'
-hideVersion: 'true'
-hideErrors: 'true'
-useEqualHeights: 'true'
+hideVersion: true
+hideErrors: true
+disableCollapse: true
+useEqualHeights: true
 layout:
   # TAB 1
   System:
@@ -25,6 +26,7 @@ layout:
     style: 'row'
     columns: '3'
     Observability:
+      icon: 'mdi-kubernetes'
       style: 'row'
       columns: '1'
     Operations:
@@ -32,12 +34,15 @@ layout:
       style: 'row'
       columns: '1'
       Services:
+        icon: 'mdi-apps'
         style: 'row'
         columns: '4'
       Domotics:
+        icon: 'mdi-home-automation'
         style: 'row'
         columns: '4'
       Core:
+        icon: 'mdi-server-network'
         style: 'row'
         columns: '4'
   Scale-1:
@@ -68,11 +73,14 @@ layout:
       columns: '3'
   Bookmarks:
     tab: 'Homelab'
-  Server:
-    tab: 'Homelab'
+    icon: 'mdi-bookmark'
   Forums:
     tab: 'Homelab'
-  # TAB 3
+    icon: 'mdi-forum'
+  Management:
+    tab: 'Homelab'
+    icon: 'mdi-shield-crown'
+  # TAB 2
   Media:
     tab: 'Media'
     icon: 'mdi-bookshelf'
@@ -83,10 +91,10 @@ layout:
     icon: 'mdi-newspaper-variant-multiple'
   Torrent/EN:
     tab: 'Media'
-    icon: 'mdi-download-network'
+    icon: 'mdi-share-variant'
   Torrent/FR:
     tab: 'Media'
-    icon: 'mdi-download-network'
+    icon: 'mdi-baguette'
   Direct Download:
     tab: 'Media'
     icon: 'mdi-cloud-download'

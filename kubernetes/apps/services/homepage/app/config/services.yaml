@@ -72,8 +72,12 @@
         - Domotics: []
         - Core:
             - LiteLLM:
+                app: litellm
                 href: 'https://litellm.${DOMAIN_0}/ui'
                 icon: sh-litellm.svg
+                namespace: litellm
+                podSelector: 'app.kubernetes.io/instance=litellm,app.kubernetes.io/name=litellm'
+                weight: 0
 - Scale-1:
     - Storage:
         - TrueNAS:

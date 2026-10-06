@@ -412,3 +412,22 @@ div.border-theme-400.rounded-full.animate-spin {
   margin-right: 0.5rem;
   font-weight: 700;
 }
+
+/* Media bookmark layout */
+.homepage-media-bookmarks {
+  display: grid;
+  flex: 0 0 100%;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+}
+.homepage-media-bookmark-column {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+@media (min-width: 768px) {
+  .homepage-media-bookmarks {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

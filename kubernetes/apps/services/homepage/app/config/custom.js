@@ -157,4 +157,94 @@
   new MutationObserver(applyAlertDescriptions).observe(document.body, { childList: true, subtree: true });
   applyAlertDescriptions();
 
+  const mediaColumns = [["Usenet", "Direct Download"], ["Torrent/EN"], ["Torrent/FR"]];
+  const mediaGroupNames = mediaColumns.flat();
+
+  const createMediaGroup = (source) => {
+    const group = document.createElement("section");
+    group.className = "homepage-media-bookmark-group";
+
+    const heading = document.createElement("div");
+    heading.className = "homepage-media-bookmark-heading flex items-center";
+    [".bookmark-group-icon", ".bookmark-group-name"].forEach((selector) => {
+      const element = source.querySelector(selector);
+      if (element) heading.append(element.cloneNode(true));
+    });
+    group.append(heading);
+
+    const list = source.querySelector(".bookmark-list");
+    if (list) group.append(list.cloneNode(true));
+
+    const sourceImages = source.querySelectorAll("img");
+    group.querySelectorAll("img").forEach((image, index) => {
+      const src = sourceImages[index]?.currentSrc || sourceImages[index]?.getAttribute("src");
+      if (!src) return;
+      image.loading = "eager";
+      image.removeAttribute("srcset");
+      image.removeAttribute("sizes");
+      image.src = src;
+    });
+
+    return group;
+  };
+
+  const arrangeMediaBookmarks = () => {
+    const host = document.querySelector("#layout-groups");
+    if (!host) return;
+
+    let layout = host.querySelector(":scope > .homepage-media-bookmarks");
+    const mediaTabIsActive = document.querySelector("#Media-tab")?.getAttribute("aria-selected") === "true";
+    if (!mediaTabIsActive) {
+      if (layout) layout.hidden = true;
+      return;
+    }
+
+    const groups = new Map(
+      [...host.querySelectorAll(":scope > .bookmark-group")].map((group) => [
+        group.querySelector(".bookmark-group-name")?.textContent.trim(),
+        group,
+      ]),
+    );
+    const sourceGroups = mediaGroupNames.map((name) => groups.get(name));
+    if (sourceGroups.some((group) => !group)) {
+      if (layout) layout.hidden = true;
+      return;
+    }
+
+    const hasBookmarks = sourceGroups.every((group) => group.querySelector(".bookmark-list")?.children.length > 0);
+    if (!hasBookmarks) {
+      layout?.remove();
+      sourceGroups.forEach((group) => group.style.removeProperty("display"));
+      return;
+    }
+
+    const signature = sourceGroups.map((group) => group.querySelector(".bookmark-list").innerHTML).join("|");
+    if (!layout || layout.hidden || layout.dataset.signature !== signature) {
+      layout?.remove();
+      layout = document.createElement("div");
+      layout.className = "homepage-media-bookmarks";
+      layout.dataset.signature = signature;
+
+      mediaColumns.forEach((names) => {
+        const column = document.createElement("div");
+        column.className = "homepage-media-bookmark-column";
+        names.forEach((name) => column.append(createMediaGroup(groups.get(name))));
+        layout.append(column);
+      });
+
+      host.insertBefore(layout, sourceGroups[0]);
+    }
+
+    layout.hidden = false;
+    sourceGroups.forEach((group) => (group.style.display = "none"));
+  };
+
+  new MutationObserver(arrangeMediaBookmarks).observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["aria-selected"],
+  });
+  arrangeMediaBookmarks();
+
 })();
