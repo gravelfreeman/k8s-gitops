@@ -34,8 +34,8 @@ spec:
       value: litellm-dragonfly.litellm.svc.cluster.local
     - name: REDIS_PORT
       value: "6379"
-    - name: STORE_MODEL_IN_DB
-      value: "true"
+    # - name: STORE_MODEL_IN_DB
+    #   value: "true"
     - name: DATABASE_URL
       valueFrom:
         secretKeyRef:
@@ -95,7 +95,7 @@ spec:
       user_id_upsert: true
     master_key: os.environ/LITELLM_MASTER_KEY
     require_key_mcp_access_defined: true
-    supported_db_objects: []
+    # supported_db_objects: []
   litellmSettings:
     cache: true
     cache_params:
