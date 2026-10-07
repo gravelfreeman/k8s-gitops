@@ -20,6 +20,7 @@ spec:
             env:
               CORS_ALLOW_ORIGIN: https://chat.${DOMAIN_0}
               DEFAULT_USER_ROLE: user
+              ENABLE_LOCAL_WEB_FETCH: true
               ENABLE_LOGIN_FORM: false
               ENABLE_PASSWORD_AUTH: false
               ENABLE_OAUTH_GROUP_CREATION: true
@@ -37,6 +38,7 @@ spec:
               OAUTH_SUB_CLAIM: sub
               OAUTH_UPDATE_PICTURE_ON_LOGIN: true
               OPENAI_API_BASE_URLS: http://litellm.litellm.svc.cluster.local:4000/v1
+              OPENAI_API_CONFIGS: '{"0":{"enable":true,"auth_type":"system_oauth"}}'
               OPENID_PROVIDER_URL: https://id.${DOMAIN_0}/.well-known/openid-configuration
               OPENID_REDIRECT_URI: https://chat.${DOMAIN_0}/oauth/oidc/callback
               WEBUI_URL: https://chat.${DOMAIN_0}
