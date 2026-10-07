@@ -47,6 +47,7 @@ spec:
     - name: external-secrets-store
     - name: home-assistant
     - name: litellm
+    - name: rook-ceph-cluster
   interval: 30m
   path: kubernetes/apps/domotics/home-assistant/mcp
   prune: true
