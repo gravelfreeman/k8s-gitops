@@ -42,7 +42,9 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      VOLSYNC_CAPACITY: 10Gi
+      VOLSYNC_ACCESSMODES: ReadWriteMany
+      VOLSYNC_SNAPSHOT_CLASS: csi-ceph-filesystem
+      VOLSYNC_STORAGECLASS: ceph-filesystem
     substituteFrom:
       - kind: Secret
         name: flux-common

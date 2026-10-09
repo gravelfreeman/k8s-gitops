@@ -28,17 +28,16 @@ spec:
               ENABLE_OAUTH_ROLE_MANAGEMENT: true
               ENABLE_OAUTH_SIGNUP: true
               OAUTH_ALLOWED_ROLES: admin,privileged,user
-              OAUTH_AUTHORIZE_PARAMS: '{"resource":"https://litellm.${DOMAIN_0}"}'
               OAUTH_CLIENT_ID: e7244e19-a352-4870-bf09-1e33ef9db2a1
               OAUTH_CODE_CHALLENGE_METHOD: S256
               OAUTH_GROUP_DEFAULT_SHARE: members
               OAUTH_PROVIDER_NAME: Freeman ID
               OAUTH_ROLES_CLAIM: groups
-              OAUTH_SCOPES: openid email profile groups offline_access ai:chat
+              OAUTH_SCOPES: openid email profile groups offline_access
               OAUTH_SUB_CLAIM: sub
               OAUTH_UPDATE_PICTURE_ON_LOGIN: true
               OPENAI_API_BASE_URLS: http://litellm.litellm.svc.cluster.local:4000/v1
-              OPENAI_API_CONFIGS: '{"0":{"enable":true,"auth_type":"system_oauth"}}'
+              OPENAI_API_CONFIGS: '{"0":{"enable":true,"api_type":"responses"}}'
               OPENID_PROVIDER_URL: https://id.${DOMAIN_0}/.well-known/openid-configuration
               OPENID_REDIRECT_URI: https://chat.${DOMAIN_0}/oauth/oidc/callback
               WEBUI_URL: https://chat.${DOMAIN_0}

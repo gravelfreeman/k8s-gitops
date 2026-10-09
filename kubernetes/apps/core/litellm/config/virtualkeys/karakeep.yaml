@@ -1,0 +1,13 @@
+---
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMVirtualKey
+metadata:
+  name: karakeep
+spec:
+  keyAlias: Karakeep
+  models: [chatgpt/gpt-6-luna]
+  proxyRef: litellm
+  secretKey: api-key
+  secretName: litellm-karakeep-secret
+  teamID: admin
+  userID: freeman
