@@ -8,13 +8,13 @@ spec:
   restic:
     copyMethod: Snapshot
     repository: ${APP}-volsync-secret
+    cacheAccessModes: ['ReadWriteOnce']
     cacheCapacity: ${VOLSYNC_CACHE_CAPACITY:=1Gi}
     capacity: ${VOLSYNC_CAPACITY:=10Gi}
     cacheStorageClassName: openebs-lvm
-    volumeSnapshotClassName: csi-ceph-block
-    accessModes:
-      - ${VOLSYNC_ACCESSMODES:=ReadWriteOnce}
-    storageClassName: ceph-block
+    volumeSnapshotClassName: ${VOLSYNC_SNAPSHOT_CLASS:=csi-ceph-block}
+    accessModes: ['${VOLSYNC_ACCESSMODES:=ReadWriteOnce}']
+    storageClassName: ${VOLSYNC_STORAGECLASS:=ceph-block}
     cleanupCachePVC: true
     cleanupTempPVC: true
     moverSecurityContext:

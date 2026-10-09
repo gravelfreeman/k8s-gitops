@@ -28,7 +28,7 @@ spec:
         name: rook-ceph.cephfs.csi.ceph.com
         controllerPlugin:
           replicas: 2
-        snapshotPolicy: volumeGroupSnapshot
+        snapshotPolicy: volumeSnapshot
       nfs:
         enabled: false
       nvmeof:

@@ -13,7 +13,16 @@ dependsOn:
 postBuild:
   substitute:
     APP: *app
-    VOLSYNC_CAPACITY: 10Gi
+```
+
+### ReadWriteMany
+
+For an RWX claim using CephFS, set:
+
+```yaml
+VOLSYNC_ACCESSMODES: ReadWriteMany
+VOLSYNC_STORAGECLASS: ceph-filesystem
+VOLSYNC_SNAPSHOT_CLASS: csi-ceph-filesystem
 ```
 
 ## Variables
@@ -24,6 +33,8 @@ postBuild:
 | `VOLSYNC_ACCESSMODES` | `ReadWriteOnce` | PVC access mode. |
 | `VOLSYNC_CACHE_CAPACITY` | `1Gi` | Restic cache PVC size. |
 | `VOLSYNC_CAPACITY` | `10Gi` | Application data PVC size. |
+| `VOLSYNC_SNAPSHOT_CLASS` | `csi-ceph-block` | PVC volume snapshot class. |
+| `VOLSYNC_STORAGECLASS` | `ceph-block` | PVC storage class. |
 | `VOLSYNC_TRIGGER_SCHEDULE` | `0 5 * * *` | Backup schedule. |
 
 ### Permissions
@@ -39,9 +50,9 @@ postBuild:
 
 ## Resources
 
-- `PersistentVolumeClaim` named `${APP}-${VOLSYNC_CLAIM}`
-- `ReplicationSource` named `${APP}-${VOLSYNC_CLAIM}`
-- `ReplicationDestination` named `${APP}-${VOLSYNC_CLAIM}`
+- `PersistentVolumeClaim` named `${APP}-data`
+- `ReplicationSource` named `${APP}-data`
+- `ReplicationDestination` named `${APP}-data`
 - `ExternalSecret` named `${APP}-volsync-secret`
 
 ## Notes

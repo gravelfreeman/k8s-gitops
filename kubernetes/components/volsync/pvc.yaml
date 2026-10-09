@@ -20,5 +20,5 @@ spec:
   resources:
     requests:
       storage: ${VOLSYNC_CAPACITY:=10Gi}
-  storageClassName: ceph-block
+  storageClassName: ${VOLSYNC_STORAGECLASS:=ceph-block}
   volumeMode: Filesystem
