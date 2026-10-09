@@ -1,0 +1,32 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app karakeep
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/common/app
+    - ../../../../components/homepage
+    - ../../../../components/volsync
+  dependsOn:
+    - name: envoy-gateway-config
+    - name: external-secrets-store
+    - name: litellm
+    - name: rook-ceph-cluster
+    - name: volsync
+  interval: 1h
+  path: kubernetes/apps/services/karakeep/app
+  postBuild:
+    substitute:
+      APP: *app
+      VOLSYNC_CAPACITY: 100Gi
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: *app
+  timeout: 5m
+  wait: true

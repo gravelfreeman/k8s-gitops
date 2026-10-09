@@ -1,0 +1,122 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: karakeep
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    controllers:
+      karakeep:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/karakeep-app/karakeep
+              tag: 0.33.2@sha256:b069e4307dec06ea06d16989c6861c30a1ff208568be44ed5fb5d422cd3e950c
+            env:
+              BROWSER_WEB_URL: http://localhost:9222
+              DATA_DIR: /data
+              DISABLE_NEW_RELEASE_CHECK: true
+              DISABLE_PASSWORD_AUTH: true
+              INFERENCE_IMAGE_MODEL: chatgpt/gpt-6-luna
+              MEILI_ADDR: http://localhost:7700
+              NEXTAUTH_URL: https://karakeep.${DOMAIN_0}
+              OCR_USE_LLM: true
+              OAUTH_AUTO_REDIRECT: true
+              OAUTH_CLIENT_ID: 6d3891ca-91de-4d4f-be5b-a804b96a6076
+              OAUTH_PROVIDER_NAME: Freeman ID
+              OAUTH_WELLKNOWN_URL: https://id.${DOMAIN_0}/.well-known/openid-configuration
+              OPENAI_BASE_URL: http://litellm.litellm.svc.cluster.local:4000/v1
+            envFrom:
+              - secretRef:
+                  name: karakeep-app-secret
+            probes:
+              liveness: &probes
+                enabled: true
+                type: HTTP
+                path: /api/health
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 1Gi
+          chrome:
+            image:
+              repository: ghcr.io/karakeep-app/karakeep-chrome
+              tag: release@sha256:5b19bbb160e9ff60681a3abd97e1c4ec9f64212301410de658c3900ab7ef31e7
+            command:
+              - --disable-gpu
+              - --disable-dev-shm-usage
+              - --hide-scrollbars
+              - --disable-blink-features=AutomationControlled
+              - --window-size=1440,900
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 1Gi
+          meilisearch:
+            image:
+              repository: getmeili/meilisearch
+            tag: v1.41.0@sha256:860fa4baed04ae1c235de870edab0c8006227546dea1bbb6411fbfc5e27cf1db
+            env:
+              MEILI_ENV: production
+              MEILI_NO_ANALYTICS: true
+            envFrom:
+              - secretRef:
+                  name: karakeep-meilisearch-secret
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 2Gi
+        defaultContainerOptions:
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+    persistence:
+      data:
+        existingClaim: karakeep-data
+        advancedMounts:
+          karakeep:
+            app:
+              - path: /data
+                subPath: karakeep
+            meilisearch:
+              - path: /meili_data
+                subPath: meilisearch
+      cache:
+        type: emptyDir
+        advancedMounts:
+          karakeep:
+            app:
+              - path: /app/apps/web/.next/cache
+    route:
+      app:
+        hostnames: ['karakeep.${DOMAIN_0}']
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy-gateway
+            sectionName: https
+    service:
+      app:
+        ports:
+          http:
+            port: 3000
