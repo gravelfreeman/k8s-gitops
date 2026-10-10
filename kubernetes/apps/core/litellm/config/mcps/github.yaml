@@ -6,6 +6,6 @@ metadata:
 spec:
   authType: bearer_token
   authTokenRef:
-    name: litellm-app-secret
+    name: github-mcp-secret
     key: GITHUB_MCP_PAT
   url: https://api.githubcopilot.com/mcp

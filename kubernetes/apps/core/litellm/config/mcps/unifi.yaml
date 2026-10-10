@@ -10,6 +10,8 @@ spec:
     env:
       - name: UNIFI_NETWORK_HOST
         value: 10.0.20.1
+      - name: UNIFI_NETWORK_USERNAME
+        value: litellm
       - name: UNIFI_NETWORK_PORT
         value: "443"
       - name: UNIFI_NETWORK_REDACT_SENSITIVE_FIELDS
