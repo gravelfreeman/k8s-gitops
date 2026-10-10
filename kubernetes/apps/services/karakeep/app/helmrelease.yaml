@@ -19,12 +19,12 @@ spec:
               repository: ghcr.io/karakeep-app/karakeep
               tag: 0.33.2@sha256:b069e4307dec06ea06d16989c6861c30a1ff208568be44ed5fb5d422cd3e950c
             env:
-              BROWSER_WEB_URL: http://localhost:9222
+              BROWSER_WEB_URL: http://127.0.0.1:9222
               DATA_DIR: /data
               DISABLE_NEW_RELEASE_CHECK: true
               DISABLE_PASSWORD_AUTH: true
               INFERENCE_IMAGE_MODEL: chatgpt/gpt-6-luna
-              MEILI_ADDR: http://localhost:7700
+              MEILI_ADDR: http://127.0.0.1:7700
               NEXTAUTH_URL: https://karakeep.${DOMAIN_0}
               OCR_USE_LLM: true
               OAUTH_AUTO_REDIRECT: true
@@ -58,6 +58,8 @@ spec:
               - --hide-scrollbars
               - --disable-blink-features=AutomationControlled
               - --window-size=1440,900
+            env:
+              XDG_CACHE_HOME: /tmp
             resources:
               requests:
                 cpu: 10m
