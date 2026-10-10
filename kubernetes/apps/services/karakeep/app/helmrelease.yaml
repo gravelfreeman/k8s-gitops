@@ -32,6 +32,8 @@ spec:
               OAUTH_PROVIDER_NAME: Freeman ID
               OAUTH_WELLKNOWN_URL: https://id.${DOMAIN_0}/.well-known/openid-configuration
               OPENAI_BASE_URL: http://litellm.litellm.svc.cluster.local:4000/v1
+              S6_READ_ONLY_ROOT: "1"
+              S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: "1"
             envFrom:
               - secretRef:
                   name: karakeep-app-secret
@@ -102,12 +104,13 @@ spec:
             meilisearch:
               - path: /meili_data
                 subPath: meilisearch
-      cache:
+      runtime:
         type: emptyDir
         advancedMounts:
           karakeep:
             app:
               - path: /app/apps/web/.next/cache
+              - path: /run
     route:
       app:
         hostnames: ['karakeep.${DOMAIN_0}']
