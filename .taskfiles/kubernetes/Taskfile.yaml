@@ -10,7 +10,7 @@ tasks:
     requires:
       vars: [APP]
     preconditions:
-      - which base64 bash flux git jq kubectl kustomize yq
+      - which awk base64 bash find flux git jq kubectl kustomize sed sleep sort yq
 
   namespace:delete:
     desc: Clear finalizers from a Terminating namespace [NS=required]
