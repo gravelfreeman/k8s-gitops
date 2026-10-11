@@ -70,15 +70,9 @@ spec:
         namespace: envoy-gateway
         sectionName: https
   volumeMounts:
-    - name: semantic-mcp-hook
-      mountPath: /app/semantic_injector.py
-      subPath: semantic_injector.py
     - name: chatgpt-tokens
       mountPath: /home/nonroot/.config/litellm/chatgpt
   volumes:
-    - name: semantic-mcp-hook
-      configMap:
-        name: litellm-semantic-mcp-hook
     - name: chatgpt-tokens
       persistentVolumeClaim:
         claimName: litellm-data
@@ -88,8 +82,6 @@ spec:
     disable_password_login_when_sso_enabled: true
     master_key: os.environ/LITELLM_MASTER_KEY
     require_key_mcp_access_defined: true
-  callbacks:
-    callbacks: [semantic_injector.semantic_mcp_injector]
   litellmSettings:
     cache: true
     cache_params:

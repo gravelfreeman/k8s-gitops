@@ -1,11 +1,5 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-configMapGenerator:
-  - name: litellm-semantic-mcp-hook
-    files:
-      - semantic_injector.py=hooks/semantic_injector.py
-    options:
-      disableNameSuffixHash: true
 resources:
   - externalsecret.yaml
   - proxy.yaml
