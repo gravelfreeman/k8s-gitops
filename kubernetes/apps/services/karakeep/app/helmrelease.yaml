@@ -20,6 +20,7 @@ spec:
               tag: 0.33.2@sha256:b069e4307dec06ea06d16989c6861c30a1ff208568be44ed5fb5d422cd3e950c
             env:
               BROWSER_WEB_URL: http://127.0.0.1:9222
+              CRAWLER_FULL_PAGE_ARCHIVE: true
               DATA_DIR: /data
               DISABLE_NEW_RELEASE_CHECK: true
               DISABLE_PASSWORD_AUTH: true
