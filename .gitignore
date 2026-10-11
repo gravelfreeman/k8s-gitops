@@ -10,3 +10,6 @@
 /kubernetes/apps/services/homepage/app/config/SPECS.md
 /kubernetes/apps/services/homepage/app/config/STYLE_GUIDE.md
 .agents/instructions/ai
+k8s-gitops-child.2104014.moz_log
+k8s-gitops-main.2069197.moz_log
+logfirefox

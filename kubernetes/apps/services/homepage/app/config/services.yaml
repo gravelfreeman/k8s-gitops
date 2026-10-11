@@ -134,10 +134,10 @@
         - TrueNAS:
             id: scale-2-truenas
             icon: 'sh-truenas-scale.svg'
-            href: 'https://10.0.10.11'
+            href: 'http://10.1.10.15'
             widget:
                 type: truenas
-                url: 'https://10.0.10.11'
+                url: 'http://10.1.10.15'
                 version: 2
                 key: '{{HOMEPAGE_FILE_SCALE_02_KEY}}'
                 enablePools: true
@@ -147,37 +147,37 @@
             id: scale-2-glances
             widget:
                 type: glances
-                url: 'http://10.0.10.11:30015'
+                url: 'http://10.1.10.15:30015'
                 version: 4
                 metric: cpu
         - Memory Usage:
             widget:
                 type: glances
-                url: 'http://10.0.10.11:30015'
+                url: 'http://10.1.10.15:30015'
                 version: 4
                 metric: memory
         - Network Usage:
             widget:
                 type: glances
-                url: 'http://10.0.10.11:30015'
+                url: 'http://10.1.10.15:30015'
                 version: 4
                 metric: 'network:eth0'
         - Top Processes:
             widget:
                 type: glances
-                url: 'http://10.0.10.11:30015'
+                url: 'http://10.1.10.15:30015'
                 version: 4
                 metric: process
         - CPU Temp:
             widget:
                 type: glances
-                url: 'http://10.0.10.11:30015'
+                url: 'http://10.1.10.15:30015'
                 version: 4
                 metric: 'sensor:Package id 0'
         - Disk I/O:
             widget:
                 type: glances
-                url: 'http://10.0.10.11:30015'
+                url: 'http://10.1.10.15:30015'
                 version: 4
                 metric: 'disk:sda'
 - Media: []
