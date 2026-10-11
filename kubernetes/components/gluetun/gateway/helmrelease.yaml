@@ -82,7 +82,7 @@ spec:
                 add: [CHOWN, NET_ADMIN, NET_RAW]
                 drop: [ALL]
               readOnlyRootFilesystem: false
-              runAsGroup: 0
+              runAsGroup: 1000
               runAsUser: 0
           agent:
             image:
