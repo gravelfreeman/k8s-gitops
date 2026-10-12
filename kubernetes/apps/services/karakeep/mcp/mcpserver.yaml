@@ -1,0 +1,38 @@
+---
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMMCPServer
+metadata:
+  name: karakeep
+spec:
+  transport: sse
+  workload:
+    image: ghcr.io/supercorp-ai/supergateway:3.4.3@sha256:095acf4471e142553c1a5514aa5e480abbc5885d00549d4a3481cc70eac53889
+    args:
+      - --stdio
+      - npx -y @karakeep/mcp@0.33.0
+      - --outputTransport
+      - sse
+    port: 8000
+    path: /sse
+    env:
+      - name: KARAKEEP_API_ADDR
+        value: http://karakeep.karakeep.svc.cluster.local:3000
+    envFrom:
+      - secretRef:
+          name: karakeep-mcp-secret
+    resources:
+      requests:
+        cpu: 10m
+        memory: 128Mi
+      limits:
+        memory: 512Mi
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 1000
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: [ALL]
