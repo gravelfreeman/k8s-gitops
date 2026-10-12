@@ -33,6 +33,7 @@ Starts from the pinned `mcr.microsoft.com/devcontainers/base:ubuntu` image.
 - Mounts the host 1Password SSH agent directory into `/home/zed/.1password`.
 - Mounts the host runtime directory read-only into `/run/host-runtime`.
 - Mounts the host Talos artifact cache into `/tmp/talos`.
+- Mounts host `~/.local/share/opencode` into the container for OpenCode persistence. Zed assistant conversation history is stored by the host Zed client under `~/.local/share/zed/threads`, independently of the container.
 - Configures the `op` executable with the host `onepassword-cli` GID and setgid permissions for 1Password CLI desktop app integration.
 - Mounts host `~/.gitconfig` read-only into `/tmp/host.gitconfig`.
 - Grants FUSE access with `/dev/fuse`, `SYS_ADMIN`, and unconfined AppArmor for local PVC mounts through `pv-mounter`/SSHFS.
@@ -47,6 +48,7 @@ Starts from the pinned `mcr.microsoft.com/devcontainers/base:ubuntu` image.
 Runs on the host before the container starts.
 
 - Creates `~/.cache/k8s-gitops/talos` with mode `0700` for Talos artifacts such as generated ISO files.
+- Starts a detached host-side watcher that waits for a recreated devcontainer, then waits for Zed to exit before backing up and rebinding the configured agent threads in Zed's database to the new Docker container ID. Configure agent IDs, an optional read-only SQLite session database path, and a query that returns session IDs for the workspace in `initializeCommand.sh`. The query must accept the workspace path as its single parameter. Leave the session database path and query empty to skip attaching session placeholders; existing Zed thread references will still be rebound. Its log is `~/.cache/k8s-gitops/rebindZedThreads.log`.
 - Does not read or cache 1Password secrets.
 
 ## onCreateCommand.sh

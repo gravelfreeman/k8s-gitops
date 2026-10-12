@@ -31,7 +31,6 @@
         "source=${localEnv:XDG_RUNTIME_DIR},target=/run/host-runtime,type=bind,readonly",
         "source=${localEnv:HOME}/.cache/k8s-gitops/talos,target=/tmp/talos,type=bind",
         "source=${localEnv:HOME}/.gitconfig,target=/tmp/host.gitconfig,type=bind,readonly",
-        "source=${localEnv:HOME}/.codex,target=/home/zed/.codex,type=bind",
         "source=/usr/bin/opencode,target=/usr/bin/opencode,type=bind,readonly",
         "source=${localEnv:HOME}/.local/share/opencode,target=/home/zed/.local/share/opencode,type=bind"
     ],
@@ -57,7 +56,7 @@
     "containerUser": "zed",
     "updateRemoteUserUID": false,
     "userEnvProbe": "loginInteractiveShell",
-    "initializeCommand": "bash ${localWorkspaceFolder}/.devcontainer/scripts/initializeCommand.sh",
+    "initializeCommand": "bash ${localWorkspaceFolder}/.devcontainer/scripts/initializeCommand.sh ${localWorkspaceFolder}",
     "onCreateCommand": "bash ${containerWorkspaceFolder}/.devcontainer/scripts/onCreateCommand.sh ${containerWorkspaceFolder}",
     "postCreateCommand": "bash ${containerWorkspaceFolder}/.devcontainer/scripts/postCreateCommand.sh ${containerWorkspaceFolder}",
     "postStartCommand": "bash ${containerWorkspaceFolder}/.devcontainer/scripts/postStartCommand.sh"
