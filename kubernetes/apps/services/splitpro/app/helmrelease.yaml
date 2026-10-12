@@ -82,6 +82,9 @@ spec:
       app:
         hostnames: ['split.${DOMAIN_0}']
         parentRefs:
+          - name: envoy-internal
+            namespace: envoy-gateway
+            sectionName: https
           - name: envoy-external
             namespace: envoy-gateway
             sectionName: https
