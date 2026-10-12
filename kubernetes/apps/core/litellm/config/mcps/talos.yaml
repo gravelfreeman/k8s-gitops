@@ -13,12 +13,13 @@ spec:
       - name: talosconfig
         secret:
           secretName: talos-mcp-talosconfig
-          defaultMode: 0400
+          defaultMode: 0440
     volumeMounts:
       - name: talosconfig
         mountPath: /var/run/secrets/talos.dev
         readOnly: true
     podSecurityContext:
+      fsGroup: 1000
       runAsNonRoot: true
       seccompProfile:
         type: RuntimeDefault
