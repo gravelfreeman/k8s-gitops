@@ -8,6 +8,7 @@ spec:
     xForwardedFor:
       trustedCIDRs:
         - 10.244.0.0/16
+  http3: {}
   targetRefs:
     - group: gateway.networking.k8s.io
       kind: Gateway
@@ -20,6 +21,7 @@ kind: ClientTrafficPolicy
 metadata:
   name: envoy-internal
 spec:
+  http3: {}
   targetRefs:
     - group: gateway.networking.k8s.io
       kind: Gateway
