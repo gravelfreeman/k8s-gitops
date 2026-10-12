@@ -2,6 +2,21 @@
   "$schema": "https://opencode.ai/config.json",
   "model": "litellm/gpt-6-luna",
   "providers": {
+    "opencode": {
+      "models": {
+        "big-pickle": { "disabled": true },
+        "exo-free": { "disabled": true },
+        "ling-3.0-flash-fin-free": { "disabled": true },
+        "ling-3.1-flash-free": { "disabled": true },
+        "longcat-2.5-preview-free": { "disabled": true },
+        "mimo-v2.6-flash-free": { "disabled": true },
+        "muse-spark-1.3-contributor-free": { "disabled": true },
+        "nemotron-3-ultra-free": { "disabled": true },
+        "nemotron-3.5-lightning-free": { "disabled": true },
+        "space-bunny-free": { "disabled": true },
+        "step-5-preview-free": { "disabled": true }
+      }
+    },
     "litellm": {
       "name": "LiteLLM",
       "package": "@opencode/ai/providers/openai-compatible/responses",
@@ -12,15 +27,44 @@
       "models": {
         "gpt-6-luna": {
           "name": "GPT-6 Luna",
-          "modelID": "chatgpt/gpt-6-luna"
+          "modelID": "chatgpt/gpt-6-luna",
+          "cost": { "input": 0.1, "output": 0.5, "cache": { "read": 0.01, "write": 0.125 } },
+          "limit": { "context": 272000, "output": 128000 },
+          "variants": [
+            { "id": "none", "settings": { "reasoningEffort": "none" } },
+            { "id": "low", "settings": { "reasoningEffort": "low" } },
+            { "id": "medium", "settings": { "reasoningEffort": "medium" } },
+            { "id": "high", "settings": { "reasoningEffort": "high" } },
+            { "id": "xhigh", "settings": { "reasoningEffort": "xhigh" } },
+            { "id": "max", "settings": { "reasoningEffort": "max" } }
+          ]
         },
         "gpt-6-sol": {
           "name": "GPT-6 Sol",
-          "modelID": "chatgpt/gpt-6-sol"
+          "modelID": "chatgpt/gpt-6-sol",
+          "cost": { "input": 2, "output": 10, "cache": { "read": 0.2, "write": 2.5 } },
+          "limit": { "context": 272000, "output": 128000 },
+          "variants": [
+            { "id": "none", "settings": { "reasoningEffort": "none" } },
+            { "id": "low", "settings": { "reasoningEffort": "low" } },
+            { "id": "medium", "settings": { "reasoningEffort": "medium" } },
+            { "id": "high", "settings": { "reasoningEffort": "high" } },
+            { "id": "xhigh", "settings": { "reasoningEffort": "xhigh" } },
+            { "id": "max", "settings": { "reasoningEffort": "max" } }
+          ]
         },
         "gpt-6-astra": {
           "name": "GPT-6 Astra",
-          "modelID": "chatgpt/gpt-6-astra"
+          "modelID": "chatgpt/gpt-6-astra",
+          "cost": { "input": 10, "output": 50, "cache": { "read": 1, "write": 12.5 } },
+          "limit": { "context": 272000, "output": 128000 },
+          "variants": [
+            { "id": "low", "settings": { "reasoningEffort": "low" } },
+            { "id": "medium", "settings": { "reasoningEffort": "medium" } },
+            { "id": "high", "settings": { "reasoningEffort": "high" } },
+            { "id": "xhigh", "settings": { "reasoningEffort": "xhigh" } },
+            { "id": "max", "settings": { "reasoningEffort": "max" } }
+          ]
         }
       }
     }
