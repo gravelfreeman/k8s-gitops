@@ -41,5 +41,10 @@ RUN usermod \
     --shell /bin/zsh \
     vscode \
   && groupmod --new-name "${USERNAME}" vscode \
+  && install -d -m 0755 -o "${USERNAME}" -g "${USERNAME}" \
+    "/home/${USERNAME}/.local" \
+    "/home/${USERNAME}/.local/share" \
+    "/home/${USERNAME}/.local/bin" \
+    "/home/${USERNAME}/.local/state" \
   && rm -f /etc/sudoers.d/vscode /etc/sudoers.d/zed \
   && passwd -l root

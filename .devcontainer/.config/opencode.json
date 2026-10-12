@@ -1,0 +1,41 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "litellm/gpt-6-luna",
+  "providers": {
+    "litellm": {
+      "name": "LiteLLM",
+      "package": "@opencode/ai/providers/openai-compatible/responses",
+      "settings": {
+        "baseURL": "https://litellm.{file:/home/zed/.config/opencode/domain.env}/v1",
+        "apiKey": "{file:/home/zed/.config/opencode/litellm.key}"
+      },
+      "models": {
+        "gpt-6-luna": {
+          "name": "GPT-6 Luna",
+          "modelID": "chatgpt/gpt-6-luna"
+        },
+        "gpt-6-sol": {
+          "name": "GPT-6 Sol",
+          "modelID": "chatgpt/gpt-6-sol"
+        },
+        "gpt-6-astra": {
+          "name": "GPT-6 Astra",
+          "modelID": "chatgpt/gpt-6-astra"
+        }
+      }
+    }
+  },
+  "mcp": {
+    "servers": {
+      "litellm": {
+        "type": "remote",
+        "url": "https://litellm.{file:/home/zed/.config/opencode/domain.env}/mcp",
+        "oauth": false,
+        "headers": {
+          "Authorization": "Bearer {file:/home/zed/.config/opencode/litellm.key}"
+        },
+        "codemode": true
+      }
+    }
+  }
+}
