@@ -1,5 +1,3 @@
-.DS_Store
-/restore
 /kubernetes/apps/services/homepage/app/config/bookmarks.yaml
 /kubernetes/apps/media/torrent/qbitmanage/app/resources/config_qb1.yml
 /kubernetes/apps/media/torrent/qbitmanage/app/resources/config_qb2.yml
@@ -10,6 +8,3 @@
 /kubernetes/apps/services/homepage/app/config/SPECS.md
 /kubernetes/apps/services/homepage/app/config/STYLE_GUIDE.md
 .agents/instructions/ai
-k8s-gitops-child.2104014.moz_log
-k8s-gitops-main.2069197.moz_log
-logfirefox

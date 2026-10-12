@@ -21,8 +21,9 @@ machine:
       enabled: true
       allowedKubernetesNamespaces:
         - actions-runner-system
+        - litellm
         - system-upgrade
-      allowedRoles: [os:admin]
+      allowedRoles: [os:admin, os:reader]
     {% endif %}
     rbac: true
     stableHostname: true

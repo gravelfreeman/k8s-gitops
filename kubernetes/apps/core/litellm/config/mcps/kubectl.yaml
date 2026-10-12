@@ -1,0 +1,147 @@
+---
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMMCPServer
+metadata:
+  name: kubectl
+spec:
+  workload:
+    image: ghcr.io/rohitg00/kubectl-mcp-server:1.24.0@sha256:17134e36a3e1d3a5e457c12d61e8c7f7c52a7927c6ae4250131dfd95a74a2331
+    args: [--transport, streamable-http, --read-only]
+    port: 8000
+    serviceAccountName: kubectl-mcp
+    automountServiceAccountToken: true
+    resources:
+      requests:
+        cpu: 25m
+        memory: 256Mi
+      limits:
+        memory: 1Gi
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 1000
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: [ALL]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubectl-mcp
+  namespace: litellm
+automountServiceAccountToken: true
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: litellm-kubectl-mcp
+rules:
+  - apiGroups: [""]
+    resources: [configmaps, endpoints, events, limitranges, namespaces, nodes, persistentvolumeclaims, persistentvolumes, pods, resourcequotas, serviceaccounts, services]
+    verbs: [get, list, watch]
+  - apiGroups: [""]
+    resources: [pods/log]
+    verbs: [get]
+  - apiGroups: [apiextensions.k8s.io]
+    resources: [customresourcedefinitions]
+    verbs: [get, list, watch]
+  - apiGroups: [admissionregistration.k8s.io]
+    resources: [mutatingadmissionpolicies, mutatingadmissionpolicybindings]
+    verbs: [get, list, watch]
+  - apiGroups: [apps]
+    resources: [daemonsets, deployments, replicasets, statefulsets]
+    verbs: [get, list, watch]
+  - apiGroups: [autoscaling]
+    resources: [horizontalpodautoscalers]
+    verbs: [get, list, watch]
+  - apiGroups: [barmancloud.cnpg.io]
+    resources: [objectstores]
+    verbs: [get, list, watch]
+  - apiGroups: [batch]
+    resources: [cronjobs, jobs]
+    verbs: [get, list, watch]
+  - apiGroups: [cert-manager.io]
+    resources: [certificaterequests, certificates, clusterissuers, issuers]
+    verbs: [get, list, watch]
+  - apiGroups: [acme.cert-manager.io]
+    resources: [challenges, orders]
+    verbs: [get, list, watch]
+  - apiGroups: [cilium.io]
+    resources: [ciliumbgpadvertisements, ciliumbgpclusterconfigs, ciliumbgppeerconfigs, ciliumclusterwidenetworkpolicies, ciliumendpoints, ciliumidentities, ciliumloadbalancerippools, ciliumnetworkpolicies, ciliumnodes]
+    verbs: [get, list, watch]
+  - apiGroups: [dragonflydb.io]
+    resources: [dragonflies]
+    verbs: [get, list, watch]
+  - apiGroups: [external-secrets.io]
+    resources: [clustersecretstores, externalsecrets]
+    verbs: [get, list, watch]
+  - apiGroups: [externaldns.k8s.io]
+    resources: [dnsendpoints]
+    verbs: [get, list, watch]
+  - apiGroups: [gluetun.k8s-gitops.io]
+    resources: [gluetunclients, glutungateways]
+    verbs: [get, list, watch]
+  - apiGroups: [gateway.envoyproxy.io]
+    resources: [backendtrafficpolicies, clienttrafficpolicies, envoyextensionpolicies, envoyproxies, securitypolicies]
+    verbs: [get, list, watch]
+  - apiGroups: [gateway.networking.k8s.io]
+    resources: [gatewayclasses, gateways, httproutes]
+    verbs: [get, list, watch]
+  - apiGroups: [generators.external-secrets.io]
+    resources: [clustergenerators, passwords]
+    verbs: [get, list, watch]
+  - apiGroups: [helm.toolkit.fluxcd.io]
+    resources: [helmreleases]
+    verbs: [get, list, watch]
+  - apiGroups: [k8s.cni.cncf.io]
+    resources: [network-attachment-definitions]
+    verbs: [get, list, watch]
+  - apiGroups: [kustomize.toolkit.fluxcd.io]
+    resources: [kustomizations]
+    verbs: [get, list, watch]
+  - apiGroups: [metrics.k8s.io]
+    resources: [nodes, pods]
+    verbs: [get, list]
+  - apiGroups: [monitoring.coreos.com]
+    resources: [podmonitors]
+    verbs: [get, list, watch]
+  - apiGroups: [networking.k8s.io]
+    resources: [ingresses, networkpolicies]
+    verbs: [get, list, watch]
+  - apiGroups: [postgresql.cnpg.io]
+    resources: [clusterimagecatalogs, clusters, databases, scheduledbackups]
+    verbs: [get, list, watch]
+  - apiGroups: [policy]
+    resources: [poddisruptionbudgets]
+    verbs: [get, list, watch]
+  - apiGroups: [rbac.authorization.k8s.io]
+    resources: [clusterrolebindings, clusterroles, rolebindings, roles]
+    verbs: [get, list, watch]
+  - apiGroups: [source.toolkit.fluxcd.io]
+    resources: [ocirepositories]
+    verbs: [get, list, watch]
+  - apiGroups: [storage.k8s.io]
+    resources: [storageclasses]
+    verbs: [get, list, watch]
+  - apiGroups: [tuppr.home-operations.com]
+    resources: [kubernetesupgrades, talosupgrades]
+    verbs: [get, list, watch]
+  - apiGroups: [volsync.backube]
+    resources: [replicationdestinations, replicationsources]
+    verbs: [get, list, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: litellm-kubectl-mcp
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: litellm-kubectl-mcp
+subjects:
+  - kind: ServiceAccount
+    name: kubectl-mcp
+    namespace: litellm

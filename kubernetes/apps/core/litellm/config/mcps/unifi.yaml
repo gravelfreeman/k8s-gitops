@@ -10,19 +10,11 @@ spec:
     env:
       - name: UNIFI_NETWORK_HOST
         value: 10.0.20.1
-      - name: UNIFI_NETWORK_USERNAME
-        value: litellm
       - name: UNIFI_NETWORK_PORT
         value: "443"
-      - name: UNIFI_NETWORK_REDACT_SENSITIVE_FIELDS
-        value: "true"
-      - name: UNIFI_NETWORK_TOOL_PERMISSION_MODE
-        value: confirm
-      - name: UNIFI_NETWORK_VERIFY_SSL
-        value: "false"
+      - name: UNIFI_NETWORK_USERNAME
+        value: litellm
       - name: UNIFI_POLICY_NETWORK_CREATE
-        value: "false"
-      - name: UNIFI_POLICY_NETWORK_DELETE
         value: "false"
       - name: UNIFI_POLICY_NETWORK_UPDATE
         value: "false"
@@ -32,8 +24,6 @@ spec:
         value: 0.0.0.0
       - name: UNIFI_MCP_HTTP_ENABLED
         value: "true"
-      - name: UNIFI_MCP_HTTP_TRANSPORT
-        value: streamable-http
     envFrom:
       - secretRef:
           name: unifi-mcp-secret

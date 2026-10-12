@@ -1,0 +1,35 @@
+---
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMMCPServer
+metadata:
+  name: talos
+spec:
+  workload:
+    image: registry.erwanleboucher.dev/eleboucher/talos-mcp:0.0.2@sha256:ad1b388e20cbe171763ba0ff85ed32856f2573c9c40f5081a83c96b3b57f0d35
+    env:
+      - name: TALOS_MCP_TRANSPORT
+        value: http
+    volumes:
+      - name: talosconfig
+        secret:
+          secretName: talos-mcp-talosconfig
+          defaultMode: 0400
+    volumeMounts:
+      - name: talosconfig
+        mountPath: /var/run/secrets/talos.dev
+        readOnly: true
+    podSecurityContext:
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: [ALL]
+---
+apiVersion: talos.dev/v1alpha1
+kind: ServiceAccount
+metadata:
+  name: talos-mcp-talosconfig
+spec:
+  roles: [os:reader]

@@ -1,0 +1,24 @@
+---
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMMCPServer
+metadata:
+  name: kubesearch
+spec:
+  workload:
+    image: ghcr.io/perfectra1n/kubesearch-mcp:latest@sha256:2f0b48c90550c2bde2cb54ddb8759a53997b9d5d22f8e532297d08fa1362198c
+    port: 3000
+    resources:
+      requests:
+        cpu: 25m
+        memory: 128Mi
+      limits:
+        memory: 512Mi
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: [ALL]
