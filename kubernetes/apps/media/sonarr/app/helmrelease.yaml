@@ -27,6 +27,7 @@ spec:
               tag: 4.0.19.3011-bin1.2@sha256:ec6748bf8b0a15aeabe535ef26746e359799e5a87f9e87315fa17358202d1d80
             env:
               SONARR__AUTH__METHOD: External
+              SONARR__LOG__ANALYTICSENABLED: "false"
               SONARR__LOG__LEVEL: info
               SSL_CERT_FILE: /etc/ssl/certs/ca-certificates.crt
             probes:

@@ -21,6 +21,7 @@ spec:
             env:
               DYNACONF_GENERAL__USE_POSTPROCESSING: "true"
               DYNACONF_GENERAL__POSTPROCESSING_CMD: 'python3 /subcleaner/subcleaner.py "{{ "{{" }}subtitles{{ "}}" }}" -s'
+              DYNACONF_ANALYTICS__ENABLED: "false"
             probes:
               liveness: &probes
                 enabled: true

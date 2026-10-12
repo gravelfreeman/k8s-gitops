@@ -72,6 +72,8 @@ spec:
       envFromSecrets:
         - name: grafana-oauth-secret
       grafana.ini:
+        analytics:
+          reporting_enabled: false
         server:
           root_url: https://grafana.${DOMAIN_0}
         auth:
