@@ -9,7 +9,7 @@ spec:
     name: poznote-mcp-secret
     key: POZNOTE_MCP_AUTH_TOKEN
   workload:
-    image: ghcr.io/timothepoznanski/poznote-mcp:6.111.2-beta@sha256:53ab737d9de27c27af32521a76f7ff6ba9e7e8c42d64b282a72c1fd494f753d9
+    image: ghcr.io/timothepoznanski/poznote-mcp:6.119.0-beta@sha256:df95d42ca060f90f5c833227a886cfcf711a2e57166265f0199076782a86b396
     port: 8045
     env:
       - name: POZNOTE_API_URL
