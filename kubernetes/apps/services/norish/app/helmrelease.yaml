@@ -53,7 +53,7 @@ spec:
           obscura:
             image:
               repository: norishapp/obscura
-              tag: 0.2.2-norish.1@sha256:068e9f2496d59dada78274526f9edc8e768cb42a4b48ea9635c109ac9b86fe7b
+              tag: 0.2.4-norish.1@sha256:d3b30af8d88a73685422d9c29a7689c0952966e8d6e87eb00edcf6c2c85defe6
             resources:
               requests:
                 cpu: 50m
