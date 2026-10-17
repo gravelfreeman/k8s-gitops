@@ -89,11 +89,6 @@ spec:
       host: os.environ/REDIS_HOST
       port: os.environ/REDIS_PORT
       password: os.environ/REDIS_PASSWORD
-    mcp_semantic_tool_filter:
-      enabled: true
-      embedding_model: text-embedding-3-small
-      similarity_threshold: 0.3
-      top_k: 10
   routerSettings:
     redis_host: os.environ/REDIS_HOST
     redis_password: os.environ/REDIS_PASSWORD
