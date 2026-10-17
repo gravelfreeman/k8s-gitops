@@ -75,6 +75,7 @@ spec:
             env:
               MEILI_ENV: production
               MEILI_NO_ANALYTICS: true
+              MEILI_UPGRADE_DB: "true"
             envFrom:
               - secretRef:
                   name: karakeep-meilisearch-secret
