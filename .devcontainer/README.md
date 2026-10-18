@@ -28,18 +28,17 @@ Starts from the pinned `mcr.microsoft.com/devcontainers/base:ubuntu` image.
 ## devcontainer.json
 
 - Builds the image from `.devcontainer/Dockerfile`.
-- Installs devcontainer features for AWS CLI, common utilities, Kubernetes tools, Cloudflared, Task, Helmfile, Talos, K9s, YQ, 1Password CLI, Flux, and Kustomize.
+- Installs devcontainer features for AWS CLI, common utilities, Kubernetes tools, Cloudflared, Task, Helmfile, Talos, K9s, YQ, Flux, and Kustomize.
 - Installs extra apt packages through the apt packages feature.
 - Mounts the host 1Password SSH agent directory into `/home/zed/.1password`.
-- Mounts the host runtime directory read-only into `/run/host-runtime`.
+- Mounts the stable host `/run/user` parent read-only into `/run/host-runtime`, so recreated per-user runtime directories and sockets become visible without restarting the container.
+- Mounts the host `/usr/bin/op` executable read-only at the same path in the container, using the host CLI's setgid metadata for desktop app integration.
 - Mounts the host Talos artifact cache into `/tmp/talos`.
 - Mounts host `~/.local/share/opencode` into the container for OpenCode persistence. Zed assistant conversation history is stored by the host Zed client under `~/.local/share/zed/threads`, independently of the container.
-- Configures the `op` executable with the host `onepassword-cli` GID and setgid permissions for 1Password CLI desktop app integration.
 - Mounts host `~/.gitconfig` read-only into `/tmp/host.gitconfig`.
 - Grants FUSE access with `/dev/fuse`, `SYS_ADMIN`, and unconfined AppArmor for local PVC mounts through `pv-mounter`/SSHFS.
 - Sets shell, devcontainer marker, SSH agent, PATH, Minijinja, kubeconfig, and talosconfig environment variables.
 - Runs container processes as the `zed` user.
-- Disables remote user UID rewriting.
 - Runs `onCreateCommand.sh` inside the container when the container is first created.
 - Runs `postCreateCommand.sh` inside the container after creation setup.
 
@@ -93,5 +92,5 @@ Runs inside the container after `onCreateCommand.sh` during first creation.
 
 Runs inside the container at every start.
 
-- Links the container's standard 1Password CLI IPC socket path to the read-only host runtime mount.
+- Links the container's standard 1Password CLI IPC socket path to the current host runtime directory under the read-only `/run/user` mount, then fails clearly if the socket is unavailable.
 - Replaces a stale socket entry left by an older container configuration.
