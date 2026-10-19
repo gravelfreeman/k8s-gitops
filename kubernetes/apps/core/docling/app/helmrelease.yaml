@@ -1,0 +1,66 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: docling
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    controllers:
+      docling:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/docling-project/docling-serve-cpu
+              tag: v1.35.0@sha256:79e5fcd19ab227ed36323fa5fa31820d14d53efc4f073417ba37be7931c7af0a
+            env:
+              DOCLING_SERVE_DEFAULT_PICTURE_DESCRIPTION_PRESET: docling
+              DOCLING_SERVE_ENABLE_REMOTE_SERVICES: true
+              DOCLING_SERVE_MAX_SYNC_WAIT: 600
+            envFrom:
+              - secretRef:
+                  name: docling-app-secret
+            probes:
+              liveness: &probes
+                enabled: true
+                type: HTTP
+                path: /health
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 1
+                memory: 4Gi
+              limits:
+                cpu: 4
+                memory: 12Gi
+            securityContext:
+              readOnlyRootFilesystem: false
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+    persistence:
+      cache:
+        accessMode: ReadWriteOnce
+        size: 20Gi
+        storageClass: ceph-block
+        globalMounts:
+          - path: /opt/app-root/src/.cache
+    service:
+      app:
+        ports:
+          http:
+            port: 5001

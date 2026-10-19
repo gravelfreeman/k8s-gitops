@@ -1,0 +1,13 @@
+---
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMVirtualKey
+metadata:
+  name: ${USER_2}
+spec:
+  keyAlias: ${USER_2_ALIAS}
+  models: [all-team-models]
+  proxyRef: litellm
+  secretKey: api-key
+  secretName: litellm-${USER_2}-secret
+  teamID: privileged
+  userID: ${USER_2}

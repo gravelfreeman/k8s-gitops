@@ -1,0 +1,13 @@
+---
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMVirtualKey
+metadata:
+  name: openwebui
+spec:
+  keyAlias: Open WebUI
+  models: []
+  proxyRef: litellm
+  secretKey: api-key
+  secretName: litellm-openwebui-secret
+  teamID: admin
+  userID: freeman

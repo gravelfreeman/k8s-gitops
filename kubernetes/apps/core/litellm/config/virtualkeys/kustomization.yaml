@@ -1,5 +1,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+  - docling.yaml
   - karakeep.yaml
   - opencode.yaml
+  - openwebui.yaml
+  - user_2.yaml
+  - user_3.yaml
+  - user_4.yaml

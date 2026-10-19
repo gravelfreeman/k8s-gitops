@@ -5,7 +5,7 @@ metadata:
   name: opencode
 spec:
   keyAlias: OpenCode
-  models: [chatgpt/gpt-6-astra, chatgpt/gpt-6-luna, chatgpt/gpt-6-sol]
+  models: []
   proxyRef: litellm
   secretKey: api-key
   secretName: litellm-opencode-secret

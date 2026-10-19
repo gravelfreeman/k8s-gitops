@@ -20,7 +20,23 @@ spec:
             env:
               BYPASS_ADMIN_ACCESS_CONTROL: false
               CORS_ALLOW_ORIGIN: https://chat.${DOMAIN_0}
+              CONTENT_EXTRACTION_ENGINE: docling
               DEFAULT_USER_ROLE: user
+              DOCLING_SERVER_URL: http://docling.docling.svc.cluster.local:5001
+              DOCLING_PARAMS: >-
+                {
+                  "do_ocr": true,
+                  "do_table_structure": true,
+                  "do_pdf_heading_hierarchy": true,
+                  "do_picture_classification": true,
+                  "do_picture_description": true,
+                  "picture_description_preset": "docling",
+                  "do_formula_enrichment": true,
+                  "code_formula_preset": "docling",
+                  "do_code_enrichment": true,
+                  "do_chart_extraction": true,
+                  "chart_extraction_preset": "docling"
+                }
               ENABLE_LOCAL_WEB_FETCH: true
               ENABLE_LOGIN_FORM: false
               ENABLE_PASSWORD_AUTH: false
@@ -37,8 +53,6 @@ spec:
               OAUTH_SCOPES: openid email profile groups offline_access
               OAUTH_SUB_CLAIM: sub
               OAUTH_UPDATE_PICTURE_ON_LOGIN: true
-              OPENAI_API_BASE_URLS: http://litellm.litellm.svc.cluster.local:4000/v1
-              OPENAI_API_CONFIGS: '{"0":{"enable":true,"api_type":"responses"}}'
               OPENID_PROVIDER_URL: https://id.${DOMAIN_0}/.well-known/openid-configuration
               OPENID_REDIRECT_URI: https://chat.${DOMAIN_0}/oauth/oidc/callback
               WEBUI_URL: https://chat.${DOMAIN_0}

@@ -1,0 +1,13 @@
+---
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMVirtualKey
+metadata:
+  name: docling
+spec:
+  keyAlias: Docling
+  models: [chatgpt/gpt-6-luna]
+  proxyRef: litellm
+  secretKey: api-key
+  secretName: litellm-docling-secret
+  teamID: admin
+  userID: freeman

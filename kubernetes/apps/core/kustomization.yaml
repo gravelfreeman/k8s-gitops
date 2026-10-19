@@ -16,6 +16,7 @@ resources:
   - byparr/ks.yaml
   - cloudflared/ks.yaml
   - cloudnative-pg/ks.yaml
+  - docling/ks.yaml
   - dragonfly/ks.yaml
   - envoy-gateway/ks.yaml
   - external-dns/ks.yaml

@@ -11,6 +11,7 @@ spec:
     - ../../../../components/volsync
   dependsOn:
     - name: cloudnative-pg
+    - name: docling
     - name: external-secrets-store
     - name: litellm
     - name: volsync
