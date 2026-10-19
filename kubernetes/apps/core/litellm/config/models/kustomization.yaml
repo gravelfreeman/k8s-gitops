@@ -4,4 +4,4 @@ resources:
   - chatgpt-gpt-6-astra.yaml
   - chatgpt-gpt-6-luna.yaml
   - chatgpt-gpt-6-sol.yaml
-  - text-embedding-3-small.yaml
+  - text-embedding-3-large.yaml

@@ -4,12 +4,14 @@ kind: LiteLLMModel
 metadata:
   name: semantic-embedding
 spec:
-  modelName: text-embedding-3-small
+  modelName: text-embedding-3-large
   params:
-    model: openai/text-embedding-3-small
+    model: openai/text-embedding-3-large
     apiKeyRef:
       name: litellm-app-secret
       key: OPENAI_API_KEY
   info:
     mode: embedding
+    extra:
+      input_cost_per_token: 1.3e-07
   proxyRef: litellm

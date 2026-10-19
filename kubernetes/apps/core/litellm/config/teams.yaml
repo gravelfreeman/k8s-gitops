@@ -4,7 +4,7 @@ kind: LiteLLMTeam
 metadata:
   name: admin
 spec:
-  models: [chatgpt/gpt-6-astra, chatgpt/gpt-6-luna, chatgpt/gpt-6-sol]
+  models: [all-proxy-models]
   proxyRef: litellm
   teamID: admin
 ---

@@ -26,6 +26,8 @@ spec:
               DOCLING_PARAMS: >-
                 {
                   "do_ocr": true,
+                  "ocr_engine": "easyocr",
+                  "ocr_lang": ["en", "fr"],
                   "do_table_structure": true,
                   "do_pdf_heading_hierarchy": true,
                   "do_picture_classification": true,
@@ -55,6 +57,9 @@ spec:
               OAUTH_UPDATE_PICTURE_ON_LOGIN: true
               OPENID_PROVIDER_URL: https://id.${DOMAIN_0}/.well-known/openid-configuration
               OPENID_REDIRECT_URI: https://chat.${DOMAIN_0}/oauth/oidc/callback
+              RAG_EMBEDDING_ENGINE: openai
+              RAG_EMBEDDING_MODEL: 
+              RAG_OPENAI_API_BASE_URL: http://litellm.litellm.svc.cluster.local:4000/v1
               WEBUI_URL: https://chat.${DOMAIN_0}
               DATABASE_URL:
                 valueFrom:

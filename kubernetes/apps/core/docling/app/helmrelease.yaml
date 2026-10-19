@@ -22,6 +22,7 @@ spec:
               DOCLING_SERVE_DEFAULT_PICTURE_DESCRIPTION_PRESET: docling
               DOCLING_SERVE_ENABLE_REMOTE_SERVICES: true
               DOCLING_SERVE_MAX_SYNC_WAIT: 600
+              EASYOCR_MODULE_PATH: /opt/app-root/src/.cache/easyocr
             envFrom:
               - secretRef:
                   name: docling-app-secret

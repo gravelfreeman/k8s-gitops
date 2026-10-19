@@ -5,7 +5,7 @@ metadata:
   name: openwebui
 spec:
   keyAlias: Open WebUI
-  models: []
+  models: [all-proxy-models]
   proxyRef: litellm
   secretKey: api-key
   secretName: litellm-openwebui-secret
