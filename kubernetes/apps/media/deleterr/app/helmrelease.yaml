@@ -21,7 +21,7 @@ spec:
           app:
             image:
               repository: docker.io/rfsbraz/deleterr
-              tag: 0.2.27@sha256:b02394ceac8069b8423c66ec5a873d274f4ca00d2ab0cfb2dc52ad4e80a0b21e
+              tag: 0.2.28@sha256:fbcc2601641a134b0a7d56a00a5ccd053ff9daf01c5b584c01cd717f72509d2f
             env:
               PLEXAPI_CONFIG_PATH: /config/plexapi.ini
             envFrom:
