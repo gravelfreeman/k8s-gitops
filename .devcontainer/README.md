@@ -32,7 +32,9 @@ Starts from the pinned `mcr.microsoft.com/devcontainers/base:ubuntu` image.
 - Installs extra apt packages through the apt packages feature.
 - Mounts the host 1Password SSH agent directory into `/home/zed/.1password`.
 - Mounts the stable host `/run/user` parent read-only into `/run/host-runtime`, so recreated per-user runtime directories and sockets become visible without restarting the container.
-- Mounts the host `/usr/bin/op` executable read-only at the same path in the container, using the host CLI's setgid metadata for desktop app integration.
+- Mounts the host `/usr/local/bin/op` executable read-only at the same path in the container, matching Zed's configured command and preserving the host CLI's setgid metadata.
+- Mounts host `~/.config/opencode` read-only at `/home/zed/.config/opencode` for OpenCode's normal configuration lookup.
+- Also mounts host `~/.config/opencode` at the same absolute path used by Zed's user-level env-file argument, so the unchanged host agent-server command works remotely.
 - Mounts the host Talos artifact cache into `/tmp/talos`.
 - Mounts host `~/.local/share/opencode` into the container for OpenCode persistence. Zed assistant conversation history is stored by the host Zed client under `~/.local/share/zed/threads`, independently of the container.
 - Mounts host `~/.gitconfig` read-only into `/tmp/host.gitconfig`.
@@ -41,6 +43,7 @@ Starts from the pinned `mcr.microsoft.com/devcontainers/base:ubuntu` image.
 - Runs container processes as the `zed` user.
 - Runs `onCreateCommand.sh` inside the container when the container is first created.
 - Runs `postCreateCommand.sh` inside the container after creation setup.
+- Does not fetch OpenCode credentials into container-local files; OpenCode uses the mounted host configuration.
 
 ## initializeCommand.sh
 

@@ -69,30 +69,6 @@ process_talosconfig() {
   chmod 0600 "$target_file"
 }
 
-process_opencode_credentials() {
-  local target_dir="$HOME/.config/opencode"
-  local key_tmp domain_tmp
-
-  install -d -m 0700 "$target_dir"
-
-  key_tmp="$(mktemp "$target_dir/litellm.key.tmp.XXXXXX")"
-  domain_tmp="$(mktemp "$target_dir/domain.env.tmp.XXXXXX")"
-  if ! op read 'op://Kubernetes/4st6qgvkzonu2wzoojfj5btbiy/credential' >"$key_tmp"; then
-    rm -f "$key_tmp" "$domain_tmp"
-    echo "Unable to read the LiteLLM API key from 1Password" >&2
-    return 1
-  fi
-  if ! op read 'op://Kubernetes/flux-common/DOMAIN_0' >"$domain_tmp"; then
-    rm -f "$key_tmp" "$domain_tmp"
-    echo "Unable to read the LiteLLM domain from 1Password" >&2
-    return 1
-  fi
-
-  chmod 0600 "$key_tmp" "$domain_tmp"
-  mv "$key_tmp" "$target_dir/litellm.key"
-  mv "$domain_tmp" "$target_dir/domain.env"
-}
-
 generate_kubeconfig() {
   local controller
 
@@ -116,7 +92,6 @@ post_create() {
   run_step "Installing krew plugins" install_krew_plugins
   run_step "Installing krr" install_krr
   run_step "Processing talosconfig" process_talosconfig
-  run_step "Processing OpenCode credentials" process_opencode_credentials
   run_step "Generating kubeconfig" generate_kubeconfig
 
   cd "$HOME" && rm -rf "$tmp_dir"

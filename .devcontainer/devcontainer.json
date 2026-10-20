@@ -27,7 +27,9 @@
     "mounts": [
         "source=${localEnv:HOME}/.1password,target=/home/zed/.1password,type=bind",
         "source=/run/user,target=/run/host-runtime,type=bind,readonly",
-        "source=/usr/bin/op,target=/usr/bin/op,type=bind,readonly",
+        "source=/usr/local/bin/op,target=/usr/local/bin/op,type=bind,readonly",
+        "source=${localEnv:HOME}/.config/opencode,target=/home/zed/.config/opencode,type=bind,readonly",
+        "source=${localEnv:HOME}/.config/opencode,target=${localEnv:HOME}/.config/opencode,type=bind,readonly",
         "source=${localEnv:HOME}/.cache/k8s-gitops/talos,target=/tmp/talos,type=bind",
         "source=${localEnv:HOME}/.gitconfig,target=/tmp/host.gitconfig,type=bind,readonly",
         "source=/usr/bin/opencode,target=/usr/bin/opencode,type=bind,readonly",
@@ -45,7 +47,6 @@
         "SSH_AUTH_SOCK": "/home/zed/.1password/agent.sock",
         "XDG_RUNTIME_DIR": "/run/user/1000",
         "OP_BIOMETRIC_UNLOCK_ENABLED": "true",
-        "OPENCODE_CONFIG": "${containerWorkspaceFolder}/.devcontainer/.config/opencode.json",
         "PATH": "/home/zed/.local/bin:/home/zed/.krew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
         "MINIJINJA_CONFIG_FILE": "${containerWorkspaceFolder}/.devcontainer/.config/.minijinja.toml",
         "KUBECONFIG": "/home/zed/.kube/config",
