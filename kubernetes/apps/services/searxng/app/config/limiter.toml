@@ -1,0 +1,5 @@
+[botdetection]
+trusted_proxies = ['10.244.0.0/16']
+
+[botdetection.ip_lists]
+pass_ip = ['10.244.0.0/16']
