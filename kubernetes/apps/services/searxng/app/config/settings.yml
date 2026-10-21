@@ -1,0 +1,60 @@
+---
+use_default_settings: true
+server:
+  limiter: true
+  image_proxy: true
+  method: GET
+  public_instance: false
+search:
+  autocomplete: duckduckgo
+  favicon_resolver: duckduckgo
+  languages: [all, en, fr]
+  formats: [html, json]
+general:
+  instance_name: Freeman Search
+ui:
+  default_locale: fr
+  default_theme: simple
+  infinite_scroll: true
+  query_in_title: true
+  results_on_new_tab: true
+  static_use_hash: true
+  theme_args:
+    simple_style: auto
+categories_as_tabs:
+  general:
+  images:
+  videos:
+  map:
+plugins:
+  searx.plugins.calculator.SXNGPlugin:
+    active: true
+  searx.plugins.hash_plugin.SXNGPlugin:
+    active: true
+  searx.plugins.hostnames.SXNGPlugin:
+    active: true
+  searx.plugins.oa_doi_rewrite.SXNGPlugin:
+    active: true
+  searx.plugins.self_info.SXNGPlugin:
+    active: true
+  searx.plugins.time_zone.SXNGPlugin:
+    active: true
+  searx.plugins.tracker_url_remover.SXNGPlugin:
+    active: true
+  searx.plugins.unit_converter.SXNGPlugin:
+    active: true
+hostnames:
+  high_priority:
+    - (.*\.)?archlinux.org$
+    - (.*\.)?askubuntu.com$
+    - (.*\.)?docker.com$
+    - (.*\.)?doom9\.org$
+    - (.*\.)?github.com$
+    - (.*\.)?hydrogenaudio\.org$
+    - (.*\.)?launchbox-app\.com$
+    - (.*\.)?reddit.com$
+    - (.*\.)?stackoverflow.com$
+    - (.*\.)?superuser.com$
+    - (.*\.)?thetvdb\.com$
+    - (.*\.)?videohelp\.com$
+    - (.*\.)?wikipedia.org$

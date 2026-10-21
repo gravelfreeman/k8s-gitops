@@ -23,5 +23,6 @@ resources:
   - poznote/ks.yaml
   - songhub/ks.yaml
   - snapotter/ks.yaml
+  - searxng/ks.yaml
   - splitpro/ks.yaml
   - transmute/ks.yaml
