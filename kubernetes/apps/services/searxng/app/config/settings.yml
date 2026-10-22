@@ -22,9 +22,6 @@ engines:
     disabled: false
   - name: yandex
     disabled: false
-  # general:web
-  - name: qwant
-    disabled: false
   # general:wikimedia
   - name: wikibooks
     disabled: false
@@ -113,9 +110,6 @@ engines:
   # other:music
   - name: mixcloud
     disabled: true
-  # other:news
-  - name: qwant news
-    disabled: false
   # other:onions
   - name: ahmia
     inactive: true

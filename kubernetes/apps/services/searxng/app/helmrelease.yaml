@@ -31,8 +31,7 @@ spec:
             probes:
               liveness: &probes
                 enabled: true
-                type: HTTP
-                path: /healthz
+                type: TCP
               readiness: *probes
             resources:
               requests:
