@@ -20,5 +20,12 @@
       matchUpdateTypes: ["major"],
       enabled: false,
     },
+    {
+      description: "Wait 30 days before qBittorrent updates are eligible",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["ghcr.io/home-operations/qbittorrent"],
+      minimumReleaseAge: "30 days",
+      internalChecksFilter: "strict",
+    },
   ],
 }
