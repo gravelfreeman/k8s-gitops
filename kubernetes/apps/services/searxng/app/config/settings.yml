@@ -144,8 +144,6 @@ plugins:
     active: true
   searx.plugins.hostnames.SXNGPlugin:
     active: true
-  searx.plugins.oa_doi_rewrite.SXNGPlugin:
-    active: true
   searx.plugins.self_info.SXNGPlugin:
     active: true
   searx.plugins.time_zone.SXNGPlugin:
