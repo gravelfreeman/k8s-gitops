@@ -5,7 +5,7 @@ metadata:
   name: kubesearch
 spec:
   workload:
-    image: ghcr.io/perfectra1n/kubesearch-mcp:latest@sha256:4620f09fffb30672b429b9bbffb8a657d34dcee420729598c3f65732a3c89079
+    image: ghcr.io/perfectra1n/kubesearch-mcp:latest@sha256:e5613e0824cf4446fb64e9e3210513c173e7201d36161272b71455341302fc3d
     port: 3000
     resources:
       requests:
