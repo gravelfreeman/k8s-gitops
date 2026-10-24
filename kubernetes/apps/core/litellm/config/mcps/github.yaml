@@ -8,8 +8,9 @@ spec:
   authTokenRef:
     name: github-mcp-secret
     key: GITHUB_MCP_PAT
-  headers:
-    X-MCP-Toolsets: default,actions
+  params:
+    static_headers:
+      X-MCP-Toolsets: default,actions
   url: https://api.githubcopilot.com/mcp
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/external-secrets.io/externalsecret_v1.json
