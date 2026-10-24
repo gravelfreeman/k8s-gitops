@@ -27,7 +27,7 @@
     "mounts": [
         "source=${localEnv:HOME}/.1password,target=/home/zed/.1password,type=bind",
         "source=/run/user,target=/run/host-runtime,type=bind,readonly",
-        "source=/usr/local/bin/op,target=/usr/local/bin/op,type=bind,readonly",
+        "source=/usr/bin/op,target=/usr/bin/op,type=bind,readonly",
         "source=${localEnv:HOME}/.config/opencode,target=/home/zed/.config/opencode,type=bind,readonly",
         "source=${localEnv:HOME}/.config/opencode,target=${localEnv:HOME}/.config/opencode,type=bind,readonly",
         "source=${localEnv:HOME}/.cache/k8s-gitops/talos,target=/tmp/talos,type=bind",

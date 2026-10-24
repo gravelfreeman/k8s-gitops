@@ -32,7 +32,7 @@ Starts from the pinned `mcr.microsoft.com/devcontainers/base:ubuntu` image.
 - Installs extra apt packages through the apt packages feature.
 - Mounts the host 1Password SSH agent directory into `/home/zed/.1password`.
 - Mounts the stable host `/run/user` parent read-only into `/run/host-runtime`, so recreated per-user runtime directories and sockets become visible without restarting the container.
-- Mounts the host `/usr/local/bin/op` executable read-only at the same path in the container, matching Zed's configured command and preserving the host CLI's setgid metadata.
+- Mounts the host `/usr/bin/op` executable read-only at the same path in the container, matching the CachyOS desktop's official package path and preserving the host CLI's setgid metadata.
 - Mounts host `~/.config/opencode` read-only at `/home/zed/.config/opencode` for OpenCode's normal configuration lookup.
 - Also mounts host `~/.config/opencode` at the same absolute path used by Zed's user-level env-file argument, so the unchanged host agent-server command works remotely.
 - Mounts the host Talos artifact cache into `/tmp/talos`.

@@ -8,7 +8,7 @@ install -d -m 0700 \
 workspace_dir="${1:?Usage: initializeCommand.sh <workspace-dir>}"
 script_dir="$(cd -- "$(dirname -- "$0")" && pwd)"
 log_file="$HOME/.cache/k8s-gitops/rebindZedThreads.log"
-agent_ids=("OpenCode v2")
+agent_ids=("OpenCode")
 session_db="$HOME/.local/share/opencode/opencode.db"
 session_query="SELECT id FROM session_v2 WHERE directory = ?"
 
