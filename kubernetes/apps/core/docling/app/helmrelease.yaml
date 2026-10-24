@@ -17,7 +17,7 @@ spec:
           app:
             image:
               repository: ghcr.io/docling-project/docling-serve-cpu
-              tag: v1.37.0@sha256:6eda9c524992147c1b0b06a1a9be4894bd68b1f43c86d92c32f996c4c60d18a3
+              tag: v1.38.1@sha256:203c2ce82f19413bc3b83641962082165510352b9f93c1a840c0036be616eebf
             env:
               DOCLING_SERVE_DEFAULT_PICTURE_DESCRIPTION_PRESET: docling
               DOCLING_SERVE_ENABLE_REMOTE_SERVICES: true
