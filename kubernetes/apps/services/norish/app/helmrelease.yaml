@@ -53,7 +53,7 @@ spec:
           obscura:
             image:
               repository: norishapp/obscura
-              tag: 0.2.4-norish.1@sha256:d3b30af8d88a73685422d9c29a7689c0952966e8d6e87eb00edcf6c2c85defe6
+              tag: 0.2.5-norish.1@sha256:7bd78a6dbb8329a172f8c4d38cd7a875139b5a7756118579c376c978f612a0a9
             envFrom:
               - secretRef:
                   name: norish-obscura-secret
