@@ -27,5 +27,11 @@
       minimumReleaseAge: "30 days",
       internalChecksFilter: "strict",
     },
+    {
+      description: "Temporarily pause Recyclarr updates until Sonarr v5 migration",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["ghcr.io/recyclarr/recyclarr"],
+      enabled: false,
+    },
   ],
 }
