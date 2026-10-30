@@ -62,6 +62,13 @@ spec:
             subPath: limiter.toml
           - path: /etc/searxng/settings.yml
             subPath: settings.yml
+      theme:
+        type: configMap
+        name: searxng-theme
+        globalMounts:
+          - path: /usr/local/searxng/searx/templates/catppuccin
+          - path: /usr/local/searxng/searx/static/themes/catppuccin/img/favicon.svg
+            subPath: favicon.svg
     route:
       app:
         hostnames: ['search.${DOMAIN_0}']

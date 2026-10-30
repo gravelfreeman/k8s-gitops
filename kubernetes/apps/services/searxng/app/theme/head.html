@@ -1,0 +1,13 @@
+{% if rtl %}
+<link rel="stylesheet" href="{{ url_for('static', filename='themes/simple/sxng-rtl.min.css') }}" type="text/css" media="screen">
+{% else %}
+<link rel="stylesheet" href="{{ url_for('static', filename='themes/simple/sxng-ltr.min.css') }}" type="text/css" media="screen">
+{% endif %}
+<script type="module" src="{{ url_for('static', filename='themes/simple/sxng-core.min.js') }}" client_settings="{{ client_settings }}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const main = document.querySelector('main[id^="main_catppuccin/"]');
+    if (main) main.id = main.id.replace(/^main_catppuccin\//, "main_");
+  });
+</script>
+<style>{% include "catppuccin/catppuccin.css" %}</style>

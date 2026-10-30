@@ -125,7 +125,7 @@ general:
   instance_name: Freeman Search
 ui:
   default_locale: fr
-  default_theme: simple
+  default_theme: catppuccin
   infinite_scroll: true
   query_in_title: true
   results_on_new_tab: true

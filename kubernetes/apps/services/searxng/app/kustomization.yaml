@@ -4,6 +4,22 @@ resources:
   - externalsecret.yaml
   - helmrelease.yaml
 configMapGenerator:
+  - name: searxng-theme
+    files:
+      - catppuccin.css=./theme/catppuccin.css
+      - favicon.svg=./theme/favicon.svg
+      - head.html=./theme/head.html
+    literals:
+      - '404.html={% extends "simple/404.html" %}{% block head %}{{ super() }}{% include "catppuccin/head.html" %}{% endblock %}'
+      - 'index.html={% extends "simple/index.html" %}{% block head %}{{ super() }}{% include "catppuccin/head.html" %}{% endblock %}'
+      - 'info.html={% extends "simple/info.html" %}{% block head %}{{ super() }}{% include "catppuccin/head.html" %}{% endblock %}'
+      - 'manifest.json={% extends "simple/manifest.json" %}'
+      - 'opensearch.xml={% extends "simple/opensearch.xml" %}'
+      - 'opensearch_response_rss.xml={% extends "simple/opensearch_response_rss.xml" %}'
+      - 'preferences.html={% extends "simple/preferences.html" %}{% block head %}{{ super() }}{% include "catppuccin/head.html" %}{% endblock %}'
+      - 'results.html={% extends "simple/results.html" %}{% block head %}{{ super() }}{% include "catppuccin/head.html" %}{% endblock %}'
+      - 'rss.xsl={% extends "simple/rss.xsl" %}'
+      - 'stats.html={% extends "simple/stats.html" %}{% block head %}{{ super() }}{% include "catppuccin/head.html" %}{% endblock %}'
   - name: searxng-config
     files:
       - settings.yml=./config/settings.yml
