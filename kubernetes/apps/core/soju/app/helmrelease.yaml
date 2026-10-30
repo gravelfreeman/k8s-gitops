@@ -17,7 +17,7 @@ spec:
           app:
             image:
               repository: codeberg.org/emersion/soju
-              tag: v0.11.1@sha256:d96e0e796eab43fdea143e2ccfdd586bb5b04e3bb6a6dc544b01c35ebeaef74a
+              tag: v0.11.1@sha256:c695fb996dce168fb39449415c7523b17189ed81b48c107d4728fc93fb30e799
             args: ["-config", "/etc/soju/config"]
             env:
               PGUSER: soju
