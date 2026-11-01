@@ -7,6 +7,7 @@ configMapGenerator:
   - name: searxng-theme
     files:
       - catppuccin.css=./theme/catppuccin.css
+      - empty_favicon.svg=./theme/favicon.svg
       - favicon.svg=./theme/favicon.svg
       - head.html=./theme/head.html
     literals:

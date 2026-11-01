@@ -67,6 +67,8 @@ spec:
         name: searxng-theme
         globalMounts:
           - path: /usr/local/searxng/searx/templates/catppuccin
+          - path: /usr/local/searxng/searx/static/themes/catppuccin/img/empty_favicon.svg
+            subPath: empty_favicon.svg
           - path: /usr/local/searxng/searx/static/themes/catppuccin/img/favicon.svg
             subPath: favicon.svg
     route:
