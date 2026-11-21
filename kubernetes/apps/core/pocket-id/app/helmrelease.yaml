@@ -17,7 +17,7 @@ spec:
           db-wait:
             image:
               repository: postgres
-              tag: "18.7-alpine3.23@sha256:f3ee138d5fce80ffaeb315b8bea7610f0c4f2304fb2aceb4ec8e457b92fc41a0"
+              tag: "18.7-alpine3.23@sha256:339a86bf416979bb4d3d2e30a1f9e096e7302564faff4151b804cf53463059d5"
             command: ["/bin/sh", "-ec"]
             args: ["until pg_isready -q -h ${APP}-cnpg-rw -p 5432 -U postgres -d postgres; do sleep 2; done"]
             securityContext: &securityContext
