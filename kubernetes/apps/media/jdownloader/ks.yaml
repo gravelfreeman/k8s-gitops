@@ -1,0 +1,63 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app jdownloader
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/common/app
+    - ../../../../components/volsync
+  dependsOn:
+    - name: external-secrets-store
+    - name: openebs
+    - name: rook-ceph-cluster
+    - name: volsync
+  interval: 1h
+  path: kubernetes/apps/media/jdownloader/app
+  postBuild:
+    substitute:
+      APP: *app
+      VOLSYNC_ACCESSMODES: ReadWriteMany
+      VOLSYNC_SNAPSHOT_CLASS: csi-ceph-filesystem
+      VOLSYNC_STORAGECLASS: ceph-filesystem
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: *app
+  timeout: 5m
+  wait: true
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app jdownloader-webui
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/common/app/shared
+    - ../../../../components/homepage
+    - ../../../../components/envoy-oidc
+  dependsOn:
+    - name: envoy-gateway-config
+    - name: external-secrets-store
+    - name: jdownloader
+  interval: 1h
+  path: kubernetes/apps/media/jdownloader/webui
+  postBuild:
+    substitute:
+      APP: *app
+      HOMEPAGE_NAME: jDownloader
+      HOMEPAGE_ICON: sh-jdownloader.png
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: jdownloader
+  timeout: 5m
+  wait: true
