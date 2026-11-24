@@ -68,7 +68,7 @@ spec:
                 valueFrom:
                   secretKeyRef:
                     name: open-webui-cnpg-app
-                    key: fqdn-uri
+                    key: uri
             envFrom:
               - secretRef:
                   name: open-webui-app-secret
