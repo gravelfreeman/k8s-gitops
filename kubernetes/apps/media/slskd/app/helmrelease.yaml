@@ -22,6 +22,7 @@ spec:
               SLSKD_APP_DIR: /data
               SLSKD_NO_AUTH: true
               SLSKD_NO_VERSION_CHECK: true
+              SLSKD_REMOTE_CONFIGURATION: true
               SLSKD_SHARED_DIR: /media
             envFrom:
               - secretRef:

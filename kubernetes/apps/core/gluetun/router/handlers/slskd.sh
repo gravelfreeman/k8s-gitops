@@ -16,6 +16,7 @@ payload="$(printf '{"soulseek":{"listenPort":%s}}' "${TARGET_TCP_PORT}")"
 
 curl -fs --max-time 10 \
   -X PATCH \
+  -H @/run/secrets/router/slskd-api-key \
   -H 'Content-Type: application/json' \
   --data "${payload}" \
   "${TARGET_URL}/api/v0/options" \

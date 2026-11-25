@@ -49,6 +49,12 @@ spec:
         globalMounts:
           - path: /router
             readOnly: true
+      secret:
+        type: secret
+        name: gluetun-router-secret
+        globalMounts:
+          - path: /run/secrets/router
+            readOnly: true
       state:
         type: emptyDir
         globalMounts:

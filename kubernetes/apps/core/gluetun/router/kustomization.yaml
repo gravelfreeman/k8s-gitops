@@ -8,6 +8,7 @@ resources:
   - config/token-generator.yaml
   - crds/clients.yaml
   - crds/gateways.yaml
+  - externalsecret.yaml
   - helmrelease.yaml
   - rbac.yaml
 configMapGenerator:
