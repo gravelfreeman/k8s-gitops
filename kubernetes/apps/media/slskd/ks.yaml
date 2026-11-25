@@ -1,0 +1,37 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app slskd
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/common/app
+    - ../../../../components/envoy-oidc
+    - ../../../../components/gluetun
+    - ../../../../components/homepage
+    - ../../../../components/volsync
+  dependsOn:
+    - name: envoy-gateway-config
+    - name: external-secrets-store
+    - name: gluetun-echo
+    - name: openebs
+    - name: rook-ceph-cluster
+    - name: volsync
+  interval: 1h
+  path: kubernetes/apps/media/slskd/app
+  postBuild:
+    substitute:
+      APP: *app
+      GLUETUN_GATEWAY_ID: "5"
+      GLUETUN_GATEWAY_NAME: gluetun-echo
+      GLUETUN_FORWARD_USE_SERVICE_PORT: "false"
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: *app
+  timeout: 5m
+  wait: true

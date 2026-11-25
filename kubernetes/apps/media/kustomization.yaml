@@ -33,6 +33,7 @@ resources:
   - romm/ks.yaml
   - shelfmark/ks.yaml
   - seerr/ks.yaml
+  - slskd/ks.yaml
   - sonarr/ks.yaml
   - torrent/ks.yaml
   - torrent/scripts/ks.yaml
