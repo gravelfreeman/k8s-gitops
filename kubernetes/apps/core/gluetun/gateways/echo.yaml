@@ -14,8 +14,9 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      GLUETUN_GATEWAY_ID: "5"
       GLUETUN_CLUSTER_DNS_ACTION: ACCEPT
+      GLUETUN_GATEWAY_ID: "5"
+      GLUETUN_PORT_FORWARDS: "1"
       GLUETUN_PROXIES_ENABLED: "true"
   prune: true
   sourceRef:
