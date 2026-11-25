@@ -58,8 +58,8 @@ route:
 
 ## Resources
 
-- `SecurityPolicy` named `${APP}-oidc`
-- `ExternalSecret` named `envoy-oidc-secret`
+- `SecurityPolicy` named `${APP}-oidc`.
+- `ExternalSecret` named `${APP}-oidc-secret`, containing only `client-id` and `client-secret`.
 
 ## Notes
 
