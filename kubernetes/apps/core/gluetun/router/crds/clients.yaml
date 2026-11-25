@@ -36,6 +36,12 @@ spec:
                   minLength: 1
                   maxLength: 63
                   pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                portForwarding:
+                  type: object
+                  properties:
+                    useServicePort:
+                      type: boolean
+                      default: true
                 service:
                   type: string
                   minLength: 1

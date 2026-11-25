@@ -6,4 +6,6 @@ metadata:
   name: ${APP}
 spec:
   gateway: ${GLUETUN_GATEWAY_NAME}
+  portForwarding:
+    useServicePort: ${GLUETUN_FORWARD_USE_SERVICE_PORT:=true}
   service: ${GLUETUN_SERVICE:=${APP}}

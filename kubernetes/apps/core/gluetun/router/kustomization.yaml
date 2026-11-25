@@ -15,6 +15,7 @@ configMapGenerator:
     behavior: merge
     files:
       - handlers/qbittorrent.sh
+      - handlers/slskd.sh
 generatorOptions:
   disableNameSuffixHash: true
   annotations:

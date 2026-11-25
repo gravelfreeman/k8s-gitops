@@ -150,6 +150,11 @@ service:
         protocol: UDP
 ```
 
+TCP and UDP use the Service port by default. This setting applies to both protocols:
+
+- `true` (default): forward to the port declared by the app's corresponding Service port.
+- `false`: forward to the port assigned by the VPN. The app must listen on that port.
+
 ## Variables
 
 ### Client component
@@ -159,6 +164,7 @@ service:
 | `APP` *(required)* | none | Client app name and resource prefix. |
 | `GLUETUN_GATEWAY_NAME` *(required)* | none | Gluetun instance name, for example `gluetun-<instance>`. |
 | `GLUETUN_GATEWAY_ID` *(required)* | none | Numeric instance ID matching the selected `GLUETUN_GATEWAY_NAME`. |
+| `GLUETUN_FORWARD_USE_SERVICE_PORT` | `true` | Use the Service-declared TCP and UDP ports; set to `false` to target the VPN-assigned port for both protocols. |
 
 ### Instance component
 
