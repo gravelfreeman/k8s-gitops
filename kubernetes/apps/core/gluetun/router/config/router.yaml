@@ -297,7 +297,8 @@ data:
             | . as $pod
             | client_ip($pod; $gateway) as $ip
             | select($ip != null and $ip != "")
-            | ($client.spec.portForwarding.useServicePort // true) as $use_service_port
+            | ($client.spec.portForwarding // {}) as $port_forwarding
+            | (if ($port_forwarding | has("useServicePort")) then $port_forwarding.useServicePort else true end) as $use_service_port
             | {
                 namespace: $namespace,
                 service: $service.metadata.name,
