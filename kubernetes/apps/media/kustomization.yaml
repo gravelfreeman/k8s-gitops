@@ -36,6 +36,7 @@ resources:
   - seerr/ks.yaml
   - slskd/ks.yaml
   - sonarr/ks.yaml
+  - tidarr/ks.yaml
   - torrent/ks.yaml
   - torrent/scripts/ks.yaml
   - torrent/qbittorrent-1/ks.yaml
