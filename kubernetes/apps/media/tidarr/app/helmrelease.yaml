@@ -47,7 +47,7 @@ spec:
     persistence:
       shared:
         existingClaim: tidarr-data
-      music:
+      downloads:
         type: custom
         volumeSpec:
           csi:
@@ -55,6 +55,8 @@ spec:
             volumeAttributes:
               server: 10.0.10.10
               share: /mnt/eden/media/temp/tidarr
+        globalMounts:
+          - path: /shared/nzb_downloads
       processing:
         type: emptyDir
         globalMounts:
