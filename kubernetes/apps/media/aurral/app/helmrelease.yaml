@@ -27,6 +27,7 @@ spec:
               OIDC_ENABLED: true
               OIDC_ISSUER: https://id.${DOMAIN_0}
               OIDC_REDIRECT_URI: https://aurral.${DOMAIN_1}/sso/callback
+              XDG_CACHE_HOME: /tmp
             envFrom:
               - secretRef:
                   name: aurral-app-secret
