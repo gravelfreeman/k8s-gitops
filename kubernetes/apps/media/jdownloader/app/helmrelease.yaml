@@ -17,7 +17,7 @@ spec:
           app:
             image:
               repository: ghcr.io/tuxpeople/jdownloader-headless
-              tag: 3.1.0@sha256:9f8f175b6eb98bbbac05f7a8e5fbda735b53304c701dcd9cec48e8f548d5e8b9
+              tag: 3.1.0@sha256:1d9bc97646ba1656f104bedf3eef7046f746188902d33f3ff8a067483cf53d74
             envFrom:
               - secretRef:
                   name: jdownloader-app-secret
