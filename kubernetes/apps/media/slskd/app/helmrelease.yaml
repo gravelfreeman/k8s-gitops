@@ -66,12 +66,12 @@ spec:
               server: 10.0.10.10
               share: /mnt/eden/media
         globalMounts:
-          - path: /app/downloads
-            subPath: temp/slskd
-          - path: /app/incomplete
-            subPath: temp/slskd/.temp
           - path: /media
-            subPath: temp/downloads/music
+            subPath: library/music
+          - path: /data/downloads
+            subPath: temp/slskd
+          - path: /data/incomplete
+            subPath: temp/slskd/.temp
       runtime:
         type: emptyDir
         globalMounts:
